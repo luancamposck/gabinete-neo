@@ -1,17 +1,9 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-import { cookies } from "next/headers"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger
-} from "@/components/ui/sidebar"
+import { ThemeProvider } from "@/components/theme-provider"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Separator } from "@/components/ui/separator"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +20,7 @@ export const metadata: Metadata = {
   description: ""
 }
 
-const RootLayout = async ({
-  children
-}: Readonly<{ children: React.ReactNode }>) => {
-  const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
-
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="pt-BR">
       <body
@@ -46,32 +33,7 @@ const RootLayout = async ({
           enableSystem
           disableTransitionOnChange
         >
-          <SidebarProvider defaultOpen={defaultOpen}>
-            <AppSidebar />
-
-            <SidebarInset className="overflow-auto">
-              <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
-                <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-                  <SidebarTrigger className="-ml-1" />
-                  <Separator
-                    orientation="vertical"
-                    className="mx-2 data-[orientation=vertical]:h-4"
-                  />
-
-                  <div className="ml-auto flex items-center gap-2">
-                    <span className="hidden sm:flex font-semibold">
-                      Gabinete NEO
-                    </span>
-                  </div>
-                </div>
-              </header>
-              <div className="p-4 lg:p-8">
-                <div className="container mx-auto flex flex-1 flex-col justify-center gap-8">
-                  {children}
-                </div>
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>
