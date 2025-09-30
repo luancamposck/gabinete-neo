@@ -59,7 +59,7 @@ const RootLayout = async ({
                   />
 
                   <div className="ml-auto flex items-center gap-2">
-                    <span className="hidden sm:flex font-semibold text-primary-foreground">
+                    <span className="hidden sm:flex font-semibold">
                       Gabinete NEO
                     </span>
                   </div>
