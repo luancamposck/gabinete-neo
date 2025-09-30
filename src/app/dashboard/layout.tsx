@@ -38,7 +38,7 @@ const DashboardLayout = async ({
             </div>
           </div>
         </header>
-        <div className="p-4 lg:p-8">
+        <div className="p-4">
           <div className="container mx-auto flex flex-1 flex-col justify-center gap-8">
             {children}
           </div>
