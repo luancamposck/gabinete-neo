@@ -1,5 +1,7 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Briefcase, Home } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+
 import { Separator } from "@/components/ui/separator"
 import {
   Sidebar,
@@ -13,28 +15,13 @@ import {
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/dashboard/home",
     icon: Home
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings
+    title: "Mala Direta",
+    url: "/dashboard/mailing-list",
+    icon: Briefcase
   }
 ]
 
@@ -61,10 +48,10 @@ const AppSidebar = () => {
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
-                <a href={item.url}>
+                <Link href={item.url} className="mx-auto">
                   <item.icon />
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
