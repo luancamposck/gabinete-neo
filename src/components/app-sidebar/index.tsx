@@ -42,7 +42,16 @@ const AppSidebar = () => {
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
-        <Image alt="MEO Ernegia" src="/logo.png" width={300} height={200} />
+        <Image
+          alt="Gabinete NEO"
+          src="/logo.png"
+          width={150}
+          height={150}
+          className="mx-auto p-2"
+        />
+        <h1 className="font-semibold text-center text-3xl group-data-[collapsible=icon]:hidden">
+          Gabinete NEO
+        </h1>
       </SidebarHeader>
 
       <Separator className="data-[orientation=horizontal]:h-0.5" />
