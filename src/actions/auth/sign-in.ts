@@ -1,8 +1,8 @@
 "use server"
 
+import type { Session, User } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/server"
 import type { ActionResponse } from "@/types/action-response"
-import type { Session, User } from "@supabase/supabase-js"
 
 type SignInParams = {
   email: string
@@ -16,26 +16,26 @@ type SignInData = {
 
 export default async function signInAction({
   email,
-  password,
+  password
 }: SignInParams): Promise<ActionResponse<SignInData>> {
   try {
     const supabase = await createClient()
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password
     })
 
     if (error) {
       return {
         success: false,
-        message: error.message,
+        message: error.message
       }
     }
 
     return {
       success: true,
       message: "Autenticado com sucesso",
-      data,
+      data
     }
   } catch (error) {
     return {
@@ -43,7 +43,7 @@ export default async function signInAction({
       message:
         error instanceof Error
           ? error.message
-          : "Erro inesperado ao realizar login",
+          : "Erro inesperado ao realizar login"
     }
   }
 }
