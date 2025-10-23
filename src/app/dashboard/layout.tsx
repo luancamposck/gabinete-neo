@@ -21,7 +21,7 @@ const DashboardLayout = async ({
 
   // Redireciona se não houver usuário logado
   if (!sessionResult.success || !sessionResult.data) {
-    redirect("/login") // ou sua página de login
+    redirect("/") // ou sua página de login
   }
 
   return (
