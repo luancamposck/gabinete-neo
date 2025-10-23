@@ -38,7 +38,7 @@ export const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
     }
   })
 
-  const onSubmit = (values: SignUpFormValues) => {
+  function onSubmit(values: SignUpFormValues) {
     startTransition(() => {
       signUp(values)
         .then((response) => {
