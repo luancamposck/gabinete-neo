@@ -3,13 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
 
-import { signIn } from "@/actions/auth"
+import { signUp } from "@/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -21,27 +20,26 @@ import {
   FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { signInSchema } from "@/lib/definitions/sign-in-schema"
+import { signUpSchema } from "@/lib/definitions/sign-up-schema"
 import { cn } from "@/lib/utils"
 
-type SignInFormProps = React.ComponentProps<"div">
-type SignInFormValues = z.infer<typeof signInSchema>
+type SignUpFormProps = React.ComponentProps<"div">
+type SignUpFormValues = z.infer<typeof signUpSchema>
 
-export const SignInForm = ({ className, ...props }: SignInFormProps) => {
+export const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
   const [isPending, startTransition] = useTransition()
-  const router = useRouter()
 
-  const form = useForm<SignInFormValues>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: "",
       password: ""
     }
   })
 
-  const onSubmit = (values: SignInFormValues) => {
+  const onSubmit = (values: SignUpFormValues) => {
     startTransition(() => {
-      signIn(values)
+      signUp(values)
         .then((response) => {
           if (!response.success) {
             toast.error(response.message)
@@ -49,7 +47,7 @@ export const SignInForm = ({ className, ...props }: SignInFormProps) => {
           }
 
           toast.success(response.message)
-          router.push("/dashboard")
+          form.reset()
         })
         .catch(() => {
           toast.error("Não foi possível conectar ao servidor")
@@ -69,9 +67,9 @@ export const SignInForm = ({ className, ...props }: SignInFormProps) => {
             >
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Bem-vindo de volta</h1>
+                  <h2 className="text-2xl font-bold">Crie sua conta</h2>
                   <p className="text-muted-foreground text-balance">
-                    Faça login na sua conta Gabinete NEO
+                    Cadastre-se para acessar o Gabinete NEO
                   </p>
                 </div>
                 <FormField
@@ -104,13 +102,13 @@ export const SignInForm = ({ className, ...props }: SignInFormProps) => {
                           href="#"
                           className="ml-auto text-sm underline-offset-2 hover:underline"
                         >
-                          Esqueceu sua senha?
+                          Precisa de ajuda?
                         </Link>
                       </div>
                       <FormControl>
                         <Input
                           type="password"
-                          autoComplete="current-password"
+                          autoComplete="new-password"
                           disabled={isPending}
                           {...field}
                         />
@@ -120,12 +118,12 @@ export const SignInForm = ({ className, ...props }: SignInFormProps) => {
                   )}
                 />
                 <Button type="submit" className="w-full" disabled={isPending}>
-                  {isPending ? "Entrando..." : "Login"}
+                  {isPending ? "Cadastrando..." : "Cadastrar"}
                 </Button>
                 <div className="text-center text-sm">
-                  Ainda não tem uma conta?{" "}
+                  Já possui uma conta?{" "}
                   <Link href="#" className="underline underline-offset-4">
-                    Cadastre-se
+                    Faça login
                   </Link>
                 </div>
               </div>
@@ -138,7 +136,7 @@ export const SignInForm = ({ className, ...props }: SignInFormProps) => {
               height={300}
               alt="Gabinete NEO"
             />
-            <h1 className="text-3xl font-semibold text-center">Gabinete NEO</h1>
+            <h2 className="text-3xl font-semibold text-center">Gabinete NEO</h2>
           </div>
         </CardContent>
       </Card>

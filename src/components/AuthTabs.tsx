@@ -1,7 +1,7 @@
 "use client"
 
 import { SignInForm } from "@/components/forms/auth/sign-in-form"
-import { SignUpForm } from "@/components/forms/sign-up-form"
+import { SignUpForm } from "@/components/forms/auth/sign-up-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const AuthTabs = () => {
