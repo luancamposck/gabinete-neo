@@ -48,7 +48,7 @@ export const MyComponent = () => {
 
 > **Atenção:** use exatamente o estilo abaixo. O Codex vinha gerando schemas com `required_error` e `z.string().email()`. **Não** usar `required_error`. **Não** usar `z.string().email()`. O formato correto é **`z.email()`** direto.
 
-- Todos os schemas Zod devem estar em **`/lib/definitions`**.
+- Todos os schemas Zod devem estar em **`/lib/validations`**.
 - **Apenas UM schema por arquivo**.
 - Estilo obrigatório (exemplo para *sign-in*):
 
