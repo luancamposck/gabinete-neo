@@ -1,4 +1,5 @@
 import { Briefcase } from "lucide-react"
+import { MailingListModal } from "@/components/modals/mailing-list-modal"
 
 const MailingListPage = () => (
   <>
@@ -6,10 +7,14 @@ const MailingListPage = () => (
       <h1 className="text-3xl font-semibold mb-4 flex items-center gap-2">
         <Briefcase className="size-7" /> Mala Direta
       </h1>
-      <p>
-        Adicione contatos, gerencie endereços e não esqueça nenhum número, tudo
-        isso aqui.
-      </p>
+      <div className="flex justify-between">
+        <p>
+          Adicione contatos, gerencie endereços e não esqueça nenhum número,
+          tudo isso aqui.
+        </p>
+
+        <MailingListModal />
+      </div>
     </div>
 
     <div className="flex flex-1 flex-col gap-4">
