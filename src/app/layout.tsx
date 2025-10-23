@@ -35,7 +35,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           disableTransitionOnChange
         >
           {children}
-          <Toaster />
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>
