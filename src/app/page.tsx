@@ -1,4 +1,4 @@
-import { AuthTabs } from "@/components/AuthTabs"
+import { AuthTabs } from "@/components/auth-tabs"
 
 export default function LoginPage() {
   return (
