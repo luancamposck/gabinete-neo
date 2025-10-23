@@ -1,12 +1,15 @@
 "use server"
 
 import { AuthError, type User } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/server"
+
+import { supabaseAdmin } from "@/lib/supabase/admin"
 import type { ActionResponse } from "@/types/action-response"
 
 type SignUpParams = {
   email: string
   password: string
+  name: string
+  cpf: string
 }
 
 type SignUpData = {
@@ -49,24 +52,72 @@ function getAuthErrorMessage(
   )
 }
 
-export default async function signUp({
+async function signUp({
   email,
-  password
+  password,
+  name,
+  cpf
 }: SignUpParams): Promise<ActionResponse<SignUpData>> {
+  let userId: string | null = null
+
   try {
-    const supabase = await createClient()
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password
-    })
+    // 1. Tentar criar usuário no auth.users
+    const { data: authData, error: authError } =
+      await supabaseAdmin.auth.admin.createUser({
+        email,
+        password
+      })
 
-    if (error) {
-      const errorMessage = getAuthErrorMessage(error.code, error.message)
+    if (authError) {
+      const errorMessage = getAuthErrorMessage(
+        authError.code,
+        authError.message
+      )
 
-      console.error("Supabase signUp error", error)
+      console.error("Supabase signUp error", authError)
+
       return {
         success: false,
         message: errorMessage
+      }
+    }
+
+    if (!authData.user) {
+      return {
+        success: false,
+        message: "Erro ao criar conta: usuário não foi criado"
+      }
+    }
+
+    userId = authData.user.id
+
+    // 2. Tentar adicionar na tabela public.users
+    const { error: dbError } = await supabaseAdmin.from("users").insert({
+      id: userId,
+      email,
+      nome: name,
+      cpf
+    })
+
+    if (dbError) {
+      console.error("Error inserting into public.users", dbError)
+
+      // 3. Se falhou, deletar o usuário do auth.users
+      try {
+        const { error: deleteError } =
+          await supabaseAdmin.auth.admin.deleteUser(userId)
+
+        if (deleteError) {
+          console.error("Error deleting user after failed insert", deleteError)
+          // Mesmo que falhe ao deletar, informamos o erro principal
+        }
+      } catch (deleteErr) {
+        console.error("Exception while deleting user", deleteErr)
+      }
+
+      return {
+        success: false,
+        message: "Erro ao completar cadastro. Por favor, tente novamente"
       }
     }
 
@@ -74,10 +125,19 @@ export default async function signUp({
       success: true,
       message: "Conta criada com sucesso",
       data: {
-        user: data.user
+        user: authData.user
       }
     }
   } catch (error) {
+    // Se algo inesperado acontecer e temos um userId, tentar deletar
+    if (userId) {
+      try {
+        await supabaseAdmin.auth.admin.deleteUser(userId)
+      } catch (deleteErr) {
+        console.error("Exception while deleting user in catch block", deleteErr)
+      }
+    }
+
     if (error instanceof AuthError) {
       console.error("Supabase signUp throw", error)
       return {
@@ -96,3 +156,5 @@ export default async function signUp({
     }
   }
 }
+
+export default signUp

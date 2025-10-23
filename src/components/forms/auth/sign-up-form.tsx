@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { signUpSchema } from "@/lib/definitions/sign-up-schema"
+import { maskCpf } from "@/lib/masks"
 import { cn } from "@/lib/utils"
 
 type SignUpFormProps = React.ComponentProps<"div">
@@ -72,6 +73,26 @@ export const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                     Cadastre-se para acessar o Gabinete NEO
                   </p>
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Pedro Souza da Silva"
+                          autoComplete="name"
+                          disabled={isPending}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="email"
@@ -100,10 +121,13 @@ export const SignUpForm = ({ className, ...props }: SignUpFormProps) => {
                       <FormLabel>CPF</FormLabel>
                       <FormControl>
                         <Input
+                          {...field}
                           placeholder="123.456.789-10"
+                          onChange={(e) =>
+                            field.onChange(maskCpf(e.target.value))
+                          }
                           autoComplete="cpf"
                           disabled={isPending}
-                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
