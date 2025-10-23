@@ -20,9 +20,9 @@ import {
   FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { signUpSchema } from "@/lib/definitions/sign-up-schema"
 import { maskCpf } from "@/lib/masks"
 import { cn } from "@/lib/utils"
+import { signUpSchema } from "@/lib/validations/sign-up-schema"
 
 type SignUpFormProps = React.ComponentProps<"div">
 type SignUpFormValues = z.infer<typeof signUpSchema>

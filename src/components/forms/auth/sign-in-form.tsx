@@ -21,8 +21,8 @@ import {
   FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { signInSchema } from "@/lib/definitions/sign-in-schema"
 import { cn } from "@/lib/utils"
+import { signInSchema } from "@/lib/validations/sign-in-schema"
 
 type SignInFormProps = React.ComponentProps<"div">
 type SignInFormValues = z.infer<typeof signInSchema>
