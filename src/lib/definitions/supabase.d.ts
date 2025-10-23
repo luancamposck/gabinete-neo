@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      mailing_list: {
+        Row: {
+          city: string
+          complement: string | null
+          created_at: string | null
+          id: string
+          name: string
+          neighborhood: string
+          number: string
+          phone_number: number | null
+          postal_code: string
+          state: string
+          street: string
+        }
+        Insert: {
+          city: string
+          complement?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          neighborhood: string
+          number: string
+          phone_number?: number | null
+          postal_code: string
+          state: string
+          street: string
+        }
+        Update: {
+          city?: string
+          complement?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          neighborhood?: string
+          number?: string
+          phone_number?: number | null
+          postal_code?: string
+          state?: string
+          street?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           cpf: string | null
