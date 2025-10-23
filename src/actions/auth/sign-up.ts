@@ -65,7 +65,8 @@ async function signUp({
     const { data: authData, error: authError } =
       await supabaseAdmin.auth.admin.createUser({
         email,
-        password
+        password,
+        email_confirm: true
       })
 
     if (authError) {
