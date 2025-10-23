@@ -38,6 +38,16 @@
       "name": "add",
       "command": "npm run add",
       "runAtStart": false
+    },
+    "db:push": {
+      "name": "db:push",
+      "command": "npm run db:push",
+      "runAtStart": false
+    },
+    "db:gen-types": {
+      "name": "db:gen-types",
+      "command": "npm run db:gen-types",
+      "runAtStart": false
     }
   }
 }
