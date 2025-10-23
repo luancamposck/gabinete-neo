@@ -8,7 +8,9 @@
     "start": "next start",
     "lint:biome": "biome check src",
     "fix:biome": "biome check --write src",
-    "add": "npx shadcn@latest add"
+    "add": "npx shadcn@latest add",
+    "db:push": "npx supabase db push",
+    "db:gen-types": "npx supabase gen types typescript --project-id csivzqansvingomnafom --schema public > src/lib/definitions/supabase.d.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
