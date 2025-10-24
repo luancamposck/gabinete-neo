@@ -23,7 +23,7 @@ export type Database = {
           name: string
           neighborhood: string
           number: string
-          phone_number: number | null
+          phone_number: number
           postal_code: string
           state: string
           street: string
@@ -36,7 +36,7 @@ export type Database = {
           name: string
           neighborhood: string
           number: string
-          phone_number?: number | null
+          phone_number: number
           postal_code: string
           state: string
           street: string
@@ -49,7 +49,7 @@ export type Database = {
           name?: string
           neighborhood?: string
           number?: string
-          phone_number?: number | null
+          phone_number?: number
           postal_code?: string
           state?: string
           street?: string
@@ -109,7 +109,7 @@ export type Tables<
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -137,7 +137,7 @@ export type TablesInsert<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -162,7 +162,7 @@ export type TablesUpdate<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -187,7 +187,7 @@ export type Enums<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -204,7 +204,7 @@ export type CompositeTypes<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -215,6 +215,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {}
-  }
+    Enums: {},
+  },
 } as const
