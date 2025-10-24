@@ -2,7 +2,7 @@
 
 import type { MailingListInsert } from "@/lib/definitions/mailing-list"
 import { createClient } from "@/lib/supabase/server"
-import { translateSupabaseError } from "@/lib/utils/translate-supabase-error"
+import { translateSupabaseError } from "@/lib/utils"
 import type { ActionResponse } from "@/types/action-response"
 
 async function createMailingListEntry(
