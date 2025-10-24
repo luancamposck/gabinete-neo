@@ -35,8 +35,8 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { brazilianStates } from "@/lib/constants/brazilian-states"
-import { maskCep, maskPhone } from "@/lib/masks"
 import { cn } from "@/lib/utils"
+import { maskCep, maskPhone } from "@/lib/utils/masks"
 import {
   type MailingListFormValues,
   mailingListFormSchema

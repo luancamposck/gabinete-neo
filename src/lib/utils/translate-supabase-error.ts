@@ -8,10 +8,7 @@ const SUPABASE_ERROR_MAP: Record<string, string> = {
   PGRST204: "Requisição inválida."
 }
 
-export function translateSupabaseError(
-  code?: string,
-  fallback?: string
-): string {
+function translateSupabaseError(code?: string, fallback?: string): string {
   if (!code) return fallback ?? "Ocorreu um erro inesperado. Tente novamente."
   return (
     SUPABASE_ERROR_MAP[code] ??
@@ -19,3 +16,5 @@ export function translateSupabaseError(
     "Ocorreu um erro inesperado. Tente novamente."
   )
 }
+
+export default translateSupabaseError

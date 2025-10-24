@@ -20,8 +20,8 @@ import {
   FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { maskCpf } from "@/lib/masks"
 import { cn } from "@/lib/utils"
+import { maskCpf } from "@/lib/utils/masks"
 import { signUpSchema } from "@/lib/validations/sign-up-schema"
 
 type SignUpFormProps = React.ComponentProps<"div">
