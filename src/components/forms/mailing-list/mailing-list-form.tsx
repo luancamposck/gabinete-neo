@@ -130,7 +130,10 @@ export const AddressForm = ({ className, ...props }: AddressFormProps) => {
 
   function onSubmit(values: MailingListFormValues) {
     startTransition(() => {
-      createMailingListEntry(values)
+      createMailingListEntry({
+        ...values,
+        phone_number: Number(values.phone_number.replace(/\D/g, ""))
+      })
         .then((response) => {
           if (!response.success) {
             toast.error(response.message)
