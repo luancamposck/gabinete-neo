@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import { adressBaseSchemaServer, cpfSchemaServer, phoneSchemaServer } from "@/lib/validations/atom-schemas/atom-schemas.server"
 
-const userBaseSchemaServer = z.object({
+export const userBaseSchemaServer = z.object({
 	// Dados do usuário
 	name: z.string().min(3, "Nome do usuário deve ter no mínimo 3 caracteres."),
 	cpf: cpfSchemaServer,
@@ -16,7 +16,4 @@ const userBaseSchemaServer = z.object({
 	adress: adressBaseSchemaServer
 })
 
-type UserBaseServerData = z.infer<typeof userBaseSchemaServer>
-
-export { userBaseSchemaServer }
-export type { UserBaseServerData }
+export type UserBaseServerData = z.infer<typeof userBaseSchemaServer>

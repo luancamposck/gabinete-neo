@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import { adressBaseSchemaClient } from "@/lib/validations/atom-schemas/atom-schemas.client"
 
-const userBaseSchemaClient = z
+export const userBaseSchemaClient = z
 	.object({
 		// Dados do usuário
 		name: z.string().min(3, "Nome do usuário deve ter no mínimo 3 caracteres."),
@@ -27,7 +27,4 @@ const userBaseSchemaClient = z
 		path: ["confirmEmail"]
 	})
 
-type UserBaseClientData = z.infer<typeof userBaseSchemaClient>
-
-export { userBaseSchemaClient }
-export type { UserBaseClientData }
+export type UserBaseClientData = z.infer<typeof userBaseSchemaClient>
