@@ -5,7 +5,7 @@ import type { OperationResponse } from "@/types/operation-response"
 
 export interface CreateOrganizationServiceParams extends OrganizationsInsert {}
 
-export async function createOrganizationService(params: CreateOrganizationServiceParams): Promise<OperationResponse<{ id: string }>> {
+export async function createOrganizationService(params: CreateOrganizationServiceParams): Promise<OperationResponse<{ organizationId: string }>> {
 	const { data: organizationResData, error: organizationResError } = await insertOrganizationsAdminRepo(params)
 
 	if (organizationResError || !organizationResData) {
@@ -28,6 +28,8 @@ export async function createOrganizationService(params: CreateOrganizationServic
 	return {
 		success: true,
 		message: "Organização criada com sucesso.",
-		data: { id: organizationId }
+		data: {
+			organizationId: organizationId
+		}
 	}
 }
