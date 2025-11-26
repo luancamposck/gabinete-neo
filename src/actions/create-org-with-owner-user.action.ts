@@ -1,73 +1,71 @@
 "use server"
 
-import { createPartnerWithOwnerSchemaServer } from "@/lib/validations/use-cases/create-partner-with-owner-user/create-partner-with-owner-user.server"
-import { type CreatePartnerWithOwnerUserServiceParams, createPartnerWithOwnerUserService } from "@/services/create-partner-with-owner-user.service"
+import { createOrganizationWithOwnerSchemaServer } from "@/lib/validations/use-cases/create-organization-with-owner-schema"
+import { type CreateOrganizationWithOwnerUserServiceParams, createOrganizationWithOwnerUserService } from "@/services/create-organization-with-owner-user.service"
 import type { OperationResponse } from "@/types/operation-response"
 
-export async function createPartnerWithOwnerUserAction(formData: unknown): Promise<OperationResponse<{ userId: string; partnerId: string }>> {
+export async function createOrganizationWithOwnerAction(formData: unknown): Promise<OperationResponse<{ organizationId: string; userId: string }>> {
 	// 1) Validação
-	const dataParsed = createPartnerWithOwnerSchemaServer.safeParse(formData)
+	const dataParsed = createOrganizationWithOwnerSchemaServer.safeParse(formData)
 
 	if (!dataParsed.success) {
 		console.error(dataParsed.error)
-		return { success: false, message: dataParsed.error.message }
+
+		return {
+			success: false,
+			message: dataParsed.error.message
+		}
 	}
 
-	const { partner: newPartnerData, user: newUserData } = dataParsed.data
+	const { organization: newOrganizationData, user: newUserData } = dataParsed.data
 
-	// 2) Criação de empresa parceira(partner) e user com profile
-	const createPartnerWithOwnerUserServiceParams: CreatePartnerWithOwnerUserServiceParams = {
-		partner: {
-			cnpj: newPartnerData.cnpj,
-			legal_business_name: newPartnerData.legalBusinessName,
-			contact_email: newPartnerData.contactEmail,
-			contact_name: newPartnerData.contactName,
-			contact_phone: newPartnerData.contactMobile,
-
-			cep: newPartnerData.adress.cep,
-			street: newPartnerData.adress.street,
-			number: newPartnerData.adress.number,
-			neighborhood: newPartnerData.adress.neighborhood,
-			city: newPartnerData.adress.city,
-			state: newPartnerData.adress.state,
-			complement: newPartnerData.adress.complement
-		},
-
+	// 2) Uso da Service para criar organização, user, user profile e relação de orgn e user
+	const createOrganizationWithOwnerUserServiceParams: CreateOrganizationWithOwnerUserServiceParams = {
 		user: {
-			name: newUserData.name,
-			cpf: newUserData.cpf,
-
 			email: newUserData.email,
 			password: newUserData.password,
+
+			name: newUserData.name,
+			cpf: newUserData.cpf,
 			phone: newUserData.phone,
 
 			cep: newUserData.adress.cep,
-			city: newUserData.adress.city,
-			neighborhood: newUserData.adress.neighborhood,
-			number: newUserData.adress.number,
 			street: newUserData.adress.street,
+			number: newUserData.adress.number,
+			neighborhood: newUserData.adress.neighborhood,
+			city: newUserData.adress.city,
 			state: newUserData.adress.state,
 			complement: newUserData.adress.complement
+		},
+
+		organization: {
+			name: newOrganizationData.name,
+			slug: newOrganizationData.slug
 		}
 	}
+	const createOrganizationWithOwnerUserServiceRes = await createOrganizationWithOwnerUserService(createOrganizationWithOwnerUserServiceParams)
 
-	const createPartnerWithOwnerUserServiceRes = await createPartnerWithOwnerUserService(createPartnerWithOwnerUserServiceParams)
-	if (createPartnerWithOwnerUserServiceRes.success === false) {
+	if (createOrganizationWithOwnerUserServiceRes.success === false) {
+		const errorMessage = createOrganizationWithOwnerUserServiceRes.message
+
+		console.error(errorMessage)
+
 		return {
 			success: false,
-			message: createPartnerWithOwnerUserServiceRes.message
+			message: errorMessage
 		}
 	}
 
-	const { partnerId, userId } = createPartnerWithOwnerUserServiceRes.data
+	const userId = createOrganizationWithOwnerUserServiceRes.data.userId
+	const organizationId = createOrganizationWithOwnerUserServiceRes.data.organizationId
 
-	// 3) Tudo deu certo
+	// 5) Retorno se deu tudo certo
 	return {
 		success: true,
-		message: "",
+		message: "Usuário e organização criados com sucesso",
 		data: {
-			partnerId,
-			userId
+			organizationId: organizationId,
+			userId: userId
 		}
 	}
 }
