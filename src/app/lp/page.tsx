@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { motion, type Variants } from "motion/react"
 import Image from "next/image"
+
 import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -162,11 +163,12 @@ const LpPage = () => {
             className="mb-6 flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2 text-sm font-medium text-primary max-w-full"
             aria-label="Plataforma Inteligente de Gestão Política"
           >
-            <Badge className="border-none p-0 bg-transparent text-sm md:text-base shadow-none ">
+            <Badge className="border-none p-0 bg-transparent text-sm md:text-base shadow-none">
               <span className="mr-2 text-md md:text-lg" role="img" aria-hidden>
                 🚀
               </span>
-              Plataforma Inteligente de Gestão Política
+              Plataforma Inteligente de Gestão{" "}
+              <span className="hidden sm:flex">Política</span>
             </Badge>
           </motion.div>
 
