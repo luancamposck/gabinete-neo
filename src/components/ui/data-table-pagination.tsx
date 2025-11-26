@@ -53,12 +53,7 @@ export const DataTablePagination = <TData,>({ table }: DataTablePaginationProps<
 						<span className="sr-only">Ir para a próxima página</span>
 						<ChevronRight className="h-4 w-4" />
 					</Button>
-					<Button
-						variant="outline"
-						className="hidden h-8 w-8 p-0 lg:flex"
-						onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-						disabled={!table.getCanNextPage()}
-					>
+					<Button variant="outline" className="hidden h-8 w-8 p-0 lg:flex" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
 						<span className="sr-only">Ir para a última página</span>
 						<ChevronsRight className="h-4 w-4" />
 					</Button>
