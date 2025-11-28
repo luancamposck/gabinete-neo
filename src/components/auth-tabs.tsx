@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 
-import { SignInForm } from "@/components/forms/auth/sign-in-form"
+import { SignInAuthUserForm } from "@/components/forms/auth/sign-in-form"
 import { CreateOrganizationWithOwnerUserForm } from "@/components/forms/organizations/create-organization-with-owner-user-form"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -16,7 +16,7 @@ export const AuthTabs = () => {
 				</TabsList>
 				<Card className="grid grid-cols-2 p-0">
 					<TabsContent value="login">
-						<SignInForm />
+						<SignInAuthUserForm />
 					</TabsContent>
 					<TabsContent value="signup">
 						<CreateOrganizationWithOwnerUserForm />
