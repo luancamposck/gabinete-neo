@@ -9,7 +9,7 @@ export async function createOrganizationMenbershipService(params: CreateOrganiza
 	const { data: organizationMenbershipResData, error: organizationMenbershipResError } = await insertOrganizationMenbershipsAdminRepo(params)
 
 	if (organizationMenbershipResError || !organizationMenbershipResData) {
-		console.error(`[createOrganizationMenbershipService]: ${organizationMenbershipResError}`)
+		console.error(`[createOrganizationMenbershipService]: ${organizationMenbershipResError.message}`)
 
 		let errorMessage = "Não foi possível criar a relação entre organização e usuário."
 

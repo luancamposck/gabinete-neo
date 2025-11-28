@@ -9,7 +9,7 @@ export async function createOrganizationService(params: CreateOrganizationServic
 	const { data: organizationResData, error: organizationResError } = await insertOrganizationsAdminRepo(params)
 
 	if (organizationResError || !organizationResData) {
-		console.error(organizationResError)
+		console.error(`[createOrganizationService]: ${organizationResError.message}`)
 
 		let errorMessage = "Não foi possível criar a organização."
 
