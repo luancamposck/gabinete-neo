@@ -10,7 +10,7 @@ async function updateSession(request: NextRequest) {
 	const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 	if (!supabaseUrl || !supabaseServiceRoleKey) {
-		throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable")
+		throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable")
 	}
 
 	const supabase = createServerClient(supabaseUrl, supabaseServiceRoleKey, {
@@ -41,13 +41,13 @@ async function updateSession(request: NextRequest) {
 	const pathname = request.nextUrl.pathname
 
 	// rotas públicas (adapte conforme seus paths)
-	const publicPaths = ["/", "/_next", "/favicon.ico", "/register-partner"]
+	const publicPaths = ["/", "/_next", "/favicon.ico"]
 
 	const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
 	if (user && pathname === "/") {
 		const url = request.nextUrl.clone()
-		url.pathname = "/dashboard/home"
+		url.pathname = "/dashboard/"
 		return NextResponse.redirect(url)
 	}
 
