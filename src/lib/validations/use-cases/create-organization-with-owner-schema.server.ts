@@ -1,10 +1,10 @@
 import { z } from "zod"
 
-import { organizationBaseSchemaClient } from "@/lib/validations/organization-schemas/organization-base-schema.client"
-import { userBaseSchemaClient } from "@/lib/validations/users/user-base-schema.client"
+import { organizationBaseSchemaServer } from "@/lib/validations/organization-schemas/organization-base-schema.server"
+import { userBaseSchemaServer } from "@/lib/validations/users/user-base-schema.server"
 
-export const createOrganizationWithOwnerSchemaClient = z.object({
-	user: userBaseSchemaClient,
+export const createOrganizationWithOwnerSchemaServer = z.object({
+	user: userBaseSchemaServer,
 
-	organization: organizationBaseSchemaClient
+	organization: organizationBaseSchemaServer
 })
