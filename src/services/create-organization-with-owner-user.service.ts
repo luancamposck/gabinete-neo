@@ -77,7 +77,7 @@ export async function createOrganizationWithOwnerUserService(params: CreateOrgan
 		organization_id: createdOrganizationId,
 		user_id: createdUserId,
 
-		role: "owner",
+		role: "OWNER",
 		is_active: true
 	}
 
