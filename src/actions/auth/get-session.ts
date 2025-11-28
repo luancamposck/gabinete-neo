@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/server"
 import type { ActionResponse } from "@/types/action-response"
 
-async function getSessionAction(): Promise<ActionResponse<User>> {
+export async function getSessionAction(): Promise<ActionResponse<User>> {
 	try {
 		const supabase = await createClient()
 		const { data, error } = await supabase.auth.getUser()

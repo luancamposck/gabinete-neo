@@ -1,7 +1,7 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-import { getSession } from "@/actions/auth"
+import { getSessionAction } from "@/actions/auth/get-session"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Separator } from "@/components/ui/separator"
@@ -11,7 +11,7 @@ const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNod
 	const cookieStore = await cookies()
 	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
-	const sessionResult = await getSession()
+	const sessionResult = await getSessionAction()
 
 	// Redireciona se não houver usuário logado
 	if (!sessionResult.success || !sessionResult.data) {
