@@ -1,7 +1,9 @@
 "use client"
+import Image from "next/image"
 
 import { SignInForm } from "@/components/forms/auth/sign-in-form"
-import { SignUpForm } from "@/components/forms/auth/sign-up-form"
+import { CreateOrganizationWithOwnerUserForm } from "@/components/forms/organizations/create-organization-with-owner-user-form"
+import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const AuthTabs = () => {
@@ -12,12 +14,19 @@ export const AuthTabs = () => {
 					<TabsTrigger value="login">Login</TabsTrigger>
 					<TabsTrigger value="signup">Cadastro</TabsTrigger>
 				</TabsList>
-				<TabsContent value="login">
-					<SignInForm />
-				</TabsContent>
-				<TabsContent value="signup">
-					<SignUpForm />
-				</TabsContent>
+				<Card className="grid grid-cols-2 p-0">
+					<TabsContent value="login">
+						<SignInForm />
+					</TabsContent>
+					<TabsContent value="signup">
+						<CreateOrganizationWithOwnerUserForm />
+					</TabsContent>
+
+					<div className="bg-muted hidden md:flex md:flex-col md:justify-center md:items-center">
+						<Image src="/logo.png" width={300} height={300} alt="Gabinete NEO" />
+						<h1 className="text-3xl font-semibold text-center">Gabinete NEO</h1>
+					</div>
+				</Card>
 			</Tabs>
 		</div>
 	)
