@@ -40,10 +40,16 @@ async function updateSession(request: NextRequest) {
 
 	const pathname = request.nextUrl.pathname
 
-	// rotas públicas (adapte conforme seus paths)
+	// rotas públicas "fixas"
 	const publicPaths = ["/", "/_next", "/favicon.ico"]
 
-	const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+	// rota pública dinâmica: /[organizationSlug]/invite
+	const segments = pathname.split("/").filter(Boolean)
+	const isInvitePublicPath =
+		segments.length === 2 && // ex.: ["minha-org", "invite"]
+		segments[1] === "invite"
+
+	const isPublic = isInvitePublicPath || publicPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
 	if (user && pathname === "/") {
 		const url = request.nextUrl.clone()
