@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/server";
 
 export async function signInAuthUserRepo({ email, password }: { email: string; password: string }) {
 	const supabase = await createClient()
@@ -7,4 +7,10 @@ export async function signInAuthUserRepo({ email, password }: { email: string; p
 		email,
 		password
 	})
+}
+
+export async function getCurrentAuthUserRepo() {
+  const supabase = await createClient()
+
+  return supabase.auth.getUser() // { data: { user }, error }
 }
