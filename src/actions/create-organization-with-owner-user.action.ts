@@ -1,6 +1,6 @@
 "use server"
 
-import { createOrganizationWithOwnerSchemaServer } from "@/lib/validations/use-cases/create-organization-with-owner-schema.server"
+import { createOrganizationWithOwnerSchemaServer } from "@/lib/validations/use-cases/create-organization-with-owner-schemas/create-organization-with-owner-schema.server"
 import { type CreateOrganizationWithOwnerUserServiceParams, createOrganizationWithOwnerUserService } from "@/services/create-organization-with-owner-user.service"
 import type { OperationResponse } from "@/types/operation-response"
 
