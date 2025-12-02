@@ -16,7 +16,7 @@ import { brazilianStates } from "@/lib/constants/brazilian-states"
 import { maskCep, maskCpf, maskPhone } from "@/lib/masks"
 import { cn } from "@/lib/utils"
 import { slugify } from "@/lib/utils/slugify-utils"
-import { type CreateOrganizationWithOwnerSchemaClientData, createOrganizationWithOwnerSchemaClient } from "@/lib/validations/use-cases/create-organization-with-owner-schema.client"
+import { type CreateOrganizationWithOwnerSchemaClientData, createOrganizationWithOwnerSchemaClient } from "@/lib/validations/use-cases/create-organization-with-owner-schemas/create-organization-with-owner-schema.client"
 
 export const CreateOrganizationWithOwnerUserForm = () => {
 	const [step, setStep] = useState<number>(1)
