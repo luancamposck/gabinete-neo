@@ -10,3 +10,9 @@ export async function insertOrganizationMenbershipsAdminRepo(organizationMenbers
 
 	return supabaseAdmin.from("organization_memberships").insert(organizationMenbershipsParams).select("*").single()
 }
+
+export async function findOrganizationMembershipByUserAdminRepo({ userId }: { userId: string }) {
+	const supabaseAdmin = createAdminClient()
+
+	return supabaseAdmin.from("organization_memberships").select("*").eq("user_id", userId).eq("is_active", true).single()
+}
