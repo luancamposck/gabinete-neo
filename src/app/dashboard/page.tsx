@@ -1,7 +1,9 @@
 import { AlertTriangle, CalendarDays, CheckCircle, CircleAlert, DollarSign, FileText, Info, type LucideIcon, MessageSquare, Target, Users } from "lucide-react"
+import { InviteLinkBox } from "@/components/invite-link-box"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { getUserOrganizationService } from "@/services/get-user-organization.service"
 
 const STATS = [
 	{
@@ -120,80 +122,94 @@ const colorStyles = {
 	}
 } as const satisfies Record<AlertColor, { bg: string; border: string; badge: string }>
 
-const HomePage = () => (
-	<div className="space-y-6">
-		<section>
-			<h1 className="text-3xl font-semibold mb-4 flex items-center gap-2">Dashboard da Campanha</h1>
-			<p>Visão geral completa da sua campanha política</p>
-		</section>
+const HomePage = async () => {
+	const getUserOrganizationServiceRes = await getUserOrganizationService()
 
-		<section className="@container">
-			<div className="grid grid-cols-1 @xs:grid-cols-2 @xl:grid-cols-3 @6xl:grid-cols-5  gap-4">
-				{STATS.map(({ icon: Icon, ...cardContent }) => (
-					<Card key={cardContent.id} className="@max-md:gap-2 @max-md:py-2">
-						<div className="px-6 flex justify-between">
-							<CardTitle className="text-sm font-medium">{cardContent.title}</CardTitle>
-							<Icon className="size-4 text-[#A0AEC0]" />
+	if (!getUserOrganizationServiceRes.success || !getUserOrganizationServiceRes.data) {
+		const errorMessage = getUserOrganizationServiceRes.message
+		console.error(errorMessage)
+
+		return null
+	}
+
+	const {organizationId, organizationSlug} = getUserOrganizationServiceRes.data
+
+	return (
+		<div className="space-y-6">
+			<InviteLinkBox organizationId={organizationId} organizationSlug={organizationSlug} />
+			<section>
+				<h1 className="text-3xl font-semibold mb-4 flex items-center gap-2">Dashboard da Campanha</h1>
+				<p>Visão geral completa da sua campanha política</p>
+			</section>
+
+			<section className="@container">
+				<div className="grid grid-cols-1 @xs:grid-cols-2 @xl:grid-cols-3 @6xl:grid-cols-5  gap-4">
+					{STATS.map(({ icon: Icon, ...cardContent }) => (
+						<Card key={cardContent.id} className="@max-md:gap-2 @max-md:py-2">
+							<div className="px-6 flex justify-between">
+								<CardTitle className="text-sm font-medium">{cardContent.title}</CardTitle>
+								<Icon className="size-4 text-[#A0AEC0]" />
+							</div>
+
+							<CardContent className="text-2xl font-bold">{cardContent.value}</CardContent>
+
+							<CardFooter className="text-emerald-500 dark:text-emerald-400">{cardContent.change}</CardFooter>
+						</Card>
+					))}
+				</div>
+			</section>
+
+			<section className="@container">
+				<div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
+					<Card className="@max-md:gap-2 @max-md:py-2">
+						<div className="px-6 flex items-center gap-x-3">
+							<MessageSquare className="size-5" />
+
+							<CardTitle className="text-2xl font-semibold">Atividades Recentes</CardTitle>
 						</div>
 
-						<CardContent className="text-2xl font-bold">{cardContent.value}</CardContent>
+						<CardContent className="text-2xl font-bold">
+							<ul className="space-y-4">
+								{RECENT_ACTIVITIES.map((ACTIVITY) => (
+									<li key={ACTIVITY.id} className="flex items-start gap-3">
+										<div className={cn("size-2 rounded-full mt-2", ACTIVITY.color)} />
 
-						<CardFooter className="text-emerald-500 dark:text-emerald-400">{cardContent.change}</CardFooter>
-					</Card>
-				))}
-			</div>
-		</section>
-
-		<section className="@container">
-			<div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
-				<Card className="@max-md:gap-2 @max-md:py-2">
-					<div className="px-6 flex items-center gap-x-3">
-						<MessageSquare className="size-5" />
-
-						<CardTitle className="text-2xl font-semibold">Atividades Recentes</CardTitle>
-					</div>
-
-					<CardContent className="text-2xl font-bold">
-						<ul className="space-y-4">
-							{RECENT_ACTIVITIES.map((ACTIVITY) => (
-								<li key={ACTIVITY.id} className="flex items-start gap-3">
-									<div className={cn("size-2 rounded-full mt-2", ACTIVITY.color)} />
-
-									<div>
-										<p className="text-sm">{ACTIVITY.action}</p>
-										<p className="text-[#A0AEC0] text-xs">{ACTIVITY.time}</p>
-									</div>
-								</li>
-							))}
-						</ul>
-					</CardContent>
-				</Card>
-
-				<Card className="@max-md:gap-2 @max-md:py-2">
-					<div className="px-6 flex items-center gap-x-3">
-						<CircleAlert className="size-5" />
-
-						<CardTitle className="text-2xl font-semibold">Alertas e Lembretes</CardTitle>
-					</div>
-
-					<CardContent className="text-2xl font-bold">
-						<ul className="space-y-4">
-							{ALERTS_AND_REMINDERS.map((ITEM) => {
-								const color = colorStyles[ITEM.color]
-
-								return (
-									<li key={ITEM.id} className={cn("p-3 rounded-lg border-l-4", color.bg, color.border)}>
-										<p className="text-[#F8FAFC] text-sm">Votação importante sobre transporte público amanhã</p>
-										<Badge className={cn("mt-2 text-xs", color.badge)}>MEDIA</Badge>
+										<div>
+											<p className="text-sm">{ACTIVITY.action}</p>
+											<p className="text-[#A0AEC0] text-xs">{ACTIVITY.time}</p>
+										</div>
 									</li>
-								)
-							})}
-						</ul>
-					</CardContent>
-				</Card>
-			</div>
-		</section>
-	</div>
-)
+								))}
+							</ul>
+						</CardContent>
+					</Card>
+
+					<Card className="@max-md:gap-2 @max-md:py-2">
+						<div className="px-6 flex items-center gap-x-3">
+							<CircleAlert className="size-5" />
+
+							<CardTitle className="text-2xl font-semibold">Alertas e Lembretes</CardTitle>
+						</div>
+
+						<CardContent className="text-2xl font-bold">
+							<ul className="space-y-4">
+								{ALERTS_AND_REMINDERS.map((ITEM) => {
+									const color = colorStyles[ITEM.color]
+
+									return (
+										<li key={ITEM.id} className={cn("p-3 rounded-lg border-l-4", color.bg, color.border)}>
+											<p className="text-[#F8FAFC] text-sm">Votação importante sobre transporte público amanhã</p>
+											<Badge className={cn("mt-2 text-xs", color.badge)}>MEDIA</Badge>
+										</li>
+									)
+								})}
+							</ul>
+						</CardContent>
+					</Card>
+				</div>
+			</section>
+		</div>
+	)
+}
 
 export default HomePage
