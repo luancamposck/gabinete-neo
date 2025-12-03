@@ -7,70 +7,62 @@ import { generateInviteLinkAction } from "@/actions/generate-invite-link.action"
 import { cn } from "@/lib/utils"
 
 interface InviteLinkBoxProps {
-  organizationId: string
-  organizationSlug: string
-  className?: string
+	organizationId: string
+	organizationSlug: string
+	className?: string
 }
 
 export function InviteLinkBox({ organizationId, organizationSlug, className }: InviteLinkBoxProps) {
-  const [inviteUrl, setInviteUrl] = useState<string>("")
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [inviteUrl, setInviteUrl] = useState<string>("")
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  async function handleClick() {
-    try {
-      setIsLoading(true)
+	async function handleClick() {
+		try {
+			setIsLoading(true)
 
-      let url = inviteUrl
+			let url = inviteUrl
 
-      if (!url) {
-        const res = await generateInviteLinkAction({ organizationId, organizationSlug })
+			if (!url) {
+				const res = await generateInviteLinkAction({ organizationId, organizationSlug })
 
-        if (!res || !res.success || !res.data?.inviteUrl) {
-          toast.error("Não foi possível gerar o link de convite.", {
-            description: res?.message ?? "Tente novamente em alguns instantes.",
-          })
-          return
-        }
+				if (!res || !res.success || !res.data?.inviteUrl) {
+					toast.error("Não foi possível gerar o link de convite.", {
+						description: res?.message ?? "Tente novamente em alguns instantes."
+					})
+					return
+				}
 
-        url = res.data.inviteUrl
-        setInviteUrl(url)
-      }
+				url = res.data.inviteUrl
+				setInviteUrl(url)
+			}
 
-      await navigator.clipboard.writeText(url)
+			await navigator.clipboard.writeText(url)
 
-      toast.success("Link de convite copiado!", {
-        description: url,
-      })
-    } catch (error) {
-      console.error("[InviteLinkBox] Erro ao gerar/copiar link:", error)
-      toast.error("Erro ao copiar o link de convite.", {
-        description:
-          error instanceof Error ? error.message : "Tente novamente em alguns instantes.",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
+			toast.success("Link de convite copiado!", {
+				description: "O link foi copiado para a área de transferência."
+			})
+		} catch (error) {
+			console.error("[InviteLinkBox] Erro ao gerar/copiar link:", error)
+			toast.error("Erro ao copiar o link de convite.", {
+				description: error instanceof Error ? error.message : "Tente novamente em alguns instantes."
+			})
+		} finally {
+			setIsLoading(false)
+		}
+	}
 
-  return (
-    <div
-      onClick={handleClick}
-      className={cn(
-        "flex cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm transition hover:bg-muted",
-        isLoading && "opacity-70 cursor-wait",
-        className
-      )}
-    >
-      <span className="truncate">
-        {inviteUrl
-          ? inviteUrl
-          : isLoading
-          ? "Gerando link de convite..."
-          : "Clique aqui para gerar e copiar seu link de convite"}
-      </span>
-      <span className="ml-3 text-xs text-muted-foreground">
-        {inviteUrl ? "Clique para copiar" : ""}
-      </span>
-    </div>
-  )
+	const mainText = inviteUrl ? "Link de convite gerado. Clique para copiar novamente." : isLoading ? "Gerando link de convite..." : "Clique aqui para gerar e copiar seu link de convite"
+
+	return (
+		<button
+			type="button"
+			onClick={handleClick}
+			className={cn("flex cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm transition hover:bg-muted", isLoading && "opacity-70 cursor-wait", className)}
+		>
+			<div className="flex flex-col">
+				<span className="truncate">{mainText}</span>
+			</div>
+			<span className="ml-3 text-xs text-muted-foreground shrink-0">{inviteUrl ? "Copiar link" : "Gerar link"}</span>
+		</button>
+	)
 }
