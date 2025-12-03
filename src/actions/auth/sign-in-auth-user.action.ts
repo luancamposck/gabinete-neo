@@ -1,14 +1,17 @@
 // src/app/(auth)/sign-in/sig-in-auth.action.ts
 "use server"
 
-import { redirect } from "next/navigation"
-
 import { signInSchemaServer } from "@/lib/validations/auth/sign-in/sign-in-schema.server"
 import { resolveUserPostSignInDestinationService } from "@/services/resolve-user-post-sign-in-destination.service"
 import { signInAuthUserService } from "@/services/sign-in-auth-user.service"
 import type { OperationResponse } from "@/types/operation-response"
 
-export async function signInAuthUserAction(formData: unknown): Promise<OperationResponse<{ userId: string }>> {
+type SignInActionResponse = OperationResponse<{
+	userId: string
+	redirectTo: string
+}>
+
+export async function signInAuthUserAction(formData: unknown): Promise<SignInActionResponse> {
 	// 1) Validação
 	const parsed = signInSchemaServer.safeParse(formData)
 
@@ -35,7 +38,7 @@ export async function signInAuthUserAction(formData: unknown): Promise<Operation
 
 	const userId = signInRes.data.userId
 
-	// 3) Resolver destino pós-login (dashboard / invite-pending / no-organization)
+	// 3) Resolver destino pós-login
 	const destinationRes = await resolveUserPostSignInDestinationService({ userId })
 
 	if (!destinationRes.success || !destinationRes.data) {
@@ -47,13 +50,13 @@ export async function signInAuthUserAction(formData: unknown): Promise<Operation
 
 	const { redirectTo } = destinationRes.data
 
-	// 4) Redireciona do lado do servidor (fluxo Next oficial)
-	redirect(redirectTo)
-
-	// Nunca chega aqui em runtime (redirect lança), mas o TS exige um retorno
+	// 4) NÃO usa redirect aqui. Só retorna.
 	return {
 		success: true,
 		message: "Usuário logado com sucesso.",
-		data: { userId }
+		data: {
+			userId,
+			redirectTo
+		}
 	}
 }

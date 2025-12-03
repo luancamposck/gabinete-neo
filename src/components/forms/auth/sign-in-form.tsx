@@ -40,10 +40,10 @@ export const SignInAuthUserForm = ({ className, ...props }: SignInFormProps) => 
 				return
 			}
 
-			if (result.success) {
+			if (result.success && result.data) {
 				toast.success("Usuário logado com sucesso!")
 
-				router.push("/dashboard")
+				router.push(result.data.redirectTo) // <- usa o destino calculado
 			} else {
 				toast.error("Erro no login", {
 					description: result.message ?? "Verifique os dados e tente novamente."
