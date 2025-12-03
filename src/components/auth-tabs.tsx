@@ -14,7 +14,7 @@ export const AuthTabs = () => {
 					<TabsTrigger value="login">Login</TabsTrigger>
 					<TabsTrigger value="signup">Cadastro</TabsTrigger>
 				</TabsList>
-				<Card className="grid grid-cols-2 p-0">
+				<Card className="grid grid-cols-1 md:grid-cols-2 p-0">
 					<TabsContent value="login">
 						<SignInAuthUserForm />
 					</TabsContent>
