@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import type { OrganizationInviteWithRequestedUser } from "@/types/organization-invite"
 
 export type OrganizationInvitesInsert = TablesInsert<"organization_invites">
-export type OrganizationInvite = Tables<"organization_invites">
+export type OrganizationInviteRow = Tables<"organization_invites">
 
 export async function insertOrganizationInviteRepo(organizationInvitesInsertParams: OrganizationInvitesInsert): Promise<PostgrestSingleResponse<{ id: string }>> {
 	const supabase = await createClient()
@@ -23,7 +23,7 @@ export async function getPendingOrganizationInviteByUserIdRepo({ userId }: { use
 /**
  * Lista invites de uma org já trazendo o usuário convidado (requested_user).
  */
-export async function listOrganizationInvitesWithRequestedUserByOrgRepo({ organizationId, status }: { organizationId: string; status?: OrganizationInvite["status"] }): Promise<{
+export async function listOrganizationInvitesWithRequestedUserByOrgRepo({ organizationId, status }: { organizationId: string; status?: OrganizationInviteRow["status"] }): Promise<{
 	data: OrganizationInviteWithRequestedUser[] | null
 	error: any
 }> {

@@ -2,17 +2,17 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import type { OrganizationInvitesRow } from "@/repositories/organization-invites/organization-invites.repo"
+import type { OrganizationInviteRow } from "@/repositories/organization-invites/organization-invites.repo"
 import { findOrganizationMembershipByUserRepo } from "@/repositories/organization-menberships/organization-menberships.repo"
 import { listOrganizationInvitesService } from "@/services/list-organization-invites.service"
 import type { OperationResponse } from "@/types/operation-response"
 
 interface GetOrganizationInvitesActionInput {
 	organizationId: string
-	status?: OrganizationInvitesRow["status"]
+	status?: OrganizationInviteRow["status"]
 }
 
-export async function getOrganizationInvitesAction(input: GetOrganizationInvitesActionInput): Promise<OperationResponse<{ invites: OrganizationInvitesRow[] }>> {
+export async function getOrganizationInvitesAction(input: GetOrganizationInvitesActionInput): Promise<OperationResponse<{ invites: OrganizationInviteRow[] }>> {
 	const { organizationId, status } = input
 
 	// 1) Usuário logado
