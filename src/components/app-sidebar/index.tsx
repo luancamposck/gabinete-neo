@@ -1,160 +1,223 @@
-import {
-	BarChart3,
-	Briefcase,
-	CalendarDays,
-	CreditCard,
-	Database,
-	FileText,
-	Globe,
-	HandCoins,
-	Home,
-	LayoutDashboard,
-	LineChart,
-	Mail,
-	Megaphone,
-	PenTool,
-	Scale,
-	Search,
-	Settings,
-	Smartphone,
-	Store,
-	TerminalSquare,
-	Truck,
-	UserCheck,
-	UserCog,
-	Users
-} from "lucide-react"
+import { BookOpen, Bot, ChevronRight, Settings2, Users } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 
 import { Separator } from "@/components/ui/separator"
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible"
 
-const items = [
+// const items = [
+// 	{
+// 		title: "Home",
+// 		url: "/dashboard/home",
+// 		icon: Home
+// 	},
+// 	{
+// 		title: "Painel Administrativo",
+// 		url: "#",
+// 		icon: LayoutDashboard
+// 	},
+// 	{
+// 		title: "Dashboard do Candidato",
+// 		url: "#",
+// 		icon: UserCheck
+// 	},
+// 	{
+// 		title: "Gerenciador de Conteúdo",
+// 		url: "#",
+// 		icon: FileText
+// 	},
+// 	{
+// 		title: "Centro de Ativistas",
+// 		url: "#",
+// 		icon: Users
+// 	},
+// 	{
+// 		title: "Command Center",
+// 		url: "#",
+// 		icon: TerminalSquare
+// 	},
+// 	{
+// 		title: "Painel de Votações",
+// 		url: "#",
+// 		icon: BarChart3
+// 	},
+// 	{
+// 		title: "Neo Monitor",
+// 		url: "#",
+// 		icon: LineChart
+// 	},
+// 	{
+// 		title: "Analytics Neo PRO",
+// 		url: "#",
+// 		icon: Database
+// 	},
+// 	{
+// 		title: "CRM Eleitoral",
+// 		url: "#",
+// 		icon: Briefcase
+// 	},
+// 	{
+// 		title: "Neo Legal",
+// 		url: "#",
+// 		icon: Scale
+// 	},
+// 	{
+// 		title: "Copywriter Político",
+// 		url: "#",
+// 		icon: PenTool
+// 	},
+// 	{
+// 		title: "Assessor Neo",
+// 		url: "#",
+// 		icon: UserCog
+// 	},
+// 	{
+// 		title: "Agenda Neo",
+// 		url: "#",
+// 		icon: CalendarDays
+// 	},
+// 	{
+// 		title: "Mala Direta",
+// 		url: "/dashboard/mailing-list",
+// 		icon: Briefcase
+// 	},
+// 	{
+// 		title: "Pesquisas Neo",
+// 		url: "#",
+// 		icon: Search
+// 	},
+// 	{
+// 		title: "Doações e Finanças",
+// 		url: "#",
+// 		icon: HandCoins
+// 	},
+// 	{
+// 		title: "Comunicação",
+// 		url: "#",
+// 		icon: Megaphone
+// 	},
+// 	{
+// 		title: "Marketplace",
+// 		url: "#",
+// 		icon: Store
+// 	},
+// 	{
+// 		title: "App Mobile",
+// 		url: "#",
+// 		icon: Smartphone
+// 	},
+// 	{
+// 		title: "Área do Cidadão",
+// 		url: "#",
+// 		icon: Globe
+// 	},
+// 	{
+// 		title: "Correios Neo",
+// 		url: "#",
+// 		icon: Mail
+// 	},
+// 	{
+// 		title: "Frota Neo",
+// 		url: "#",
+// 		icon: Truck
+// 	},
+// 	{
+// 		title: "PagNeo",
+// 		url: "#",
+// 		icon: CreditCard
+// 	},
+// 	{
+// 		title: "Configurações",
+// 		url: "#",
+// 		icon: Settings
+// 	}
+// ]
+
+const navMain = [
 	{
-		title: "Home",
-		url: "/dashboard/home",
-		icon: Home
-	},
-	{
-		title: "Painel Administrativo",
+		title: "Rede de Contatos",
 		url: "#",
-		icon: LayoutDashboard
+		icon: Users,
+		isActive: true,
+		items: [
+			{
+				title: "Meus convites",
+				url: "/dashboard/network/my-network"
+			},
+			{
+				title: "Starred",
+				url: "#"
+			},
+			{
+				title: "Settings",
+				url: "#"
+			}
+		]
 	},
 	{
-		title: "Dashboard do Candidato",
+		title: "Models",
 		url: "#",
-		icon: UserCheck
+		icon: Bot,
+		items: [
+			{
+				title: "Genesis",
+				url: "#"
+			},
+			{
+				title: "Explorer",
+				url: "#"
+			},
+			{
+				title: "Quantum",
+				url: "#"
+			}
+		]
 	},
 	{
-		title: "Gerenciador de Conteúdo",
+		title: "Documentation",
 		url: "#",
-		icon: FileText
+		icon: BookOpen,
+		items: [
+			{
+				title: "Introduction",
+				url: "#"
+			},
+			{
+				title: "Get Started",
+				url: "#"
+			},
+			{
+				title: "Tutorials",
+				url: "#"
+			},
+			{
+				title: "Changelog",
+				url: "#"
+			}
+		]
 	},
 	{
-		title: "Centro de Ativistas",
+		title: "Settings",
 		url: "#",
-		icon: Users
-	},
-	{
-		title: "Command Center",
-		url: "#",
-		icon: TerminalSquare
-	},
-	{
-		title: "Painel de Votações",
-		url: "#",
-		icon: BarChart3
-	},
-	{
-		title: "Neo Monitor",
-		url: "#",
-		icon: LineChart
-	},
-	{
-		title: "Analytics Neo PRO",
-		url: "#",
-		icon: Database
-	},
-	{
-		title: "CRM Eleitoral",
-		url: "#",
-		icon: Briefcase
-	},
-	{
-		title: "Neo Legal",
-		url: "#",
-		icon: Scale
-	},
-	{
-		title: "Copywriter Político",
-		url: "#",
-		icon: PenTool
-	},
-	{
-		title: "Assessor Neo",
-		url: "#",
-		icon: UserCog
-	},
-	{
-		title: "Agenda Neo",
-		url: "#",
-		icon: CalendarDays
-	},
-	{
-		title: "Mala Direta",
-		url: "/dashboard/mailing-list",
-		icon: Briefcase
-	},
-	{
-		title: "Pesquisas Neo",
-		url: "#",
-		icon: Search
-	},
-	{
-		title: "Doações e Finanças",
-		url: "#",
-		icon: HandCoins
-	},
-	{
-		title: "Comunicação",
-		url: "#",
-		icon: Megaphone
-	},
-	{
-		title: "Marketplace",
-		url: "#",
-		icon: Store
-	},
-	{
-		title: "App Mobile",
-		url: "#",
-		icon: Smartphone
-	},
-	{
-		title: "Área do Cidadão",
-		url: "#",
-		icon: Globe
-	},
-	{
-		title: "Correios Neo",
-		url: "#",
-		icon: Mail
-	},
-	{
-		title: "Frota Neo",
-		url: "#",
-		icon: Truck
-	},
-	{
-		title: "PagNeo",
-		url: "#",
-		icon: CreditCard
-	},
-	{
-		title: "Configurações",
-		url: "#",
-		icon: Settings
+		icon: Settings2,
+		items: [
+			{
+				title: "General",
+				url: "#"
+			},
+			{
+				title: "Team",
+				url: "#"
+			},
+			{
+				title: "Billing",
+				url: "#"
+			},
+			{
+				title: "Limits",
+				url: "#"
+			}
+		]
 	}
 ]
 
@@ -169,7 +232,39 @@ const AppSidebar = () => {
 			<Separator className="data-[orientation=horizontal]:h-0.5" />
 
 			<SidebarContent>
-				<SidebarMenu>
+				<SidebarGroup>
+					<SidebarGroupLabel>Gabinete X</SidebarGroupLabel>
+					<SidebarMenu>
+						{navMain.map((item) => (
+							<Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+								<SidebarMenuItem>
+									<CollapsibleTrigger asChild>
+										<SidebarMenuButton tooltip={item.title}>
+											{item.icon && <item.icon />}
+											<span>{item.title}</span>
+											<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+										</SidebarMenuButton>
+									</CollapsibleTrigger>
+									<CollapsibleContent>
+										<SidebarMenuSub>
+											{item.items?.map((subItem) => (
+												<SidebarMenuSubItem key={subItem.title}>
+													<SidebarMenuSubButton asChild>
+														<a href={subItem.url}>
+															<span>{subItem.title}</span>
+														</a>
+													</SidebarMenuSubButton>
+												</SidebarMenuSubItem>
+											))}
+										</SidebarMenuSub>
+									</CollapsibleContent>
+								</SidebarMenuItem>
+							</Collapsible>
+						))}
+					</SidebarMenu>
+				</SidebarGroup>
+
+				{/* <SidebarMenu>
 					{items.map((item) => (
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton asChild>
@@ -180,7 +275,7 @@ const AppSidebar = () => {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
-				</SidebarMenu>
+				</SidebarMenu> */}
 			</SidebarContent>
 		</Sidebar>
 	)
