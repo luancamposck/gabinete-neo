@@ -283,8 +283,8 @@ export const AddressForm = ({ className, ...props }: AddressFormProps) => {
 												</FormControl>
 												<SelectContent>
 													{brazilianStates.map((state) => (
-														<SelectItem key={state.acronym} value={state.acronym}>
-															{state.acronym}
+														<SelectItem key={state.value} value={state.value}>
+															{state.label}
 														</SelectItem>
 													))}
 												</SelectContent>
