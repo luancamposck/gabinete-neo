@@ -1,5 +1,8 @@
 // src/app/[organizationSlug]/invite/page.tsx
+import Image from "next/image"
+
 import { CreateUserWithInvitationForm } from "@/components/forms/organization-invite/create-user-with-Invitation-form"
+import { Card } from "@/components/ui/card"
 import { verifyInviteToken } from "@/lib/utils/token-utils"
 import { getOrganizationDataByOrganizationIdService } from "@/services/get-organization-data-by-organization-id.service"
 import { getPublicUserByUserIdService } from "@/services/get-public-user-by-user-id.service"
@@ -60,13 +63,19 @@ export default async function InvitePage({ searchParams }: InvitePageProps) {
 	// decoded.kind
 
 	return (
-		<div className="p-4">
+		<div className="flex w-full flex-col items-center gap-6 pt-8">
 			<h1 className="text-xl font-semibold">Convite para organização</h1>
 			<p className="mt-2 text-sm text-muted-foreground">
 				Você foi convidado por {inviterUserName} para entrar na organização {organizationName}
 			</p>
+			<Card className="grid grid-cols-2 p-0">
+				<CreateUserWithInvitationForm inviteToken={token} />
 
-			<CreateUserWithInvitationForm inviteToken={token} />
+				<div className="bg-muted hidden md:flex md:flex-col md:justify-center md:items-center">
+					<Image src="/logo.png" width={300} height={300} alt="Gabinete NEO" />
+					<h1 className="text-3xl font-semibold text-center">Gabinete NEO</h1>
+				</div>
+			</Card>
 		</div>
 	)
 }

@@ -108,7 +108,6 @@ export const CreateOrganizationWithOwnerUserForm = () => {
 	}
 
 	async function onSubmit(data: CreateOrganizationWithOwnerSchemaClientData) {
-		console.log(data)
 		try {
 			const result = await createOrganizationWithOwnerAction(data)
 
