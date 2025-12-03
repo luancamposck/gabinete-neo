@@ -1,9 +1,7 @@
 import { AlertTriangle, CalendarDays, CheckCircle, CircleAlert, DollarSign, FileText, Info, type LucideIcon, MessageSquare, Target, Users } from "lucide-react"
-import { InviteLinkBox } from "@/components/invite-link-box"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { getUserOrganizationService } from "@/services/get-user-organization.service"
 
 const STATS = [
 	{
@@ -123,20 +121,8 @@ const colorStyles = {
 } as const satisfies Record<AlertColor, { bg: string; border: string; badge: string }>
 
 const HomePage = async () => {
-	const getUserOrganizationServiceRes = await getUserOrganizationService()
-
-	if (!getUserOrganizationServiceRes.success || !getUserOrganizationServiceRes.data) {
-		const errorMessage = getUserOrganizationServiceRes.message
-		console.error(errorMessage)
-
-		return null
-	}
-
-	const {organizationId, organizationSlug} = getUserOrganizationServiceRes.data
-
 	return (
 		<div className="space-y-6">
-			<InviteLinkBox organizationId={organizationId} organizationSlug={organizationSlug} />
 			<section>
 				<h1 className="text-3xl font-semibold mb-4 flex items-center gap-2">Dashboard da Campanha</h1>
 				<p>Visão geral completa da sua campanha política</p>
