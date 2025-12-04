@@ -5,7 +5,7 @@ import type { OperationResponse } from "@/types/operation-response"
 
 export interface CreateOrganizationServiceParams extends OrganizationsInsert {}
 
-export async function createOrganizationService(params: CreateOrganizationServiceParams): Promise<OperationResponse<{ organizationId: string }>> {
+export default async function createOrganizationService(params: CreateOrganizationServiceParams): Promise<OperationResponse<{ organizationId: string }>> {
 	const { data: organizationResData, error: organizationResError } = await insertOrganizationsAdminRepo(params)
 
 	if (organizationResError || !organizationResData) {

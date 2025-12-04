@@ -1,7 +1,7 @@
 // src/actions/get-user-organization.action.ts
 "use server"
 
-import { getUserOrganizationService } from "@/services/organization/get-user-organization.service"
+import { getUserOrganizationService } from "@/services/organization"
 import type { OperationResponse } from "@/types/operation-response"
 
 export async function getUserOrganizationAction(): Promise<OperationResponse<{ organizationId: string }>> {

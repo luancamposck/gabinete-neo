@@ -1,7 +1,7 @@
 import { signInAuthUserRepo } from "@/repositories/auth-users/auth-users.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
-export async function signInAuthUserService(params: { email: string; password: string }): Promise<OperationResponse<{ userId: string }>> {
+export default async function signInAuthUserService(params: { email: string; password: string }): Promise<OperationResponse<{ userId: string }>> {
 	const { data: authUserData, error: authUserError } = await signInAuthUserRepo(params)
 
 	if (authUserError) {

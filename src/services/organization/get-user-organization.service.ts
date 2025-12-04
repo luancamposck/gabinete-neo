@@ -11,7 +11,7 @@ export interface GetUserOrganizationServiceData {
 	organizationName: string
 }
 
-export async function getUserOrganizationService(): Promise<OperationResponse<GetUserOrganizationServiceData>> {
+export default async function getUserOrganizationService(): Promise<OperationResponse<GetUserOrganizationServiceData>> {
 	// 1) Usuário autenticado
 	const { data: authData, error: authError } = await getCurrentAuthUserRepo()
 

@@ -1,7 +1,7 @@
 import { getOrganizationByOrganizationIdAdminRepo, type OrganizationsRow } from "@/repositories/organizations/organizations.admin.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
-export async function getOrganizationDataByOrganizationIdService({ organizationId }: { organizationId: string }): Promise<OperationResponse<{ organization: OrganizationsRow }>> {
+export default async function getOrganizationDataByOrganizationIdService({ organizationId }: { organizationId: string }): Promise<OperationResponse<{ organization: OrganizationsRow }>> {
 	const { data: organizationData, error: organizationError } = await getOrganizationByOrganizationIdAdminRepo({ organizationId })
 
 	if (organizationError || !organizationData) {

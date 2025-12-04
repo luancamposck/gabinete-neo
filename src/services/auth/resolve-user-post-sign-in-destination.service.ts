@@ -8,7 +8,7 @@ interface ResolveUserPostSignInDestinationInput {
 
 type ResolveUserPostSignInDestinationOutput = OperationResponse<{ redirectTo: string }>
 
-export async function resolveUserPostSignInDestinationService({ userId }: ResolveUserPostSignInDestinationInput): Promise<ResolveUserPostSignInDestinationOutput> {
+export default async function resolveUserPostSignInDestinationService({ userId }: ResolveUserPostSignInDestinationInput): Promise<ResolveUserPostSignInDestinationOutput> {
 	// 1) Membership ativa
 	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserAdminRepo({ userId })
 
