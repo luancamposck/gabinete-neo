@@ -2,8 +2,8 @@
 
 import { verifyInviteToken } from "@/lib/utils/token-utils"
 import { createUserWithInvitationSchemaServer } from "@/lib/validations/use-cases/create-user-with-invitation-schemas/create-user-with-invitation-schemas.server"
-import { type CreateUserWithInvitationServiceParams, createUserWithInvitationService } from "@/services/create-user-with-invitation.service"
 import type { OperationResponse } from "@/types/operation-response"
+import { type CreateUserWithInvitationServiceParams, createUserWithInvitationService } from "@/use-cases/create-user-with-invitation.service"
 
 export async function createUserWithInvitationAction(formData: unknown): Promise<OperationResponse<{ userId: string }>> {
 	// 1) Validação do shape

@@ -2,8 +2,8 @@
 "use server"
 
 import { signInSchemaServer } from "@/lib/validations/auth/sign-in/sign-in-schema.server"
-import { resolveUserPostSignInDestinationService } from "@/services/resolve-user-post-sign-in-destination.service"
-import { signInAuthUserService } from "@/services/sign-in-auth-user.service"
+import { resolveUserPostSignInDestinationService } from "@/services/auth/resolve-user-post-sign-in-destination.service"
+import { signInAuthUserService } from "@/services/auth/sign-in-auth-user.service"
 import type { OperationResponse } from "@/types/operation-response"
 
 type SignInActionResponse = OperationResponse<{

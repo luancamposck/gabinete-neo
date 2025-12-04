@@ -4,7 +4,7 @@
 import { createClient } from "@/lib/supabase/server"
 import type { OrganizationInviteRow } from "@/repositories/organization-invites/organization-invites.repo"
 import { findOrganizationMembershipByUserRepo } from "@/repositories/organization-menberships/organization-menberships.repo"
-import { listOrganizationInvitesService } from "@/services/list-organization-invites.service"
+import { listOrganizationInvitesService } from "@/services/organization-invite/list-organization-invites.service"
 import type { OperationResponse } from "@/types/operation-response"
 
 interface GetOrganizationInvitesActionInput {

@@ -2,7 +2,7 @@
 "use server"
 
 import { z } from "zod"
-import { generateInviteLinkService } from "@/services/generate-invite-link.service"
+import { generateInviteLinkService } from "@/services/organization-invite/generate-invite-link.service"
 import type { OperationResponse } from "@/types/operation-response"
 
 const generateInviteLinkSchema = z.object({

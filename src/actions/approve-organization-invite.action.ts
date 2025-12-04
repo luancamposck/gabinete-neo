@@ -2,7 +2,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { approveOrganizationInviteService } from "@/services/approve-organization-invite.service"
+import { approveOrganizationInviteService } from "@/services/organization-invite/approve-organization-invite.service"
 import type { OperationResponse } from "@/types/operation-response"
 
 export async function approveOrganizationInviteAction(inviteId: string): Promise<OperationResponse<null>> {

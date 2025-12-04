@@ -4,7 +4,7 @@ import { OrganizationInvitesTable } from "@/components/data-tables/organization-
 import { InviteLinkBox } from "@/components/invite-link-box"
 import { createClient } from "@/lib/supabase/server"
 import { findOrganizationMembershipByUserRepo } from "@/repositories/organization-menberships/organization-menberships.repo"
-import { listOrganizationInvitesService } from "@/services/list-organization-invites.service"
+import { listOrganizationInvitesService } from "@/services/organization-invite/list-organization-invites.service"
 
 const MyNetworkPage = async () => {
 	// 1) Garante usuário logado

@@ -1,8 +1,8 @@
 import { deleteAuthUserAdminRepo } from "@/repositories/auth-users/auth-users.admin.repo"
 import { deleteOrganizationsAdminRepo } from "@/repositories/organizations/organizations.admin.repo"
-import { type CreateOrganizationMenbershipServiceParams, createOrganizationMenbershipService } from "@/services/create-organization-menbership.service"
-import { type CreateOrganizationServiceParams, createOrganizationService } from "@/services/create-organizations.service"
-import { type CreateUserServiceParams, createUserWithProfileService } from "@/services/create-user-with-profile.service"
+import { type CreateOrganizationServiceParams, createOrganizationService } from "@/services/organization/create-organizations.service"
+import { type CreateOrganizationMenbershipServiceParams, createOrganizationMenbershipService } from "@/services/organization-membership/create-organization-menbership.service"
+import { type CreateUserServiceParams, createUserWithProfileService } from "@/services/users/create-user-with-profile.service"
 import type { OperationResponse } from "@/types/operation-response"
 
 export interface CreateOrganizationWithOwnerUserServiceParams {

@@ -4,8 +4,8 @@ import Image from "next/image"
 import { CreateUserWithInvitationForm } from "@/components/forms/organization-invite/create-user-with-Invitation-form"
 import { Card } from "@/components/ui/card"
 import { verifyInviteToken } from "@/lib/utils/token-utils"
-import { getOrganizationDataByOrganizationIdService } from "@/services/get-organization-data-by-organization-id.service"
-import { getPublicUserByUserIdService } from "@/services/get-public-user-by-user-id.service"
+import { getOrganizationDataByOrganizationIdService } from "@/services/organization/get-organization-data-by-organization-id.service"
+import { getPublicUserByUserIdService } from "@/services/users/get-public-user-by-user-id.service"
 
 interface InvitePageProps {
 	params: {
