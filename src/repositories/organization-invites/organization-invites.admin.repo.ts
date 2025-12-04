@@ -84,3 +84,9 @@ export async function listOrganizationInvitesByOrganizationIdAdminRepo({
 	// mas supabase já infere legal.
 	return query
 }
+
+export async function getPendingOrganizationInvitesByUserIdAdminRepo({ userId }: { userId: string }) {
+	const supabaseAdmin = createAdminClient()
+
+	return supabaseAdmin.from("organization_invites").select("*").eq("requested_by_user_id", userId).eq("status", "PENDING").maybeSingle()
+}

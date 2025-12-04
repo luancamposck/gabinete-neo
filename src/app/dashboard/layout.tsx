@@ -6,6 +6,8 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { getPendingOrganizationInvitesByUserIdAdminRepo } from "@/repositories/organization-invites/organization-invites.admin.repo"
+import { findOrganizationMembershipByUserAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 
 const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	const cookieStore = await cookies()
@@ -16,6 +18,29 @@ const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNod
 	// Redireciona se não houver usuário logado
 	if (!sessionResult.success || !sessionResult.data) {
 		redirect("/") // ou sua página de login
+	}
+
+	const userId = sessionResult.data.id
+
+	const { data: hasMembership, error: membershipError } = await findOrganizationMembershipByUserAdminRepo({ userId })
+
+	if (membershipError) {
+		console.error(membershipError)
+		redirect("/")
+	}
+
+	if (!hasMembership) {
+		const { data: hasPendingInvites, error: pendingInvitesError } = await getPendingOrganizationInvitesByUserIdAdminRepo({ userId })
+		if (pendingInvitesError) {
+			console.error(pendingInvitesError)
+			redirect("/")
+		}
+
+		if (hasPendingInvites) {
+			redirect("/invite-pending")
+		}
+
+		redirect("/no-organization")
 	}
 
 	return (
