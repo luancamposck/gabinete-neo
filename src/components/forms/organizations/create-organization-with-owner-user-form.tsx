@@ -177,7 +177,7 @@ export const CreateOrganizationWithOwnerUserForm = () => {
 					<div className="flex flex-1 flex-col items-center">
 						{" "}
 						<div className={cn("flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold transition-all", step >= 3 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>3</div>{" "}
-						<p className={cn("mt-2 text-sm font-medium", step >= 3 ? "text-primary" : "text-muted-foreground")}>Organização</p>{" "}
+						<p className={cn("mt-2 text-sm font-medium", step >= 3 ? "text-primary" : "text-muted-foreground")}>Constelação</p>{" "}
 					</div>{" "}
 				</div>
 			</CardHeader>
@@ -397,11 +397,11 @@ export const CreateOrganizationWithOwnerUserForm = () => {
 										name="organization.name"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Nome da Organização</FormLabel>
+												<FormLabel>Nome da Constelação</FormLabel>
 												<FormControl>
 													<Input
 														{...field}
-														placeholder="Gabinete do João Paulo"
+														placeholder="Constelação do João Paulo"
 														onChange={(e) => {
 															const nameValue = e.target.value
 															// Atualiza o campo name normalmente
@@ -428,7 +428,7 @@ export const CreateOrganizationWithOwnerUserForm = () => {
 											<FormItem>
 												<FormLabel>URL visível publicamente</FormLabel>
 												<FormControl>
-													<Input {...field} placeholder="gabinete-do-joao-paulo" onChange={(e) => field.onChange(slugify(e.target.value))} />
+													<Input {...field} placeholder="constelacao-do-joao-paulo" onChange={(e) => field.onChange(slugify(e.target.value))} />
 												</FormControl>
 												<FormMessage />
 											</FormItem>

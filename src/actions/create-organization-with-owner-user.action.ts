@@ -61,7 +61,7 @@ export async function createOrganizationWithOwnerAction(formData: unknown): Prom
 	// 5) Retorno se deu tudo certo
 	return {
 		success: true,
-		message: "Usuário e organização criados com sucesso",
+		message: "Usuário e constelação criados com sucesso",
 		data: {
 			organizationId: organizationId,
 			userId: userId

@@ -64,9 +64,9 @@ export default async function InvitePage({ searchParams }: InvitePageProps) {
 
 	return (
 		<div className="flex w-full flex-col items-center gap-6 pt-8">
-			<h1 className="text-xl font-semibold">Convite para organização</h1>
+			<h1 className="text-xl font-semibold">Convite para constelação</h1>
 			<p className="mt-2 text-sm text-muted-foreground">
-				Você foi convidado por {inviterUserName} para entrar na organização {organizationName}
+				Você foi convidado por {inviterUserName} para entrar na constelação {organizationName}
 			</p>
 			<Card className="grid grid-cols-2 p-0">
 				<CreateUserWithInvitationForm inviteToken={token} />

@@ -28,7 +28,7 @@ const InvitePendingPage = async () => {
 		return (
 			<div className="p-6">
 				<h1 className="text-xl font-semibold">Algo deu errado</h1>
-				<p className="mt-2 text-sm text-muted-foreground">Não foi possível verificar seu acesso à organização. Tente novamente em alguns instantes.</p>
+				<p className="mt-2 text-sm text-muted-foreground">Não foi possível verificar seu acesso à constelação. Tente novamente em alguns instantes.</p>
 			</div>
 		)
 	}
@@ -74,8 +74,8 @@ const InvitePendingPage = async () => {
 		console.error("[InvitePendingPage] erro ao buscar usuário convidador:", inviterError)
 	}
 
-	const organizationName = organization?.name ?? "sua organização"
-	const inviterName = inviterUser?.name ?? "Um membro da organização"
+	const organizationName = organization?.name ?? "sua constelação"
+	const inviterName = inviterUser?.name ?? "Um membro da constelação"
 
 	return (
 		<div className="flex min-h-[60vh] items-center justify-center px-4">
@@ -83,20 +83,20 @@ const InvitePendingPage = async () => {
 				<h1 className="text-2xl font-semibold tracking-tight">Seu acesso está aguardando aprovação</h1>
 
 				<p className="mt-3 text-sm text-muted-foreground">
-					Você solicitou acesso à organização <span className="font-medium text-foreground">{organizationName}</span>.
+					Você solicitou acesso à constelação <span className="font-medium text-foreground">{organizationName}</span>.
 				</p>
 
 				<p className="mt-2 text-sm text-muted-foreground">
-					O convite foi criado por <span className="font-medium text-foreground">{inviterName}</span>. Um administrador ou proprietário da organização precisa aprovar seu acesso.
+					O convite foi criado por <span className="font-medium text-foreground">{inviterName}</span>. Um administrador ou proprietário da constelação precisa aprovar seu acesso.
 				</p>
 
 				<div className="mt-6 rounded-md bg-muted px-4 py-3 text-sm text-muted-foreground">
-					<p>Assim que seu convite for aprovado, você será redirecionado automaticamente para o painel da organização ao entrar no sistema.</p>
+					<p>Assim que seu convite for aprovado, você será redirecionado automaticamente para o painel da constelação ao entrar no sistema.</p>
 				</div>
 
 				<div className="mt-6 flex items-center justify-between text-xs text-muted-foreground">
 					<span>ID do convite: {pendingInvite.id}</span>
-					{organization?.slug && <span>Organização: /{organization.slug}</span>}
+					{organization?.slug && <span>Constelação: /{organization.slug}</span>}
 				</div>
 			</div>
 		</div>
