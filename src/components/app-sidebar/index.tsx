@@ -1,9 +1,25 @@
 import { BookOpen, Bot, ChevronRight, Settings2, Users } from "lucide-react"
 import Image from "next/image"
-
+import { redirect } from "next/navigation"
+import getSessionAction from "@/actions/auth/get-session"
 import { Separator } from "@/components/ui/separator"
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar"
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem
+} from "@/components/ui/sidebar"
+import { getPublicUserByUserIdService } from "@/services/users/get-public-user-by-user-id.service"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible"
+import { NavFooter } from "./nav-footer"
 
 // const items = [
 // 	{
@@ -145,11 +161,11 @@ const navMain = [
 				url: "/dashboard/network/my-network"
 			},
 			{
-				title: "Starred",
+				title: "Minha constelação",
 				url: "#"
 			},
 			{
-				title: "Settings",
+				title: "Mapa espacial ",
 				url: "#"
 			}
 		]
@@ -221,7 +237,23 @@ const navMain = [
 	}
 ]
 
-const AppSidebar = () => {
+const AppSidebar = async () => {
+	const getSessionActionRes = await getSessionAction()
+
+	if (getSessionActionRes.success === false) {
+		console.error(getSessionActionRes.message)
+		redirect("/")
+	}
+
+	const userId = getSessionActionRes.data.id
+
+	const getPublicUserByUserIdServiceRes = await getPublicUserByUserIdService({ userId })
+	if (getPublicUserByUserIdServiceRes.success === false) {
+		redirect("/")
+	}
+
+	const { user } = getPublicUserByUserIdServiceRes.data
+
 	return (
 		<Sidebar collapsible="icon" variant="inset">
 			<SidebarHeader>
@@ -277,6 +309,15 @@ const AppSidebar = () => {
 					))}
 				</SidebarMenu> */}
 			</SidebarContent>
+
+			<SidebarFooter>
+				<NavFooter
+					user={{
+						email: user.email,
+						name: user.name
+					}}
+				/>
+			</SidebarFooter>
 		</Sidebar>
 	)
 }
