@@ -39,7 +39,6 @@ export async function createUserWithInvitationAction(formData: unknown): Promise
 			password: newUserData.password,
 
 			name: newUserData.name,
-			cpf: newUserData.cpf,
 			phone: newUserData.phone,
 
 			cep: newUserData.adress.cep,

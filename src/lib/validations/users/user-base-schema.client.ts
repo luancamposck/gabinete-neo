@@ -6,7 +6,6 @@ export const userBaseSchemaClient = z
 	.object({
 		// Dados do usuário
 		name: z.string().min(3, "Nome do usuário deve ter no mínimo 3 caracteres."),
-		cpf: z.string().length(14, "CPF deve conter 11 dígitos. Formato: 000.000.000-00"),
 		phone: z.string().refine((val) => val.length === 14 || val.length === 15, "Celular inválido. Use (00) 00000-0000 ou (00) 0000-0000"),
 
 		// Login do usuário

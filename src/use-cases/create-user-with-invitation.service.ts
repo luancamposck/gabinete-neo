@@ -19,7 +19,6 @@ export async function createUserWithInvitationService(params: CreateUserWithInvi
 		password: newUserData.password,
 
 		name: newUserData.name,
-		cpf: newUserData.cpf,
 		phone: newUserData.phone,
 
 		cep: newUserData.cep,

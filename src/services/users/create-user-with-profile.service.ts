@@ -87,7 +87,6 @@ export async function createUserWithProfileService(params: CreateUserServicePara
 			user_id: authUserResData.user.id,
 			cep: params.cep,
 			city: params.city,
-			cpf: params.cpf,
 			neighborhood: params.neighborhood,
 			number: params.number,
 			street: params.street,
@@ -106,7 +105,7 @@ export async function createUserWithProfileService(params: CreateUserServicePara
 			let errorMessage = "Falha ao provisionar perfil de usuário."
 
 			if (userProfileResError.code === "23505") {
-				errorMessage = "Já existe um perfil com esse CPF cadastrado no sistema."
+				errorMessage = "Já existe um perfil com esse Telefone cadastrado no sistema."
 			}
 
 			return { success: false, message: errorMessage }

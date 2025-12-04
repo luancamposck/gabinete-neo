@@ -26,7 +26,6 @@ export async function createOrganizationWithOwnerAction(formData: unknown): Prom
 			password: newUserData.password,
 
 			name: newUserData.name,
-			cpf: newUserData.cpf,
 			phone: newUserData.phone,
 
 			cep: newUserData.adress.cep,

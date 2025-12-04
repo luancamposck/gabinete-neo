@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { brazilianStates } from "@/lib/constants/brazilian-states"
-import { maskCep, maskCpf, maskPhone } from "@/lib/masks"
+import { maskCep, maskPhone } from "@/lib/masks"
 import { cn } from "@/lib/utils"
 import { slugify } from "@/lib/utils/slugify-utils"
 import { type CreateOrganizationWithOwnerSchemaClientData, createOrganizationWithOwnerSchemaClient } from "@/lib/validations/use-cases/create-organization-with-owner-schemas/create-organization-with-owner-schema.client"
@@ -27,7 +27,6 @@ export const CreateOrganizationWithOwnerUserForm = () => {
 		defaultValues: {
 			user: {
 				name: "",
-				cpf: "",
 				phone: "",
 				email: "",
 				confirmEmail: "",
@@ -94,7 +93,7 @@ export const CreateOrganizationWithOwnerUserForm = () => {
 		let fieldsToValidate: FieldPath<CreateOrganizationWithOwnerSchemaClientData>[] = []
 
 		if (currentStep === 1) {
-			fieldsToValidate = ["user.name", "user.cpf", "user.phone", "user.email", "user.confirmEmail", "user.password", "user.confirmPassword"]
+			fieldsToValidate = ["user.name", "user.phone", "user.email", "user.confirmEmail", "user.password", "user.confirmPassword"]
 		} else if (currentStep === 2) {
 			fieldsToValidate = ["user.adress.cep", "user.adress.street", "user.adress.number", "user.adress.neighborhood", "user.adress.city", "user.adress.state"]
 		} else if (currentStep === 3) {
@@ -204,34 +203,19 @@ export const CreateOrganizationWithOwnerUserForm = () => {
 										)}
 									/>
 
-									<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-										<FormField
-											control={control}
-											name="user.cpf"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>CPF</FormLabel>
-													<FormControl>
-														<Input placeholder="000.000.000-00" {...field} onChange={(e) => field.onChange(maskCpf(e.target.value))} />
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-										<FormField
-											control={control}
-											name="user.phone"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>Celular</FormLabel>
-													<FormControl>
-														<Input placeholder="(11) 99999-9999" {...field} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-									</div>
+									<FormField
+										control={control}
+										name="user.phone"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Celular</FormLabel>
+												<FormControl>
+													<Input placeholder="(11) 99999-9999" {...field} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
 
 									<FormField
 										control={control}

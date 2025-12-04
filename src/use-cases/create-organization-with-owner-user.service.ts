@@ -21,7 +21,6 @@ export async function createOrganizationWithOwnerUserService(params: CreateOrgan
 		password: newUserData.password,
 
 		name: newUserData.name,
-		cpf: newUserData.cpf,
 		phone: newUserData.phone,
 
 		cep: newUserData.cep,
