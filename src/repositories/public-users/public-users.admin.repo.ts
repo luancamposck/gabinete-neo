@@ -18,7 +18,7 @@ export async function deletePublicUserAdminRepo({ publicUserId }: { publicUserId
 	return supabaseAdmin.from("users").delete().eq("id", publicUserId)
 }
 
-export async function getPublicUserByUserIdAdminRepo({ userId}: {userId: string}): Promise<PostgrestSingleResponse<PublicUserRow>> {
+export async function getPublicUserByUserIdAdminRepo({ userId }: { userId: string }): Promise<PostgrestSingleResponse<PublicUserRow>> {
 	const supabaseAdmin = createAdminClient()
 
 	return supabaseAdmin.from("users").select("*").eq("id", userId).single()

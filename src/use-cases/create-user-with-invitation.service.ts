@@ -1,6 +1,6 @@
+import { createOrganizationInviteService } from "@/services/organization-invite/create-organization-invite.service"
+import { type CreateUserServiceParams, createUserWithProfileService } from "@/services/users/create-user-with-profile.service"
 import type { OperationResponse } from "@/types/operation-response"
-import { createOrganizationInviteService } from "../services/organization-invite/create-organization-invite.service"
-import { type CreateUserServiceParams, createUserWithProfileService } from "../services/users/create-user-with-profile.service"
 
 export interface CreateUserWithInvitationServiceParams {
 	user: CreateUserServiceParams
