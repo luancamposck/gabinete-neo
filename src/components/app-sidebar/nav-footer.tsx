@@ -2,6 +2,8 @@
 
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 import { signOutAuthUserAction } from "@/actions/auth/sign-out-auth-user.action"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -16,9 +18,18 @@ export const NavFooter = ({
 	}
 }) => {
 	const { isMobile } = useSidebar()
+	const router = useRouter()
 
 	async function handleSignOut() {
-		await signOutAuthUserAction()
+		const signOutAuthUserActionRes = await signOutAuthUserAction()
+		if (signOutAuthUserActionRes.success) {
+			const { redirectTo } = signOutAuthUserActionRes.data
+			router.push(redirectTo)
+		} else {
+			toast.error("Erro ao se deslogar", {
+				description: "Tente novamente mais tarde, se o erro permanecer contate o suporte."
+			})
+		}
 	}
 
 	const getInitials = (name: string) => {
