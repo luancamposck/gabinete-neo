@@ -233,7 +233,7 @@ const AppSidebar = () => {
 
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>Gabinete X</SidebarGroupLabel>
+					<SidebarGroupLabel>Constelação X</SidebarGroupLabel>
 					<SidebarMenu>
 						{navMain.map((item) => (
 							<Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
