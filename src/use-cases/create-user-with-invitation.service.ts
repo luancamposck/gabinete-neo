@@ -1,3 +1,4 @@
+import type { RelationshipValue } from "@/lib/constants/relationship-options"
 import { createOrganizationInviteService } from "@/services/organization-invite/create-organization-invite.service"
 import { type CreateUserServiceParams, createUserWithProfileService } from "@/services/users/create-user-with-profile.service"
 import type { OperationResponse } from "@/types/operation-response"
@@ -8,10 +9,12 @@ export interface CreateUserWithInvitationServiceParams {
 	createdByUserId: string
 
 	organizationId: string
+
+	relationshipToInviter: RelationshipValue
 }
 
 export async function createUserWithInvitationService(params: CreateUserWithInvitationServiceParams): Promise<OperationResponse<{ userId: string }>> {
-	const { user: newUserData, organizationId, createdByUserId } = params
+	const { user: newUserData, organizationId, createdByUserId, relationshipToInviter } = params
 
 	// 1) Cria o usuário
 	const createUserWithProfileServiceParams: CreateUserServiceParams = {
@@ -51,7 +54,8 @@ export async function createUserWithInvitationService(params: CreateUserWithInvi
 		createdByUserId: createdByUserId,
 		role: "MEMBER", // opcional, já default
 		origin: "PUBLIC_LINK", // opcional, já default
-		expiresInDays: 7
+		expiresInDays: 7,
+		relationshipToInviter: relationshipToInviter
 	})
 
 	if (!createOrganizationInviteServiceRes.success) {

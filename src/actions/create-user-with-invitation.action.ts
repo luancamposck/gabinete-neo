@@ -18,7 +18,7 @@ export async function createUserWithInvitationAction(formData: unknown): Promise
 		}
 	}
 
-	const { user: newUserData, inviteToken } = dataParsed.data
+	const { user: newUserData, inviteToken, relationship } = dataParsed.data
 
 	// 2) Decodificar e validar token
 	const decoded = await verifyInviteToken(inviteToken)
@@ -52,7 +52,9 @@ export async function createUserWithInvitationAction(formData: unknown): Promise
 
 		createdByUserId: inviterUserId,
 
-		organizationId: organizationId
+		organizationId: organizationId,
+
+		relationshipToInviter: relationship
 	}
 	const createUserWithInvitationServiceRes = await createUserWithInvitationService(createUserWithInvitationServiceParams)
 

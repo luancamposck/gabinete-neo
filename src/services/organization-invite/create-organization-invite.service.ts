@@ -1,3 +1,4 @@
+import type { RelationshipValue } from "@/lib/constants/relationship-options"
 import { insertOrganizationInviteRepo, type OrganizationInvitesInsert } from "@/repositories/organization-invites/organization-invites.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
@@ -8,16 +9,17 @@ export interface CreateOrganizationInviteServiceParams {
 	role?: "MEMBER" | "ADMIN" // opcional, default MEMBER
 	origin?: "PUBLIC_LINK" | "EMAIL_INVITE" | "INTERNAL" // opcional
 	expiresInDays?: number // opcional, default 7
+	relationshipToInviter: RelationshipValue
 }
 
-function computeExpiresAt(days: number): string {
-	const now = new Date()
-	now.setDate(now.getDate() + days)
-	return now.toISOString() // Supabase aceita Date ou ISO string
-}
+// function computeExpiresAt(days: number): string {
+// 	const now = new Date()
+// 	now.setDate(now.getDate() + days)
+// 	return now.toISOString() // Supabase aceita Date ou ISO string
+// }
 
 export async function createOrganizationInviteService(params: CreateOrganizationInviteServiceParams): Promise<OperationResponse<{ organizationInviteId: string }>> {
-	const { organizationId, requestedByUserId, role = "MEMBER", origin = "PUBLIC_LINK", expiresInDays = 7, createdByUserId } = params
+	const { organizationId, requestedByUserId, role = "MEMBER", origin = "PUBLIC_LINK", expiresInDays = 7, createdByUserId, relationshipToInviter } = params
 
 	const expiresAt = new Date()
 	expiresAt.setDate(expiresAt.getDate() + expiresInDays)
@@ -29,7 +31,8 @@ export async function createOrganizationInviteService(params: CreateOrganization
 		role,
 		status: "PENDING",
 		origin,
-		expires_at: expiresAt.toISOString() // ou diretamente `expiresAt`
+		expires_at: expiresAt.toISOString(), // ou diretamente `expiresAt`
+		relationship_to_inviter: relationshipToInviter
 	}
 
 	const { data: organizationInviteResData, error: organizationInviteResError } = await insertOrganizationInviteRepo(insertParams)

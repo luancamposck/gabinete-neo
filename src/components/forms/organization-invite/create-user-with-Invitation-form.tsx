@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { brazilianStates } from "@/lib/constants/brazilian-states"
+import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
 import { maskCep, maskPhone } from "@/lib/masks"
 import { cn } from "@/lib/utils"
 import { type CreateUserWithInvitationSchemaClientData, createUserWithInvitationSchemaClient } from "@/lib/validations/use-cases/create-user-with-invitation-schemas/create-user-with-invitation-schemas.client"
@@ -184,19 +185,46 @@ export const CreateUserWithInvitationForm = ({ inviteToken }: { inviteToken: str
 										)}
 									/>
 
-									<FormField
-										control={control}
-										name="user.phone"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Celular</FormLabel>
-												<FormControl>
-													<Input placeholder="(11) 99999-9999" {...field} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+									<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+										<FormField
+											control={control}
+											name="user.phone"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>Celular</FormLabel>
+													<FormControl>
+														<Input placeholder="(11) 99999-9999" {...field} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+
+										<FormField
+											control={control}
+											name="relationship"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>Relação com quem convidou</FormLabel>
+													<FormControl>
+														<Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+															<SelectTrigger>
+																<SelectValue placeholder="Selecione a relação" />
+															</SelectTrigger>
+															<SelectContent>
+																{RELATIONSHIP_OPTIONS.map((opt) => (
+																	<SelectItem key={opt.value} value={opt.value}>
+																		{opt.label}
+																	</SelectItem>
+																))}
+															</SelectContent>
+														</Select>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
 
 									<FormField
 										control={control}

@@ -66,6 +66,7 @@ export type Database = {
           id: string
           organization_id: string
           origin: string
+          relationship_to_inviter: string
           requested_by_user_id: string
           role: string
           status: string
@@ -80,6 +81,7 @@ export type Database = {
           id?: string
           organization_id: string
           origin?: string
+          relationship_to_inviter: string
           requested_by_user_id: string
           role: string
           status: string
@@ -94,6 +96,7 @@ export type Database = {
           id?: string
           organization_id?: string
           origin?: string
+          relationship_to_inviter?: string
           requested_by_user_id?: string
           role?: string
           status?: string
