@@ -14,3 +14,9 @@ export async function getCurrentAuthUserRepo() {
 
 	return supabase.auth.getUser() // { data: { user }, error }
 }
+
+export async function signOutAuthUserRepo() {
+	const supabase = await createClient()
+
+	return await supabase.auth.signOut()
+}
