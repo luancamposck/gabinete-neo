@@ -9,14 +9,14 @@ export async function signInAuthUserRepo({ email, password }: { email: string; p
 	})
 }
 
-export async function getCurrentAuthUserRepo() {
-	const supabase = await createClient()
-
-	return supabase.auth.getUser() // { data: { user }, error }
-}
-
 export async function signOutAuthUserRepo() {
 	const supabase = await createClient()
 
 	return await supabase.auth.signOut()
+}
+
+export async function getCurrentAuthUserRepo() {
+	const supabase = await createClient()
+
+	return supabase.auth.getUser() // { data: { user }, error }
 }
