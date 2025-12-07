@@ -24,3 +24,9 @@ export async function deleteOrganizationMembershipAdminRepo({ organizationId, us
 
 	return supabaseAdmin.from("organization_memberships").delete().eq("organization_id", organizationId).eq("user_id", userId)
 }
+
+export async function findOrganizationMembershipByUserAndOrganizationAdminRepo({ userId, organizationId }: { userId: string; organizationId: string }) {
+	const supabaseAdmin = createAdminClient()
+
+	return supabaseAdmin.from("organization_memberships").select("*").eq("user_id", userId).eq("organization_id", organizationId).eq("is_active", true).maybeSingle()
+}
