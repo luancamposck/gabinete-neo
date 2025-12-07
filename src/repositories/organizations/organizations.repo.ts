@@ -2,10 +2,8 @@
 
 import type { PostgrestSingleResponse } from "@supabase/supabase-js"
 
-import type { Tables } from "@/lib/definitions/supabase"
 import { createClient } from "@/lib/supabase/server"
-
-export type OrganizationsRow = Tables<"organizations">
+import type { OrganizationsRow } from "@/types/domain/organization/organization-base.types"
 
 export async function findOrganizationByIdRepo(organizationId: string): Promise<PostgrestSingleResponse<OrganizationsRow>> {
 	const supabase = await createClient()

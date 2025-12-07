@@ -1,10 +1,7 @@
 import type { PostgrestSingleResponse } from "@supabase/supabase-js"
 
-import type { Tables, TablesInsert } from "@/lib/definitions/supabase"
 import { createAdminClient } from "@/lib/supabase/admin"
-
-export type PublicUserInsert = TablesInsert<"users">
-export type PublicUserRow = Tables<"users">
+import type { PublicUserInsert, PublicUserRow } from "@/types/domain/users/user-base.types"
 
 export async function insertPublicUserAdminRepo(insertPublicUserParams: PublicUserInsert): Promise<PostgrestSingleResponse<{ id: string }>> {
 	const supabaseAdmin = createAdminClient()

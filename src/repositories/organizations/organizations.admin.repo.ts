@@ -1,10 +1,7 @@
 import type { PostgrestSingleResponse } from "@supabase/supabase-js"
 
-import type { Tables, TablesInsert } from "@/lib/definitions/supabase"
 import { createAdminClient } from "@/lib/supabase/admin"
-
-export type OrganizationsInsert = TablesInsert<"organizations">
-export type OrganizationsRow = Tables<"organizations">
+import type { OrganizationsInsert, OrganizationsRow } from "@/types/domain/organization/organization-base.types"
 
 export async function insertOrganizationsAdminRepo(insertOrganizationsParams: OrganizationsInsert): Promise<PostgrestSingleResponse<{ id: string }>> {
 	const supabaseAdmin = createAdminClient()
