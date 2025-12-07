@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
 import { getPendingOrganizationInviteByUserIdRepo } from "@/repositories/organization-invites/organization-invites.repo"
-import { findOrganizationMembershipByUserAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 
 const InvitePendingPage = async () => {
 	// 1) Descobrir usuário logado
@@ -20,7 +20,7 @@ const InvitePendingPage = async () => {
 	const userId = user.id
 
 	// 2) Verificar se ele já tem membership ativa (caso admin já aprovou)
-	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserAdminRepo({ userId })
+	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId })
 
 	if (membershipError) {
 		console.error("[InvitePendingPage] erro ao buscar membership:", membershipError)

@@ -2,7 +2,7 @@
 
 import { signInviteToken } from "@/lib/utils/token-utils"
 import { getCurrentAuthUserRepo } from "@/repositories/auth-users/auth-users.repo"
-import { findOrganizationMembershipByUserAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
 interface GenerateInviteLinkServiceParams {
@@ -28,7 +28,7 @@ export async function generateInviteLinkService(params: GenerateInviteLinkServic
 	const inviterUserId = data.user.id
 
 	// 2) busca membership pelo user (1 user = 1 org)
-	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserAdminRepo({ userId: inviterUserId })
+	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId: inviterUserId })
 
 	if (membershipError || !membership) {
 		console.error("[generateInviteLinkService] Membership não encontrado:", membershipError)

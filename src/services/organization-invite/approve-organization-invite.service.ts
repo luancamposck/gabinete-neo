@@ -1,7 +1,7 @@
 // src/services/approve-organization-invite.service.ts
 
 import { findOrganizationInviteByIdAdminRepo, updateOrganizationInviteStatusAdminRepo } from "@/repositories/organization-invites/organization-invites.admin.repo"
-import { deleteOrganizationMembershipAdminRepo, findOrganizationMembershipByUserAdminRepo, insertOrganizationMenbershipsAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { deleteOrganizationMembershipAdminRepo, findOrganizationMembershipByUserIdAdminRepo, insertOrganizationMenbershipsAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
 interface ApproveOrganizationInviteInput {
@@ -39,7 +39,7 @@ export async function approveOrganizationInviteService({ inviteId, approverUserI
 	}
 
 	// 2) Verificar se approver é OWNER/ADMIN da org do invite
-	const { data: approverMembership, error: approverMembershipError } = await findOrganizationMembershipByUserAdminRepo({ userId: approverUserId })
+	const { data: approverMembership, error: approverMembershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId: approverUserId })
 
 	if (approverMembershipError || !approverMembership) {
 		console.error("[approveOrganizationInviteService] erro ao buscar membership do aprovador:", approverMembershipError)
@@ -57,7 +57,7 @@ export async function approveOrganizationInviteService({ inviteId, approverUserI
 	}
 
 	// 3) Verificar se o usuário já é membro de alguma org (regra: 1 user -> 1 org)
-	const { data: existingMembership } = await findOrganizationMembershipByUserAdminRepo({
+	const { data: existingMembership } = await findOrganizationMembershipByUserIdAdminRepo({
 		userId: invite.requested_by_user_id
 	})
 

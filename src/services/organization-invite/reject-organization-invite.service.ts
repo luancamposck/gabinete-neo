@@ -1,7 +1,7 @@
 // src/services/reject-organization-invite.service.ts
 
 import { findOrganizationInviteByIdAdminRepo, updateOrganizationInviteStatusAdminRepo } from "@/repositories/organization-invites/organization-invites.admin.repo"
-import { findOrganizationMembershipByUserAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
 interface RejectOrganizationInviteInput {
@@ -40,7 +40,7 @@ export async function rejectOrganizationInviteService({ inviteId, approverUserId
 	}
 
 	// 2) Verificar se approver é OWNER/ADMIN da org do invite
-	const { data: approverMembership, error: approverMembershipError } = await findOrganizationMembershipByUserAdminRepo({ userId: approverUserId })
+	const { data: approverMembership, error: approverMembershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId: approverUserId })
 
 	if (approverMembershipError || !approverMembership) {
 		console.error("[rejectOrganizationInviteService] erro ao buscar membership do aprovador:", approverMembershipError)

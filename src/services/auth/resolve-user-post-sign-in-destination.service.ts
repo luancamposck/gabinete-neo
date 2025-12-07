@@ -1,5 +1,5 @@
 import { getPendingOrganizationInviteByUserIdRepo } from "@/repositories/organization-invites/organization-invites.repo"
-import { findOrganizationMembershipByUserAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
 interface ResolveUserPostSignInDestinationInput {
@@ -10,7 +10,7 @@ type ResolveUserPostSignInDestinationOutput = OperationResponse<{ redirectTo: st
 
 export default async function resolveUserPostSignInDestinationService({ userId }: ResolveUserPostSignInDestinationInput): Promise<ResolveUserPostSignInDestinationOutput> {
 	// 1) Membership ativa
-	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserAdminRepo({ userId })
+	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId })
 
 	if (membershipError) {
 		console.error("[resolveUserPostSignInDestinationService] erro ao buscar membership do usuário:", membershipError)

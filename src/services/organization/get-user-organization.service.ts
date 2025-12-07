@@ -1,7 +1,7 @@
 // src/services/get-user-organization.service.ts
 
 import { getCurrentAuthUserRepo } from "@/repositories/auth-users/auth-users.repo"
-import { findOrganizationMembershipByUserAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 import { findOrganizationByIdRepo } from "@/repositories/organizations/organizations.repo"
 import type { OperationResponse } from "@/types/operation-response"
 
@@ -27,7 +27,7 @@ export default async function getUserOrganizationService(): Promise<OperationRes
 	const userId = authData.user.id
 
 	// 2) Membership do usuário (1 user = 1 org)
-	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserAdminRepo({ userId })
+	const { data: membership, error: membershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId })
 
 	if (membershipError || !membership) {
 		console.error("[getUserOrganizationService] Membership não encontrado para user:", userId, membershipError)
