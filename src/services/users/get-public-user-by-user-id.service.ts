@@ -1,4 +1,5 @@
-import { getPublicUserByUserIdAdminRepo, type PublicUserRow } from "@/repositories/public-users/public-users.admin.repo"
+import { getPublicUserByUserIdAdminRepo } from "@/repositories/public-users/public-users.admin.repo"
+import type { PublicUserRow } from "@/types/domain/users/user-base.types"
 import type { OperationResponse } from "@/types/operation-response"
 
 export async function getPublicUserByUserIdService({ userId }: { userId: string }): Promise<OperationResponse<{ user: PublicUserRow }>> {
