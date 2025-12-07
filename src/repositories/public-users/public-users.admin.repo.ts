@@ -20,3 +20,9 @@ export async function getPublicUserByUserIdAdminRepo({ userId }: { userId: strin
 
 	return supabaseAdmin.from("users").select("*").eq("id", userId).single()
 }
+
+export async function findPublicUserByUserIdAdminRepo({ userId }: { userId: string }): Promise<PostgrestSingleResponse<PublicUserRow | null>> {
+	const supabaseAdmin = createAdminClient()
+
+	return supabaseAdmin.from("users").select("*").eq("id", userId).maybeSingle()
+}
