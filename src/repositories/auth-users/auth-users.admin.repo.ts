@@ -1,3 +1,5 @@
+import "server-only"
+
 import { createAdminClient } from "@/lib/supabase/admin"
 
 export async function createAuthUserAdminRepo(createAuthUserParams: { email: string; password: string }) {

@@ -1,3 +1,5 @@
+import "server-only"
+
 import type { PostgrestSingleResponse } from "@supabase/supabase-js"
 
 import { createAdminClient } from "@/lib/supabase/admin"
