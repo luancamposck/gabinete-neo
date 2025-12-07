@@ -1,7 +1,7 @@
 import { BookOpen, Bot, ChevronRight, Settings2, Users } from "lucide-react"
 import Image from "next/image"
 import { redirect } from "next/navigation"
-import getSessionAction from "@/actions/auth/get-session"
+import { getCurrentAuthSessionAction } from "@/actions/auth/get-current-auth-session.action"
 import { Separator } from "@/components/ui/separator"
 import {
 	Sidebar,
@@ -238,14 +238,14 @@ const navMain = [
 ]
 
 const AppSidebar = async () => {
-	const getSessionActionRes = await getSessionAction()
+	const getCurrentAuthSessionActionRes = await getCurrentAuthSessionAction()
 
-	if (getSessionActionRes.success === false) {
-		console.error(getSessionActionRes.message)
+	if (getCurrentAuthSessionActionRes.success === false) {
+		console.error(getCurrentAuthSessionActionRes.message)
 		redirect("/")
 	}
 
-	const userId = getSessionActionRes.data.id
+	const userId = getCurrentAuthSessionActionRes.data.session.user.id
 
 	const getPublicUserByUserIdServiceRes = await getPublicUserByUserIdService({ userId })
 	if (getPublicUserByUserIdServiceRes.success === false) {

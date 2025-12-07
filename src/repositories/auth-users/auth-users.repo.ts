@@ -20,3 +20,9 @@ export async function getCurrentAuthUserRepo() {
 
 	return supabase.auth.getUser() // { data: { user }, error }
 }
+
+export async function getCurrentAuthSessionRepo() {
+	const supabase = await createClient()
+
+	return supabase.auth.getSession()
+}

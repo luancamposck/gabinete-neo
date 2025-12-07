@@ -1,28 +1,28 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-import { getSessionAction } from "@/actions/auth/get-session"
+import { getCurrentAuthSessionAction } from "@/actions/auth/get-current-auth-session.action"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { getPendingOrganizationInvitesByUserIdAdminRepo } from "@/repositories/organization-invites/organization-invites.admin.repo"
-import { findOrganizationMembershipByUserAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 
 const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	const cookieStore = await cookies()
 	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
-	const sessionResult = await getSessionAction()
+	const sessionResult = await getCurrentAuthSessionAction()
 
 	// Redireciona se não houver usuário logado
-	if (!sessionResult.success || !sessionResult.data) {
+	if (sessionResult.success === false) {
 		redirect("/") // ou sua página de login
 	}
 
-	const userId = sessionResult.data.id
+	const userId = sessionResult.data.session.user.id
 
-	const { data: hasMembership, error: membershipError } = await findOrganizationMembershipByUserAdminRepo({ userId })
+	const { data: hasMembership, error: membershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId })
 
 	if (membershipError) {
 		console.error(membershipError)
