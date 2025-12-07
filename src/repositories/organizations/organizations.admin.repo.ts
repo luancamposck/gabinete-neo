@@ -20,3 +20,9 @@ export async function getOrganizationByOrganizationIdAdminRepo({ organizationId 
 
 	return supabaseAdmin.from("organizations").select("*").eq("id", organizationId).single()
 }
+
+export async function findOrganizationBySlugAdminRepo({ organizationSlug }: { organizationSlug: string }): Promise<PostgrestSingleResponse<OrganizationsRow | null>> {
+	const supabaseAdmin = createAdminClient()
+
+	return supabaseAdmin.from("organizations").select("*").eq("slug", organizationSlug).maybeSingle()
+}
