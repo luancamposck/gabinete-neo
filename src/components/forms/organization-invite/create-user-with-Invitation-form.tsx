@@ -18,7 +18,12 @@ import { maskCep, maskPhone } from "@/lib/masks"
 import { cn } from "@/lib/utils"
 import { type CreateUserWithInvitationSchemaClientData, createUserWithInvitationSchemaClient } from "@/lib/validations/use-cases/create-user-with-invitation-schemas/create-user-with-invitation-schemas.client"
 
-export const CreateUserWithInvitationForm = ({ inviteToken }: { inviteToken: string }) => {
+interface CreateUserWithInvitationFormProps {
+	inviterUserId: string
+	organizationId: string
+}
+
+export const CreateUserWithInvitationForm = ({ inviterUserId, organizationId }: CreateUserWithInvitationFormProps) => {
 	const router = useRouter()
 	const [step, setStep] = useState<number>(1)
 	const [isFetchingUserCep, setIsFetchingUserCep] = useState<boolean>(false)
@@ -90,7 +95,7 @@ export const CreateUserWithInvitationForm = ({ inviteToken }: { inviteToken: str
 		let fieldsToValidate: FieldPath<CreateUserWithInvitationSchemaClientData>[] = []
 
 		if (currentStep === 1) {
-			fieldsToValidate = ["user.name", "user.phone", "user.email", "user.confirmEmail", "user.password", "user.confirmPassword"]
+			fieldsToValidate = ["user.name", "user.phone", "user.email", "user.confirmEmail", "user.password", "user.confirmPassword", "relationship"]
 		} else if (currentStep === 2) {
 			fieldsToValidate = ["user.adress.cep", "user.adress.street", "user.adress.number", "user.adress.neighborhood", "user.adress.city", "user.adress.state"]
 		}
@@ -103,7 +108,13 @@ export const CreateUserWithInvitationForm = ({ inviteToken }: { inviteToken: str
 
 	async function onSubmit(data: CreateUserWithInvitationSchemaClientData) {
 		try {
-			const result = await createUserWithInvitationAction({ user: data.user, inviteToken })
+			const createUserWithInvitationActionParams = {
+				user: data.user,
+				relationship: data.relationship,
+				inviterUserId,
+				organizationId
+			}
+			const result = await createUserWithInvitationAction(createUserWithInvitationActionParams)
 
 			if (!result) {
 				toast.error("Erro no cadastro", {

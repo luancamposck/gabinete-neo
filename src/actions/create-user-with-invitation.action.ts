@@ -1,6 +1,5 @@
 "use server"
 
-import { verifyInviteToken } from "@/lib/utils/token-utils"
 import { createUserWithInvitationSchemaServer } from "@/lib/validations/use-cases/create-user-with-invitation-schemas/create-user-with-invitation-schemas.server"
 import type { OperationResponse } from "@/types/operation-response"
 import { type CreateUserWithInvitationServiceParams, createUserWithInvitationService } from "@/use-cases/create-user-with-invitation.service"
@@ -18,21 +17,9 @@ export async function createUserWithInvitationAction(formData: unknown): Promise
 		}
 	}
 
-	const { user: newUserData, inviteToken, relationship } = dataParsed.data
+	const { user: newUserData, relationship, inviterUserId, organizationId } = dataParsed.data
 
-	// 2) Decodificar e validar token
-	const decoded = await verifyInviteToken(inviteToken)
-
-	if (!decoded) {
-		return {
-			success: false,
-			message: "Convite inválido ou expirado."
-		}
-	}
-
-	const { organizationId, inviterUserId } = decoded
-
-	// 3) Chamar Service para criar user e criar row de convite
+	// 2) Chamar Service para criar user e criar row de convite
 	const createUserWithInvitationServiceParams: CreateUserWithInvitationServiceParams = {
 		user: {
 			email: newUserData.email,

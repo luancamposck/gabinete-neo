@@ -12,7 +12,8 @@ export const createUserWithInvitationSchemaServer = z.object({
 	user: userBaseSchemaServer,
 	relationship: relationshipToInviterSchema,
 
-	inviteToken: z.string().min(1, "Token de convite obrigatório")
+	inviterUserId: z.string().min(1, "Id do usuário que convidou é obrigatório"),
+	organizationId: z.string().min(1, "Id da organização é obrigatório")
 })
 
 export type CreateUserWithInvitationSchemaServerData = z.infer<typeof createUserWithInvitationSchemaServer>
