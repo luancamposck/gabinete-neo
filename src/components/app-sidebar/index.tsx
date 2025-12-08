@@ -1,7 +1,7 @@
 import { BookOpen, Bot, ChevronRight, Settings2, Users } from "lucide-react"
 import Image from "next/image"
 import { redirect } from "next/navigation"
-import { getCurrentAuthSessionAction } from "@/actions/auth/get-current-auth-session.action"
+import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.action"
 import { Separator } from "@/components/ui/separator"
 import {
 	Sidebar,
@@ -157,8 +157,8 @@ const navMain = [
 		isActive: true,
 		items: [
 			{
-				title: "Meus convites",
-				url: "/dashboard/network/my-network"
+				title: "Convites da constelação",
+				url: "/dashboard/network/my-invites"
 			},
 			{
 				title: "Minha constelação",
@@ -238,14 +238,14 @@ const navMain = [
 ]
 
 const AppSidebar = async () => {
-	const getCurrentAuthSessionActionRes = await getCurrentAuthSessionAction()
+	const getCurrentAuthUserActionRes = await getCurrentAuthUserAction()
 
-	if (getCurrentAuthSessionActionRes.success === false) {
-		console.error(getCurrentAuthSessionActionRes.message)
+	if (getCurrentAuthUserActionRes.success === false) {
+		console.error(getCurrentAuthUserActionRes.message)
 		redirect("/")
 	}
 
-	const userId = getCurrentAuthSessionActionRes.data.session.user.id
+	const userId = getCurrentAuthUserActionRes.data.user.id
 
 	const getPublicUserByUserIdServiceRes = await getPublicUserByUserIdService({ userId })
 	if (getPublicUserByUserIdServiceRes.success === false) {

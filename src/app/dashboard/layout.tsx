@@ -1,7 +1,7 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-import { getCurrentAuthSessionAction } from "@/actions/auth/get-current-auth-session.action"
+import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.action"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Separator } from "@/components/ui/separator"
@@ -13,14 +13,14 @@ const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNod
 	const cookieStore = await cookies()
 	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
-	const sessionResult = await getCurrentAuthSessionAction()
+	const getCurrentAuthUserActionRes = await getCurrentAuthUserAction()
 
 	// Redireciona se não houver usuário logado
-	if (sessionResult.success === false) {
+	if (getCurrentAuthUserActionRes.success === false) {
 		redirect("/") // ou sua página de login
 	}
 
-	const userId = sessionResult.data.session.user.id
+	const userId = getCurrentAuthUserActionRes.data.user.id
 
 	const { data: hasMembership, error: membershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId })
 
