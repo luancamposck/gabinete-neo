@@ -140,14 +140,6 @@ export const organizationInvitesColumns: ColumnDef<OrganizationInviteWithRequest
 		}
 	},
 	{
-		accessorKey: "expires_at",
-		header: "Expira em",
-		cell: ({ row }) => {
-			const expiresAt = row.getValue("expires_at") as string | null
-			return <span className="text-xs text-muted-foreground">{expiresAt ? formatDate(expiresAt) : "Sem expiração"}</span>
-		}
-	},
-	{
 		id: "actions",
 		header: "Ações",
 		cell: ({ row }) => {

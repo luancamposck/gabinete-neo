@@ -78,8 +78,7 @@ export const OrganizationInvitesTable = ({ data }: OrganizationInvitesTableProps
 		role: "Permissão",
 		status: "Status",
 		origin: "Origem",
-		created_at: "Criado em",
-		expires_at: "Expira em"
+		created_at: "Criado em"
 	}
 
 	const toolbar = (
