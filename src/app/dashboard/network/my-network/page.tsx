@@ -34,7 +34,7 @@ const MyNetworkPage = async () => {
 					<p className="text-sm text-muted-foreground">Confira aqui toda a sua rede de contatos, crie links de convites e aprove usuários interessados.</p>
 				</header>
 
-				<p className="mt-6 text-sm text-destructive">Algo deu errado ao carregar sua organização. Tente novamente em alguns instantes.</p>
+				<p className="mt-6 text-sm text-destructive">Algo deu errado ao carregar sua constelação. Tente novamente em alguns instantes.</p>
 			</div>
 		)
 	}
@@ -46,7 +46,7 @@ const MyNetworkPage = async () => {
 
 	const organizationId = membership.organization_id
 
-	// 3) Buscar organização para pegar o slug
+	// 3) Buscar organization para pegar o slug
 	const { data: organization, error: organizationError } = await supabase.from("organizations").select("id, slug, name").eq("id", organizationId).maybeSingle()
 
 	if (organizationError) {
@@ -54,12 +54,12 @@ const MyNetworkPage = async () => {
 	}
 
 	if (!organization?.slug) {
-		console.error("[MyNetworkPage] organização sem slug ou não encontrada.")
+		console.error("[MyNetworkPage] constelação sem slug ou não encontrada.")
 	}
 
 	const organizationSlug = organization?.slug ?? ""
 
-	// 4) Busca todos os invites dessa organização via service
+	// 4) Busca todos os invites dessa organization via service
 	const invitesRes = await listOrganizationInvitesService({ organizationId })
 
 	if (!invitesRes.success || !invitesRes.data) {
@@ -70,9 +70,9 @@ const MyNetworkPage = async () => {
 					<p className="text-sm text-muted-foreground">Confira aqui toda a sua rede de contatos, crie links de convites e aprove usuários interessados.</p>
 				</header>
 
-				{organizationSlug && <InviteLinkBox organizationId={organizationId} organizationSlug={organizationSlug} className="max-w-xl" />}
+				{organizationSlug && <InviteLinkBox className="max-w-xl" />}
 
-				<p className="text-sm text-destructive">{invitesRes.message ?? "Não foi possível carregar os convites desta organização."}</p>
+				<p className="text-sm text-destructive">{invitesRes.message ?? "Não foi possível carregar os convites desta constelação."}</p>
 			</div>
 		)
 	}
@@ -83,17 +83,13 @@ const MyNetworkPage = async () => {
 		<div className="p-4 space-y-6">
 			<header className="space-y-1">
 				<h1 className="text-2xl font-semibold tracking-tight">Meus convites</h1>
-				<p className="text-sm text-muted-foreground">Confira aqui todos os convites a sua organização.</p>
+				<p className="text-sm text-muted-foreground">Confira aqui todos os convites a sua constelação.</p>
 			</header>
 
-			{organizationSlug && (
-				<section>
-					<InviteLinkBox organizationId={organizationId} organizationSlug={organizationSlug} className="max-w-xl" />
-				</section>
-			)}
+			<InviteLinkBox className="max-w-xl" />
 
 			<section className="space-y-2">
-				<h2 className="text-sm font-medium text-muted-foreground">Convites da organização</h2>
+				<h2 className="text-sm font-medium text-muted-foreground">Convites da constelação</h2>
 				<OrganizationInvitesTable data={invites} />
 			</section>
 		</div>
