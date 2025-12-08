@@ -1,3 +1,5 @@
+"use server"
+
 import type { Session } from "@supabase/auth-js"
 
 import { getCurrentAuthSessionService } from "@/services/auth/get-current-auth-session.service"
