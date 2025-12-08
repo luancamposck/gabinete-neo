@@ -3,16 +3,14 @@
 
 import { useState } from "react"
 import { toast } from "sonner"
-import { generateInviteLinkAction } from "@/actions/generate-invite-link.action"
+import { generateInviteLinkUseCaseAction } from "@/actions/use-cases/generate-invite-link.use.case.action"
 import { cn } from "@/lib/utils"
 
 interface InviteLinkBoxProps {
-	organizationId: string
-	organizationSlug: string
 	className?: string
 }
 
-export function InviteLinkBox({ organizationId, organizationSlug, className }: InviteLinkBoxProps) {
+export const InviteLinkBox = ({ className }: InviteLinkBoxProps) => {
 	const [inviteUrl, setInviteUrl] = useState<string>("")
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -23,16 +21,16 @@ export function InviteLinkBox({ organizationId, organizationSlug, className }: I
 			let url = inviteUrl
 
 			if (!url) {
-				const res = await generateInviteLinkAction({ organizationId, organizationSlug })
+				const res = await generateInviteLinkUseCaseAction()
 
-				if (!res || !res.success || !res.data?.inviteUrl) {
+				if (!res || !res.success || !res.data.inviteLink) {
 					toast.error("Não foi possível gerar o link de convite.", {
 						description: res?.message ?? "Tente novamente em alguns instantes."
 					})
 					return
 				}
 
-				url = res.data.inviteUrl
+				url = res.data.inviteLink
 				setInviteUrl(url)
 			}
 
