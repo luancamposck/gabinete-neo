@@ -1,11 +1,12 @@
 // src/app/[organizationSlug]/[userId]/page.tsx
-import Image from "next/image"
 
+import Image from "next/image"
 import { findOrganizationBySlugAction } from "@/actions/organization"
 import { findOrganizationMembershipByUserAndOrganizationAction } from "@/actions/organization-membership"
 import { findPublicUserByUserIdAction } from "@/actions/public-users"
 import { CreateUserWithInvitationForm } from "@/components/forms/organization-invite/create-user-with-Invitation-form"
 import { Card } from "@/components/ui/card"
+import { InviteError } from "./invite-error"
 
 interface InvitePageProps {
 	params: {
@@ -19,63 +20,50 @@ export default async function InvitePage({ params }: InvitePageProps) {
 
 	// 1) Checar se o slug é real
 	const findOrganizationBySlugActionRes = await findOrganizationBySlugAction({ organizationSlug })
+
 	if (findOrganizationBySlugActionRes.success === false) {
-		return (
-			<div>
-				<h1>Ocorreu um erro ao tentar achar a constelação.</h1>
-			</div>
-		)
+		return <InviteError title="Ocorreu um erro ao carregar a constelação" description="Não foi possível buscar as informações da constelação. Tente novamente mais tarde ou peça um novo link ao responsável." />
 	}
 
 	// 1.5) Verificar se a org existe
 	const organizationData = findOrganizationBySlugActionRes.data.organization
+
 	if (!organizationData) {
-		return (
-			<div>
-				<h1>A constelação com o slug {organizationSlug} não existe.</h1>
-			</div>
-		)
+		return <InviteError title="Constelação não encontrada" description={`A constelação com o identificador “${organizationSlug}” não existe ou foi removida.`} />
 	}
 
 	// 2) Verificar se o userId é real
 	const findPublicUserByUserIdActionRes = await findPublicUserByUserIdAction({ userId })
+
 	if (findPublicUserByUserIdActionRes.success === false) {
-		return (
-			<div>
-				<h1>Não foi possível buscar o usuário convidado</h1>
-			</div>
-		)
+		return <InviteError title="Não foi possível carregar o convite" description="O usuário convidado não foi encontrado. O link pode estar incorreto, expirado ou o convite foi cancelado." />
 	}
 
 	// 2.5) Verificar se o user existe
 	const userData = findPublicUserByUserIdActionRes.data.user
 	if (!userData) {
-		return (
-			<div>
-				<h1>O usuário que te convidou não existe.</h1>
-			</div>
-		)
+		return <InviteError title="Usuário convidante não encontrado" description="O usuário que te convidou não existe ou foi removido da plataforma." />
 	}
 
 	// 3) Verificar se o userId pertence a organization
-	const findOrganizationMembershipByUserAndOrganizationActionRes = await findOrganizationMembershipByUserAndOrganizationAction({ userId: userData.id, organizationId: organizationData.id })
+	const findOrganizationMembershipByUserAndOrganizationActionRes = await findOrganizationMembershipByUserAndOrganizationAction({
+		userId: userData.id,
+		organizationId: organizationData.id
+	})
+
 	if (findOrganizationMembershipByUserAndOrganizationActionRes.success === false) {
-		return (
-			<div>
-				<h1>Não foi possível buscar o usuário convidado</h1>
-			</div>
-		)
+		return <InviteError title="Não foi possível buscar o usuário convidado" description="Ocorreu um erro ao verificar o vínculo do usuário com a constelação. Tente novamente mais tarde." />
 	}
 
 	// 3.5) Verificar se o membership existe
 	const organizationMembershipData = findOrganizationMembershipByUserAndOrganizationActionRes.data.organizationMembership
+
 	if (!organizationMembershipData) {
 		return (
-			<div>
-				<h1>
-					O usuário {userData.name} não pertence a constelação {organizationData.name}
-				</h1>
-			</div>
+			<InviteError
+				title="Convite inválido para esta constelação"
+				description={`O usuário ${userData.name} não pertence à constelação ${organizationData.name}. Verifique se o link está correto ou peça um novo convite.`}
+			/>
 		)
 	}
 
@@ -83,9 +71,10 @@ export default async function InvitePage({ params }: InvitePageProps) {
 	const inviterUserRole = organizationMembershipData.role
 	if (inviterUserRole !== "OWNER" && inviterUserRole !== "ADMIN") {
 		return (
-			<div>
-				<h1>O usuário que te convidou não tem permissão para convidar.</h1>
-			</div>
+			<InviteError
+				title="Usuário sem permissão para convidar"
+				description="A pessoa que te enviou este link não possui permissão para convidar novos membros nesta constelação. Peça um convite ao responsável ou administrador."
+			/>
 		)
 	}
 
