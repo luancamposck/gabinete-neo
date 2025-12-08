@@ -45,8 +45,9 @@ async function updateSession(request: NextRequest) {
 
 	// rota pública dinâmica: /[organizationSlug]/invite
 	const segments = pathname.split("/").filter(Boolean)
+	// rota pública dinâmica: /[organizationSlug]/invite/[userId]
 	const isInvitePublicPath =
-		segments.length === 2 && // ex.: ["minha-org", "invite"]
+		segments.length === 3 && // ["org-slug", "invite", "user-id"]
 		segments[1] === "invite"
 
 	const isPublic = isInvitePublicPath || publicPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))
