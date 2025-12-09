@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.action"
-import { getOrganizationMembershipByUserIdService } from "@/services/organization-membership/get-organization-membership-by-user-id.service"
+import { getOrganizationMembershipByUserIdAction } from "@/actions/organization-membership"
 
 import { getOrganizationMembersForTable } from "./sub-actions/get-organization-members-for-table.action"
 import { OrganizationMembersTable } from "./sub-components/data-table/organization-members-table"
@@ -17,9 +17,9 @@ const MyNetworkPage = async () => {
 	const user = getCurrentAuthUserActionRes.data.user
 
 	// 2) Pegar membership do user
-	const getOrganizationMembershipByUserIdServiceRes = await getOrganizationMembershipByUserIdService({ userId: user.id })
+	const getOrganizationMembershipByUserIdActionRes = await getOrganizationMembershipByUserIdAction({ userId: user.id })
 
-	if (getOrganizationMembershipByUserIdServiceRes.success === false) {
+	if (getOrganizationMembershipByUserIdActionRes.success === false) {
 		return (
 			<div>
 				<h1>Algo deu errado</h1>
@@ -27,7 +27,7 @@ const MyNetworkPage = async () => {
 		)
 	}
 
-	const membership = getOrganizationMembershipByUserIdServiceRes.data.organizationMemberships
+	const membership = getOrganizationMembershipByUserIdActionRes.data.organizationMemberships
 	const organizationId = membership.organization_id
 
 	// 3) Pegar membors da organization
