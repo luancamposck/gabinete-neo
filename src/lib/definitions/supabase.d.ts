@@ -185,6 +185,109 @@ export type Database = {
           },
         ]
       }
+      organization_task_assignments: {
+        Row: {
+          created_at: string
+          organization_id: string
+          role: string
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          organization_id: string
+          role: string
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          organization_id?: string
+          role?: string
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_task_assignments_membership_fk"
+            columns: ["organization_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "organization_memberships"
+            referencedColumns: ["organization_id", "user_id"]
+          },
+          {
+            foreignKeyName: "organization_task_assignments_task_fk"
+            columns: ["task_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_tasks"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      organization_tasks: {
+        Row: {
+          created_at: string
+          created_by_user_id: string
+          description: string | null
+          due_at: string | null
+          id: string
+          organization_id: string
+          status: Database["public"]["Enums"]["organization_task_status"]
+          title: string
+          updated_at: string
+          updated_by_user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          organization_id: string
+          status?: Database["public"]["Enums"]["organization_task_status"]
+          title: string
+          updated_at?: string
+          updated_by_user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          organization_id?: string
+          status?: Database["public"]["Enums"]["organization_task_status"]
+          title?: string
+          updated_at?: string
+          updated_by_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_tasks_created_by_user_id_fkey"
+            columns: ["created_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_tasks_updated_by_user_id_fkey"
+            columns: ["updated_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           created_at: string
@@ -305,7 +408,11 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      organization_task_status:
+        | "NOT_STARTED"
+        | "IN_PROGRESS"
+        | "CANCELLED"
+        | "COMPLETED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -432,6 +539,13 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      organization_task_status: [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "CANCELLED",
+        "COMPLETED",
+      ],
+    },
   },
 } as const
