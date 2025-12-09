@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeft, ArrowRight, Save, UserRoundPen } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { type FocusEvent, type ReactNode, useEffect, useMemo, useState, useTransition } from "react"
 import { type FieldPath, useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -38,6 +39,7 @@ export const EditMyAccountDialog = ({ userId, defaultValues, trigger }: EditMyAc
 	const [step, setStep] = useState(1)
 	const [isFetchingCep, setIsFetchingCep] = useState(false)
 	const [isPending, startTransition] = useTransition()
+	const router = useRouter()
 
 	const formattedDefaultValues = useMemo(() => formatDefaultValues(defaultValues), [defaultValues])
 
@@ -137,6 +139,7 @@ export const EditMyAccountDialog = ({ userId, defaultValues, trigger }: EditMyAc
 				reset(data)
 				setStep(1)
 				setOpen(false)
+				router.refresh()
 			} else {
 				toast.error("Erro ao atualizar dados", {
 					description: result.message ?? "Verifique os dados e tente novamente."
@@ -149,14 +152,14 @@ export const EditMyAccountDialog = ({ userId, defaultValues, trigger }: EditMyAc
 		<Dialog open={open} onOpenChange={handleDialogOpenChange}>
 			<DialogTrigger asChild>
 				{trigger ?? (
-					<Button variant="outline" size="sm" className="gap-2">
+					<Button variant="outline" size="lg" className="gap-2 w-full md:w-auto">
 						<UserRoundPen className="h-4 w-4" />
 						Editar dados
 					</Button>
 				)}
 			</DialogTrigger>
 
-			<DialogContent className="max-w-2xl">
+			<DialogContent className="md:max-w-2xl max-w-[90vw] max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>Atualizar meus dados</DialogTitle>
 					<DialogDescription>Revise e confirme as informacoes antes de salvar.</DialogDescription>

@@ -39,20 +39,22 @@ export const OrganizationInvitesTableToolbar = <TData,>({ table }: OrganizationI
 	return (
 		<div className="flex items-center justify-between gap-2 flex-wrap">
 			<div className="flex flex-1 flex-wrap items-center gap-2">
-				<Input placeholder="Buscar por ID ou usuário convidado..." value={globalFilter} onChange={(event) => table.setGlobalFilter(event.target.value)} className="h-8 w-[180px] lg:w-[260px]" />
+				<Input placeholder="Buscar por ID ou usuário convidado..." value={globalFilter} onChange={(event) => table.setGlobalFilter(event.target.value)} className="h-8 w-full md:w-[180px] lg:w-[260px]" />
 
-				{table.getColumn("status") && <DataTableFacetedFilter column={table.getColumn("status")} title="Status" options={statuses} />}
+				<div className="grid grid-cols-1 gap-3 xs:grid-cols-2 mx-auto sm:mx-0 sm:grid-cols-4 md:contents">
+					{table.getColumn("status") && <DataTableFacetedFilter column={table.getColumn("status")} title="Status" options={statuses} />}
 
-				{table.getColumn("role") && <DataTableFacetedFilter column={table.getColumn("role")} title="Permissão" options={roles} />}
+					{table.getColumn("role") && <DataTableFacetedFilter column={table.getColumn("role")} title="Permissão" options={roles} />}
 
-				{table.getColumn("origin") && <DataTableFacetedFilter column={table.getColumn("origin")} title="Origem" options={origins} />}
+					{table.getColumn("origin") && <DataTableFacetedFilter column={table.getColumn("origin")} title="Origem" options={origins} />}
 
-				{isFiltered && (
-					<Button variant="ghost" onClick={() => table.resetColumnFilters()} className="h-8 px-2 lg:px-3">
-						Limpar filtros
-						<X className="ml-2 h-4 w-4" />
-					</Button>
-				)}
+					{isFiltered && (
+						<Button variant="ghost" onClick={() => table.resetColumnFilters()} className="h-8 px-2 lg:px-3">
+							Limpar filtros
+							<X className="ml-2 h-4 w-4" />
+						</Button>
+					)}
+				</div>
 			</div>
 		</div>
 	)

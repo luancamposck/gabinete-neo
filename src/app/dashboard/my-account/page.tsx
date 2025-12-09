@@ -53,9 +53,12 @@ const MyAccountPage = async () => {
 
 	return (
 		<div className="p-4 space-y-6">
-			<header className="space-y-1">
-				<h1 className="text-2xl font-semibold tracking-tight">Minha conta</h1>
-				<p className="text-sm text-muted-foreground">Todos os dados da sua conta reunidos em um só lugar.</p>
+			<header className="flex flex-col md:flex-row gap-3 items-center md:justify-between">
+				<div className="space-y-1 flex-col">
+					<h1 className="text-2xl font-semibold tracking-tight">Minha conta</h1>
+					<p className="text-sm text-muted-foreground">Todos os dados da sua conta reunidos em um só lugar.</p>
+				</div>
+
 				<EditMyAccountDialog userId={userId} defaultValues={defaultValuesForm} />
 			</header>
 
@@ -64,13 +67,13 @@ const MyAccountPage = async () => {
 				<section className="space-y-4">
 					{/* Card: dados pessoais */}
 					<div className="rounded-lg border bg-card p-4 shadow-sm">
-						<div className="flex items-center gap-4">
+						<div className="flex flex-col md:flex-row max-md:justify-center items-center gap-4">
 							<div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 								<User2 className="h-6 w-6 text-primary" />
 							</div>
 
 							<div className="space-y-1">
-								<div className="flex items-center gap-2">
+								<div className="flex flex-col md:flex-row max-md:items-center gap-2">
 									<span className="text-base font-semibold leading-tight">{userWithProfile.name ?? "Nome não cadastrado"}</span>
 									{userWithProfile.created_at && (
 										<span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
@@ -143,11 +146,12 @@ const MyAccountPage = async () => {
 
 					{/* Card: constelação / organização atual */}
 					<div className="rounded-lg border bg-card p-4 shadow-sm">
-						<div className="flex items-center justify-between gap-2">
-							<div className="flex items-center gap-2">
+						<div className="flex flex-col md:flex-row justify-center items-center md:justify-between gap-2">
+							<div className="flex flex-col md:flex-row items-center gap-2">
 								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
 									<Building2 className="h-4 w-4 text-primary" />
 								</div>
+
 								<div>
 									<div className="text-sm font-semibold">Constelação</div>
 									<div className="text-xs text-muted-foreground">Informações sobre a organização da qual você faz parte.</div>
@@ -207,8 +211,8 @@ const MyAccountPage = async () => {
 				{/* Coluna direita – endereço */}
 				<section className="space-y-4">
 					<div className="rounded-lg border bg-card p-4 shadow-sm">
-						<div className="flex items-center justify-between gap-2">
-							<div className="flex items-center gap-2">
+						<div className="flex flex-col md:flex-row justify-center items-center md:justify-between gap-2">
+							<div className="flex flex-col md:flex-row items-center gap-2">
 								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
 									<MapPin className="h-4 w-4 text-primary" />
 								</div>

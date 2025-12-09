@@ -58,7 +58,7 @@ export const InviteLinkBox = ({ className }: InviteLinkBoxProps) => {
 			className={cn("flex cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm transition hover:bg-muted", isLoading && "opacity-70 cursor-wait", className)}
 		>
 			<div className="flex flex-col">
-				<span className="truncate">{mainText}</span>
+				<span>{mainText}</span>
 			</div>
 			<span className="ml-3 text-xs text-muted-foreground shrink-0">{inviteUrl ? "Copiar link" : "Gerar link"}</span>
 		</button>
