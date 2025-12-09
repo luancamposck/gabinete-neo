@@ -162,7 +162,7 @@ const navMain = [
 			},
 			{
 				title: "Minha constelação",
-				url: "#"
+				url: "/dashboard/network/my-network"
 			},
 			{
 				title: "Mapa espacial ",
