@@ -10,11 +10,12 @@ import { formatPhone } from "@/lib/utils/formatters"
 import type { OrganizationMemberDTO } from "@/types/dto/organization-member.dto"
 
 import { OrganizationMemberAddressPopover } from "../organization-member-address-popover.sub-component"
+import { OrganizationMemberActions } from "./organization-member-actions"
 
 function formatDate(value: string | null | undefined) {
-	if (!value) return "—"
+	if (!value) return "-"
 	const date = new Date(value)
-	if (Number.isNaN(date.getTime())) return "—"
+	if (Number.isNaN(date.getTime())) return "-"
 
 	return new Intl.DateTimeFormat("pt-BR", {
 		day: "2-digit",
@@ -69,7 +70,7 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 			const city = address?.city
 			const state = address?.state
 
-			const locationLabel = city || state ? `${city ?? ""}${city && state ? " / " : ""}${state ?? ""}` : "—"
+			const locationLabel = city || state ? `${city ?? ""}${city && state ? " / " : ""}${state ?? ""}` : "-"
 
 			return (
 				<div className="flex items-center gap-2">
@@ -79,6 +80,18 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 				</div>
 			)
 		}
+	},
+	{
+		accessorKey: "state",
+		header: "Estado",
+		accessorFn: (row) => row.user.address?.state ?? "",
+		cell: ({ row }) => {
+			const state = row.original.user.address?.state
+			return <span className="text-sm text-muted-foreground">{state || "-"}</span>
+		},
+		enableHiding: true,
+		enableSorting: false,
+		filterFn: (row, id, value) => (value as string[]).includes((row.getValue(id) as string) ?? "")
 	},
 	{
 		accessorKey: "role",
@@ -107,7 +120,8 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 					<span className="text-xs text-muted-foreground">{isActive ? "Ativo" : "Inativo"}</span>
 				</div>
 			)
-		}
+		},
+		filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id)))
 	},
 	{
 		accessorKey: "createdAt",
@@ -121,5 +135,12 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 			const createdAt = row.original.createdAt
 			return <span className="text-xs text-muted-foreground">{formatDate(createdAt)}</span>
 		}
+	},
+	{
+		id: "actions",
+		header: "",
+		cell: ({ row }) => <OrganizationMemberActions member={row.original} />,
+		enableSorting: false,
+		enableHiding: false
 	}
 ]
