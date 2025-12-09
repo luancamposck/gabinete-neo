@@ -1,8 +1,9 @@
 import "server-only"
 
 import { createAuthUserAdminRepo, deleteAuthUserAdminRepo } from "@/repositories/auth-users/auth-users.admin.repo"
-import { insertPublicUserAdminRepo, type PublicUserInsert } from "@/repositories/public-users/public-users.admin.repo"
+import { insertPublicUserAdminRepo } from "@/repositories/public-users/public-users.admin.repo"
 import { insertUserProfileAdminRepo, type UserProfileInsert } from "@/repositories/user-profiles/user-profiles.admin.repo"
+import type { PublicUserInsert } from "@/types/domain/users/user-base.types"
 import type { OperationResponse } from "@/types/operation-response"
 
 export type CreateUserServiceParams = Omit<UserProfileInsert, "user_id"> & {

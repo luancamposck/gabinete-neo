@@ -1,6 +1,7 @@
 import "server-only"
 
-import { insertOrganizationMenbershipsAdminRepo, type OrganizationMenbershipsInsert } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { insertOrganizationMenbershipsAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import type { OrganizationMenbershipsInsert } from "@/types/domain/organization/organization-memberships-base.types"
 import type { OperationResponse } from "@/types/operation-response"
 
 export interface CreateOrganizationMenbershipServiceParams extends OrganizationMenbershipsInsert {}

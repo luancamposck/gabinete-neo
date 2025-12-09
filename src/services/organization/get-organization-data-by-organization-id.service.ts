@@ -1,4 +1,5 @@
-import { getOrganizationByOrganizationIdAdminRepo, type OrganizationsRow } from "@/repositories/organizations/organizations.admin.repo"
+import { getOrganizationByOrganizationIdAdminRepo } from "@/repositories/organizations/organizations.admin.repo"
+import type { OrganizationsRow } from "@/types/domain/organization/organization-base.types"
 import type { OperationResponse } from "@/types/operation-response"
 
 export default async function getOrganizationDataByOrganizationIdService({ organizationId }: { organizationId: string }): Promise<OperationResponse<{ organization: OrganizationsRow }>> {
