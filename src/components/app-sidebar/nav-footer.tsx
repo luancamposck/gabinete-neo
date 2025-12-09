@@ -67,7 +67,7 @@ export const NavFooter = ({
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem asChild disabled>
+							<DropdownMenuItem asChild>
 								<Link href="/dashboard/my-account">
 									<BadgeCheck />
 									Minha conta
