@@ -10,3 +10,30 @@ export async function findOrganizationByIdRepo(organizationId: string): Promise<
 
 	return supabase.from("organizations").select("*").eq("id", organizationId).single()
 }
+
+// ---------------------- Casos de uso para tables ----------------------
+export async function findOrganizationMembershipWithOrganizationByUserIdRepo({ userId }: { userId: string }) {
+	const supabase = await createClient()
+
+	return supabase
+		.from("organization_memberships")
+		.select(
+			`
+      organization_id,
+      user_id,
+      role,
+      is_active,
+      created_at,
+      invited_by_user_id,
+      organization:organizations (
+        id,
+        name,
+        slug,
+        created_at
+      )
+    `
+		)
+		.eq("user_id", userId)
+		.eq("is_active", true)
+		.maybeSingle()
+}
