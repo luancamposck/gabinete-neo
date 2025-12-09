@@ -4,6 +4,7 @@ import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.a
 import { findOrganizationMembershipWithOrganizationByUserIdAction } from "@/actions/organization"
 import { getUserWithProfileByUserIdAction } from "@/actions/public-users"
 import cn from "@/lib/utils/cn"
+import { formatCep, formatPhone } from "@/lib/utils/formatters"
 import type { EditUserWithProfileBaseSchemaClientData } from "@/lib/validations/use-cases/edit-user-with-profile-schemas/edit-user-with-profile-schemas.client"
 import { EditMyAccountDialog } from "./sub-components/edit-my-account-dialog"
 
@@ -94,7 +95,7 @@ const MyAccountPage = async () => {
 								<div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Telefone</div>
 								<div className="inline-flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1.5">
 									<Phone className="h-3.5 w-3.5 text-muted-foreground" />
-									<span className="text-xs text-muted-foreground">{userWithProfile.profile?.phone ?? "Não informado"}</span>
+									<span className="text-xs text-muted-foreground">{formatPhone(userWithProfile.profile.phone)}</span>
 								</div>
 							</div>
 
@@ -226,7 +227,7 @@ const MyAccountPage = async () => {
 						<div className="mt-4 grid gap-3 text-sm">
 							<div className="space-y-1">
 								<div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">CEP</div>
-								<div className="rounded-md bg-muted/60 px-2 py-1.5 text-xs text-muted-foreground">{userWithProfile.profile?.cep ?? "Não informado"}</div>
+								<div className="rounded-md bg-muted/60 px-2 py-1.5 text-xs text-muted-foreground">{formatCep(userWithProfile.profile.cep)}</div>
 							</div>
 
 							<div className="space-y-1">
