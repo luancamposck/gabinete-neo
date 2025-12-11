@@ -10,6 +10,8 @@ import type { OrganizationTaskDTO } from "@/types/dto/organization-task.dto"
 
 import { OrganizationTaskActions } from "./organization-task-actions"
 
+export const getTaskCreatorLabel = (task: OrganizationTaskDTO) => task.createdByName ?? task.createdByEmail ?? "Usuário desconhecido"
+
 function formatDateTime(value: string | null | undefined) {
 	if (!value) return "-"
 	const date = new Date(value)
@@ -108,19 +110,21 @@ export const organizationTasksColumns: ColumnDef<OrganizationTaskDTO>[] = [
 		accessorKey: "createdByName",
 		header: "Criada por",
 		cell: ({ row }) => {
-			const name = row.original.createdByName
+			const creatorLabel = getTaskCreatorLabel(row.original)
 			const email = row.original.createdByEmail
+			const shouldShowEmail = email && email !== creatorLabel
 
 			return (
 				<div className="flex items-center gap-2">
 					<UserIcon className="h-3.5 w-3.5 text-muted-foreground" />
 					<div className="flex flex-col">
-						<span className="text-sm font-medium">{name || "Usuário desconhecido"}</span>
-						{email && <span className="text-xs text-muted-foreground">{email}</span>}
+						<span className="text-sm font-medium">{creatorLabel}</span>
+						{shouldShowEmail && <span className="text-xs text-muted-foreground">{email}</span>}
 					</div>
 				</div>
 			)
-		}
+		},
+		filterFn: (row, _id, value) => (value as string[]).includes(getTaskCreatorLabel(row.original))
 	},
 	{
 		id: "actions",
@@ -130,3 +134,4 @@ export const organizationTasksColumns: ColumnDef<OrganizationTaskDTO>[] = [
 		enableHiding: false
 	}
 ]
+

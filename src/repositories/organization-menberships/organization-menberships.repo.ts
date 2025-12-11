@@ -46,3 +46,27 @@ export async function listOrganizationMembersWithProfileByOrganizationIdRepo({ o
 		.eq("is_active", true)
 		.order("created_at", { ascending: true })
 }
+
+// ---------------------- Casos de uso para adicionar users em tasks ----------------------
+export async function listOrganizationMembersByOrganizationIdRepo({ organizationId }: { organizationId: string }) {
+	const supabase = await createClient()
+
+	return supabase
+		.from("organization_memberships")
+		.select(
+			`
+      organization_id,
+      user_id,
+      role,
+      is_active,
+      created_at,
+      user:users!organization_memberships_user_id_fkey (
+        id,
+        name,
+        email
+      )
+    `
+		)
+		.eq("organization_id", organizationId)
+		.order("created_at", { ascending: true })
+}

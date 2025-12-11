@@ -1,12 +1,16 @@
 "use client"
 
-import { CalendarDays, Clock, Eye, FileText, Mail, User as UserIcon } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { CalendarDays, Clock, Eye, FileText, Mail, User as UserIcon, UserPlus2 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import type { OrganizationTaskDTO } from "@/types/dto/organization-task.dto"
+
+import { type AssignableUserForTaskDTO, getAssignableUsersForTaskAction } from "../../sub-actions/get-assignable-users-for-task.action"
+import { AssignUsersToTaskDialog } from "../assign-users-to-task-dialog"
 
 const statusLabelMap: Record<string, string> = {
 	NOT_STARTED: "Não iniciado",
@@ -34,6 +38,64 @@ function formatDateTime(value: string | null | undefined) {
 		hour: "2-digit",
 		minute: "2-digit"
 	}).format(date)
+}
+
+// -----------------------------------------------------------------------------
+// Seção responsável por listar os participantes da task de forma reativa
+// -----------------------------------------------------------------------------
+function TaskParticipantsSection({ taskId }: { taskId: string }) {
+	const { data, isLoading, isError } = useQuery<{ members: AssignableUserForTaskDTO[]; assignedUserIds: string[] }, Error>({
+		queryKey: ["assignable-users-for-task", taskId],
+		queryFn: async () => {
+			const res = await getAssignableUsersForTaskAction({ taskId })
+
+			if (!res || !res.success || !res.data) {
+				throw new Error(res?.message ?? "Erro ao carregar participantes da tarefa.")
+			}
+
+			return res.data
+		}
+	})
+
+	if (isLoading) {
+		return <p className="text-xs text-muted-foreground">Carregando participantes...</p>
+	}
+
+	if (isError || !data) {
+		return <p className="text-xs text-muted-foreground">Não foi possível carregar os participantes.</p>
+	}
+
+	const { members, assignedUserIds } = data
+	const assignedSet = new Set(assignedUserIds)
+
+	// mostra só quem está atribuído à task
+	const assignedMembers = members.filter((member) => assignedSet.has(member.userId))
+
+	if (assignedMembers.length === 0) {
+		return <p className="text-xs text-muted-foreground">Nenhum participante atribuído a esta tarefa ainda.</p>
+	}
+
+	return (
+		<div className="space-y-2">
+			<ul className="space-y-1">
+				{assignedMembers.map((member) => (
+					<li key={member.userId} className="flex items-center justify-between gap-2">
+						<div className="flex flex-col">
+							<span className="text-sm font-medium">{member.name}</span>
+							<span className="text-[11px] text-muted-foreground">{member.email}</span>
+						</div>
+						<Badge variant="outline" className="text-[10px]">
+							{member.role}
+						</Badge>
+					</li>
+				))}
+			</ul>
+
+			<p className="text-[11px] text-muted-foreground">
+				Total de participantes: <span className="font-semibold">{assignedMembers.length}</span>
+			</p>
+		</div>
+	)
 }
 
 interface OrganizationTaskActionsProps {
@@ -124,6 +186,28 @@ export const OrganizationTaskActions = ({ task }: OrganizationTaskActionsProps) 
 							<span>Descrição</span>
 						</div>
 						<p className="mt-2 whitespace-pre-wrap text-sm text-foreground">{task.description?.trim() || "Nenhuma descrição foi adicionada a esta tarefa."}</p>
+					</div>
+
+					{/* Participantes / Atribuições */}
+					<div className="rounded-lg border bg-card p-3 shadow-sm space-y-3">
+						<div className="flex items-center justify-between gap-2">
+							<div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+								<UserPlus2 className="h-3.5 w-3.5" />
+								<span>Participantes</span>
+							</div>
+
+							<AssignUsersToTaskDialog
+								taskId={task.id}
+								trigger={
+									<Button variant="outline" size="sm" className="gap-1">
+										<UserPlus2 className="h-3 w-3" />
+										Atribuir
+									</Button>
+								}
+							/>
+						</div>
+
+						<TaskParticipantsSection taskId={task.id} />
 					</div>
 
 					{/* Info técnica (id) */}
