@@ -1,4 +1,4 @@
-import { BookOpen, Bot, ChevronRight, Settings2, Users } from "lucide-react"
+import { ChevronRight, Users, ListTodo } from "lucide-react"
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.action"
@@ -163,75 +163,25 @@ const navMain = [
 			{
 				title: "Minha constelação",
 				url: "/dashboard/network/my-network"
-			},
-			{
-				title: "Mapa espacial ",
-				url: "#"
 			}
+			// {
+			// 	title: "Mapa espacial ",
+			// 	url: "#"
+			// }
 		]
 	},
 	{
-		title: "Models",
+		title: "Tarefas",
 		url: "#",
-		icon: Bot,
+		icon: ListTodo,
 		items: [
 			{
-				title: "Genesis",
-				url: "#"
+				title: "Nova Tarefa",
+				url: "/dashboard/task/new"
 			},
 			{
-				title: "Explorer",
-				url: "#"
-			},
-			{
-				title: "Quantum",
-				url: "#"
-			}
-		]
-	},
-	{
-		title: "Documentation",
-		url: "#",
-		icon: BookOpen,
-		items: [
-			{
-				title: "Introduction",
-				url: "#"
-			},
-			{
-				title: "Get Started",
-				url: "#"
-			},
-			{
-				title: "Tutorials",
-				url: "#"
-			},
-			{
-				title: "Changelog",
-				url: "#"
-			}
-		]
-	},
-	{
-		title: "Settings",
-		url: "#",
-		icon: Settings2,
-		items: [
-			{
-				title: "General",
-				url: "#"
-			},
-			{
-				title: "Team",
-				url: "#"
-			},
-			{
-				title: "Billing",
-				url: "#"
-			},
-			{
-				title: "Limits",
-				url: "#"
+				title: "Todas as Tarefas",
+				url: "/dashboard/task/all"
 			}
 		]
 	}
