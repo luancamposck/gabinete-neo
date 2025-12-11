@@ -10,7 +10,7 @@ export async function findOrganizationMembershipByUserRepo({ userId }: { userId:
 }
 
 // ---------------------- Casos de uso para tables ----------------------
-export async function listOrganizationMembersByOrganizationIdRepo({ organizationId }: { organizationId: string }) {
+export async function listOrganizationMembersWithProfileByOrganizationIdRepo({ organizationId }: { organizationId: string }) {
 	const supabase = await createClient()
 
 	return supabase
