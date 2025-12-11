@@ -1,7 +1,7 @@
 // src/app/dashboard/network/my-network/get-organization-members-for-table.action.ts
 "use server"
 
-import { listOrganizationMembersWithProfileByOrganizationIdService } from "@/services/organization-membership/list-organization-members-by-organization-id.service"
+import { listOrganizationMembersWithProfileByOrganizationIdService } from "@/services/organization-membership/list-organization-members-with-profile-by-organization-id.service"
 import type { OrganizationMemberWithUserProfile } from "@/types/domain/organization/organization-members-with-user-profile.types"
 import type { OrganizationMemberAddressDTO, OrganizationMemberDTO, OrganizationMemberUserDTO } from "@/types/dto/organization-member.dto"
 import type { OperationResponse } from "@/types/operation-response"
