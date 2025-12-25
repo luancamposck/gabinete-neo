@@ -46,7 +46,7 @@ const MyNetworkPage = async () => {
 		<div className="p-4 space-y-6">
 			<header className="space-y-1">
 				<h1 className="text-2xl font-semibold tracking-tight">Minha constelação</h1>
-				<p className="text-sm text-muted-foreground">Confira aqui todos os membors da sua constelação.</p>
+				<p className="text-sm text-muted-foreground">Confira aqui todos os membros da sua constelação.</p>
 			</header>
 
 			<section className="space-y-2">
