@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { Vortex } from "@/components/vortex"
 import { getPendingOrganizationInvitesByUserIdAdminRepo } from "@/repositories/organization-invites/organization-invites.admin.repo"
 import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 
@@ -47,7 +48,11 @@ const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNod
 		<SidebarProvider defaultOpen={defaultOpen}>
 			<AppSidebar />
 
-			<SidebarInset className="overflow-auto">
+			<SidebarInset className="relative overflow-auto">
+				<div className="pointer-events-none absolute inset-0 overflow-hidden md:rounded-xl">
+					<Vortex backgroundColor="transparent" className="flex size-full" rangeY={300} baseRadius={2} particleCount={50} rangeSpeed={1.5} baseHue={200} />
+				</div>
+
 				<header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height) py-2">
 					<div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
 						<SidebarTrigger className="-ml-1" />
@@ -60,7 +65,8 @@ const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNod
 						</div>
 					</div>
 				</header>
-				<div className="p-4">
+
+				<div className="p-4 relative">
 					<div className="container mx-auto flex flex-1 flex-col justify-center gap-8">{children}</div>
 				</div>
 			</SidebarInset>
