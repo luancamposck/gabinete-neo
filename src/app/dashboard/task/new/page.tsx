@@ -12,17 +12,17 @@ const guidanceCards = [
 	{
 		icon: Sparkles,
 		title: "Deixe claro o impacto",
-		description: "Apresente o por que da tarefa e como ela movimenta a constelacao."
+		description: "Apresente o por que da tarefa e como ela movimenta a constelação."
 	},
 	{
 		icon: ShieldCheck,
-		title: "Defina proximos passos",
-		description: "Inclua entregaveis e responsaveis para que ninguem fique no escuro."
+		title: "Defina próximos passos",
+		description: "Inclua entregáveis e responsáveis para que ninguém fique no escuro."
 	},
 	{
 		icon: Users2,
 		title: "Compartilhe o contexto",
-		description: "Links, notas e expectativas ajudam a equipe a comecar com seguranca."
+		description: "Links, notas e expectativas ajudam a equipe a começar com segurança."
 	}
 ]
 
