@@ -6,7 +6,7 @@ import { getOrganizationMembershipByUserIdAction } from "@/actions/organization-
 import { getTasksForTableAction } from "./sub-actions/get-tasks-for-table.action"
 import { OrganizationTasksTable } from "./sub-components/data-table/organization-tasks-table"
 
-const MyNetworkPage = async () => {
+const AllTasksPage = async () => {
 	// 1) Pegar o usuário logado
 	const getCurrentAuthUserActionRes = await getCurrentAuthUserAction()
 
@@ -58,4 +58,4 @@ const MyNetworkPage = async () => {
 	)
 }
 
-export default MyNetworkPage
+export default AllTasksPage

@@ -26,7 +26,7 @@ const guidanceCards = [
 	}
 ]
 
-export const NewOrganizationTaskPage = () => {
+const NewOrganizationTaskPage = () => {
 	return (
 		<div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900 transition-colors duration-300 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50 rounded-lg">
 			<div className="pointer-events-none absolute inset-0">
@@ -73,7 +73,7 @@ export const NewOrganizationTaskPage = () => {
 									<Clock3 className="h-6 w-6" />
 								</div>
 								<div className="space-y-1">
-									<p className="text-sm font-semibold text-slate-900 dark:text-white">Contexto rapido</p>
+									<p className="text-sm font-semibold text-slate-900 dark:text-white">Contexto rápido</p>
 									<p className="text-sm text-slate-600 dark:text-white/70">Traga o objetivo, quem precisa agir e qual o prazo desejado para evitar duvidas logo na criacao.</p>
 								</div>
 							</div>

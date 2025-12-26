@@ -1,11 +1,13 @@
-// src/app/[organizationSlug]/[userId]/page.tsx
+// src/app/[organizationSlug]/invite/[userId]/page.tsx
 
 import Image from "next/image"
+
 import { findOrganizationBySlugAction } from "@/actions/organization"
 import { findOrganizationMembershipByUserAndOrganizationAction } from "@/actions/organization-membership"
 import { findPublicUserByUserIdAction } from "@/actions/public-users"
 import { CreateUserWithInvitationForm } from "@/components/forms/organization-invite/create-user-with-Invitation-form"
 import { Card } from "@/components/ui/card"
+
 import { InviteError } from "./invite-error"
 
 interface InvitePageProps {
