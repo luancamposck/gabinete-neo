@@ -2,22 +2,23 @@
 import { signInRepo } from "@/modules/auth/server/repos/auth.repo"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
-const GENERIC_SIGN_IN_ERROR = "Nao foi possivel entrar. Tente novamente mais tarde."
-const INVALID_CREDENTIALS_ERROR = "Email ou senha invalidos."
+const GENERIC_SIGN_IN_ERROR = "Não foi possível entrar. Tente novamente mais tarde."
+const INVALID_CREDENTIALS_ERROR = "Email ou senha inválidos."
 const SIGN_IN_SUCCESS = "Login realizado com sucesso."
+const prefixLog = "[signInService]:"
 
 export async function signInService(params: { email: string; password: string }): OperationResponse<{ userId: string }> {
 	try {
 		const { data: authUserData, error: authUserError } = await signInRepo(params)
 
 		if (authUserError) {
+			console.error(`${prefixLog} ${authUserError.message}`)
 			if (authUserError.code === "invalid_credentials") {
 				return {
 					success: false,
 					message: INVALID_CREDENTIALS_ERROR
 				}
 			}
-			console.error(`[signInService]: ${authUserError.message}`)
 			return {
 				success: false,
 				message: GENERIC_SIGN_IN_ERROR
@@ -34,7 +35,7 @@ export async function signInService(params: { email: string; password: string })
 			}
 		}
 	} catch (error) {
-		console.error("[signInService] unexpected error:", error)
+		console.error(`${prefixLog} unexpected error:`, error)
 		return {
 			success: false,
 			message: GENERIC_SIGN_IN_ERROR

@@ -1,4 +1,5 @@
-// @/modules/auth/shared/validation/sign-in.schema.ts
+// @/modules/auth/shared/validations/sign-in.schema.ts
+
 import { z } from "zod"
 
 export const signInSchema = z.object({

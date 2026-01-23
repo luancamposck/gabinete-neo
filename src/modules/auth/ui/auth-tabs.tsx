@@ -1,3 +1,4 @@
+// @/modules/auth/ui/auth-tabs.tsx
 "use client"
 
 import Image from "next/image"

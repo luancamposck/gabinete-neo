@@ -5,7 +5,7 @@ import { signInService } from "@/modules/auth/server/services/sign-in.service"
 import { signInSchema } from "@/modules/auth/shared/validations/sign-in.schema"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
-const INVALID_INPUT_MESSAGE = "Dados invalidos. Verifique os campos e tente novamente."
+const INVALID_INPUT_MESSAGE = "Dados inválidos. Verifique os campos e tente novamente."
 
 export async function signInAction(formData: unknown): OperationResponse<{ userId: string }> {
 	const parsed = signInSchema.safeParse(formData)
