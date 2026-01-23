@@ -10,9 +10,11 @@ const CREATE_PROFILE_SUCCESS = "Perfil do usuário criado com sucesso."
 const prefixLog = "[createUserProfileService]:"
 
 export async function createUserProfileService(params: CreateUserProfileParams): OperationResponse<{ userId: string }> {
+	const { userId, ...profile } = params
+
 	const insertUserProfileAdminRepoParams: UserProfileInsert = {
-		user_id: params.userId,
-		...params
+		user_id: userId,
+		...profile
 	}
 
 	try {
