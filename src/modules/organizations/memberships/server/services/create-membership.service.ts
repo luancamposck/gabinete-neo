@@ -1,7 +1,7 @@
 // @/modules/organizations/memberships/server/services/create-membership.service.ts
 
 import { insertOrganizationMembershipAdminRepo } from "@/modules/organizations/memberships/server/repos/insert-membership.admin.repo"
-import type { MembershipInsert } from "@/modules/organizations/memberships/shaerd/types/db"
+import type { MembershipInsert } from "@/modules/organizations/memberships/shared/types/db"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const GENERIC_CREATE_MEMBERSHIP_ERROR = "Não foi possível criar o vínculo do usuário. Tente novamente mais tarde."
