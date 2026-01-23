@@ -1,0 +1,13 @@
+// @/modules/accounts/users/profiles/server/shared/types/inputs.ts
+export type CreateUserProfileParams = {
+	userId: string
+	phone: string
+
+	cep: string
+	state: string
+	city: string
+	neighborhood: string
+	street: string
+	number: string
+	complement?: string
+}
