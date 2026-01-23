@@ -3,9 +3,9 @@
 
 import Image from "next/image"
 
-import { CreateOrganizationWithOwnerUserForm } from "@/components/forms/organizations/create-organization-with-owner-user-form"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { RegisterAndJoinForm } from "@/modules/accounts/onboarding/ui/register-and-join-form"
 import { SignInForm } from "@/modules/auth/ui/sign-in-form"
 
 export const AuthTabs = () => {
@@ -21,7 +21,7 @@ export const AuthTabs = () => {
 						<SignInForm />
 					</TabsContent>
 					<TabsContent value="signup">
-						<CreateOrganizationWithOwnerUserForm />
+						<RegisterAndJoinForm />
 					</TabsContent>
 
 					<div className="bg-muted hidden md:flex md:flex-col md:justify-center md:items-center">

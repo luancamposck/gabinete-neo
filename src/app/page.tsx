@@ -1,7 +1,7 @@
-import { AuthTabs } from "@/components/auth-tabs"
 import { Vortex } from "@/components/vortex"
+import { AuthTabs } from "@/modules/auth/ui/auth-tabs"
 
-export default function LoginPage() {
+const HomePage = () => {
 	return (
 		<div className="relative bg-muted/20 flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
 			<div className="fixed left-0  size-full -z-20 overflow-hidden">
@@ -12,3 +12,5 @@ export default function LoginPage() {
 		</div>
 	)
 }
+
+export default HomePage
