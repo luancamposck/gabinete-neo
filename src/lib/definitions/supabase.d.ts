@@ -291,6 +291,7 @@ export type Database = {
 			}
 			organizations: {
 				Row: {
+					app_domain: string
 					created_at: string
 					created_by_user_id: string | null
 					id: string
@@ -300,6 +301,7 @@ export type Database = {
 					updated_at: string
 				}
 				Insert: {
+					app_domain: string
 					created_at?: string
 					created_by_user_id?: string | null
 					id?: string
@@ -309,6 +311,7 @@ export type Database = {
 					updated_at?: string
 				}
 				Update: {
+					app_domain?: string
 					created_at?: string
 					created_by_user_id?: string | null
 					id?: string
