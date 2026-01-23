@@ -1,8 +1,8 @@
 // @/modules/accounts/users/profiles/server/services/create-user-profile.service.ts
 
 import { insertUserProfileAdminRepo } from "@/modules/accounts/users/profiles/server/repos/insert-profile.admin.repo"
-import type { UserProfileInsert } from "@/modules/accounts/users/profiles/server/shared/types/db"
-import type { CreateUserProfileParams } from "@/modules/accounts/users/profiles/server/shared/types/inputs"
+import type { UserProfileInsert } from "@/modules/accounts/users/profiles/shared/types/db"
+import type { CreateUserProfileParams } from "@/modules/accounts/users/profiles/shared/types/inputs"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const GENERIC_CREATE_PROFILE_ERROR = "Não foi possível criar o perfil do usuário. Tente novamente mais tarde."
