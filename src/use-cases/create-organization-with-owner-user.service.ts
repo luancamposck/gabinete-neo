@@ -52,7 +52,9 @@ export async function createOrganizationWithOwnerUserService(params: CreateOrgan
 		name: newOrganizationData.name,
 		slug: newOrganizationData.slug,
 
-		created_by_user_id: createdUserId
+		created_by_user_id: createdUserId,
+
+		app_domain: ""
 	}
 
 	const createOrganizationServiceRes = await createOrganizationService(createOrganizationServiceParams)

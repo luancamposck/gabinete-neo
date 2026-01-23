@@ -38,6 +38,7 @@ export async function createOrganizationWithOwnerAction(formData: unknown): Prom
 		},
 
 		organization: {
+			app_domain: "",
 			name: newOrganizationData.name,
 			slug: newOrganizationData.slug
 		}
