@@ -1,4 +1,4 @@
-// @/modules/accounts/users/profiles/server/shared/types/inputs.ts
+// @/modules/accounts/users/profiles/shared/types/inputs.ts
 export type CreateUserProfileParams = {
 	userId: string
 	phone: string
