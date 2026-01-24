@@ -13,4 +13,7 @@ export type RegisterAndJoinParams = {
 	street: string
 	number: string
 	complement?: string
+
+	ref?: string
+	relationshipToInviter?: string
 }
