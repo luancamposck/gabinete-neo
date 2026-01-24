@@ -1,8 +1,13 @@
 // @/modules/accounts/onboarding/shared/validations/register-and-join.schema.ts
 
 import { z } from "zod"
+import { RELATIONSHIP_OPTIONS, type RelationshipValue } from "@/lib/constants/relationship-options"
 import { addressSchemaClient, addressSchemaServer } from "@/modules/accounts/users/profiles/shared/validations/address.schema"
 import { phoneSchemaClient, phoneSchemaServer } from "@/modules/accounts/users/profiles/shared/validations/phone.schema"
+
+const RELATIONSHIP_VALUES = RELATIONSHIP_OPTIONS.map((opt) => opt.value) as [RelationshipValue, ...RelationshipValue[]]
+
+const relationshipToInviterSchema = z.enum(RELATIONSHIP_VALUES)
 
 export const registerAndJoinSchemaClient = z
 	.object({
@@ -17,7 +22,9 @@ export const registerAndJoinSchemaClient = z
 		confirmPassword: z.string().min(8, "A confirmação de senha deve ter no mínimo 8 caracteres."),
 
 		// Endereço
-		address: addressSchemaClient
+		address: addressSchemaClient,
+
+		relationshipToInviter: relationshipToInviterSchema.optional()
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "As senhas não coincidem.",
@@ -40,5 +47,8 @@ export const registerAndJoinSchemaServer = z.object({
 	password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres."),
 
 	// Endereço
-	address: addressSchemaServer
+	address: addressSchemaServer,
+
+	relationshipToInviter: relationshipToInviterSchema.optional(),
+	ref: z.uuid().optional()
 })

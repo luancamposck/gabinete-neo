@@ -4,7 +4,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeft, ArrowRight, UserPlus } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useId, useState } from "react"
 import { Controller, type FieldPath, useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -15,6 +15,7 @@ import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/component
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { brazilianStates } from "@/lib/constants/brazilian-states"
+import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
 import { maskCep, maskPhone } from "@/lib/masks"
 import { cn } from "@/lib/utils"
 import { registerAndJoinAction } from "@/modules/accounts/onboarding/server/slices/register-and-join/actions/register-and-join.action"
@@ -29,6 +30,7 @@ export const RegisterAndJoinForm = () => {
 	const confirmEmailId = `${baseId}-confirm-email`
 	const passwordId = `${baseId}-password`
 	const confirmPasswordId = `${baseId}-confirm-password`
+	const relationshipToInviterId = `${baseId}-relationship-to-inviter`
 	const cepId = `${baseId}-cep`
 	const streetId = `${baseId}-street`
 	const numberId = `${baseId}-number`
@@ -40,6 +42,10 @@ export const RegisterAndJoinForm = () => {
 	const router = useRouter()
 	const [step, setStep] = useState<number>(1)
 	const [isFetchingUserCep, setIsFetchingUserCep] = useState<boolean>(false)
+	const searchParams = useSearchParams()
+
+	const ref = searchParams.get("ref")?.trim() || undefined
+	const showRelationshipField = Boolean(ref)
 
 	const registerAndJoinForm = useForm<RegisterAndJoinSchemaClientData>({
 		resolver: zodResolver(registerAndJoinSchemaClient),
@@ -50,6 +56,7 @@ export const RegisterAndJoinForm = () => {
 			confirmEmail: "",
 			password: "",
 			confirmPassword: "",
+			relationshipToInviter: undefined,
 			address: {
 				cep: "",
 				street: "",
@@ -124,7 +131,9 @@ export const RegisterAndJoinForm = () => {
 				phone: data.phone,
 				email: data.email,
 				password: data.password,
-				address: data.address
+				address: data.address,
+				ref: ref,
+				relationshipToInviter: showRelationshipField ? data.relationshipToInviter : undefined
 			})
 
 			if (!result) {
@@ -204,6 +213,30 @@ export const RegisterAndJoinForm = () => {
 											</Field>
 										)}
 									/>
+									{showRelationshipField && (
+										<Controller
+											name="relationshipToInviter"
+											control={control}
+											render={({ field, fieldState }) => (
+												<Field data-invalid={fieldState.invalid}>
+													<FieldLabel htmlFor={relationshipToInviterId}>Relacao com quem convidou</FieldLabel>
+													<Select onValueChange={field.onChange} value={field.value ?? ""}>
+														<SelectTrigger id={relationshipToInviterId} aria-invalid={fieldState.invalid}>
+															<SelectValue placeholder="Selecione a relacao" />
+														</SelectTrigger>
+														<SelectContent>
+															{RELATIONSHIP_OPTIONS.map((opt) => (
+																<SelectItem key={opt.value} value={opt.value}>
+																	{opt.label}
+																</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+													{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+												</Field>
+											)}
+										/>
+									)}
 								</div>
 
 								<Controller

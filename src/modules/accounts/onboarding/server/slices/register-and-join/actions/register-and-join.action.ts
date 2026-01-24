@@ -39,7 +39,10 @@ export async function registerAndJoinAction(formData: unknown): OperationRespons
 		neighborhood: parsed.data.address.neighborhood,
 		street: parsed.data.address.street,
 		number: parsed.data.address.number,
-		complement: parsed.data.address.complement
+		complement: parsed.data.address.complement,
+
+		ref: parsed.data.ref,
+		relationshipToInviter: parsed.data.relationshipToInviter
 	}
 	const registerAndJoinUseCaseRes = await registerAndJoinUseCase(registerAndJoinUseCaseResParams)
 
