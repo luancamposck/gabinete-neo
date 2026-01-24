@@ -201,7 +201,7 @@ export const RegisterAndJoinForm = () => {
 									)}
 								/>
 
-								<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+								<div className="grid grid-cols-1 gap-6">
 									<Controller
 										name="phone"
 										control={control}
@@ -222,7 +222,7 @@ export const RegisterAndJoinForm = () => {
 													<FieldLabel htmlFor={relationshipToInviterId}>Relacao com quem convidou</FieldLabel>
 													<Select onValueChange={field.onChange} value={field.value ?? ""}>
 														<SelectTrigger id={relationshipToInviterId} aria-invalid={fieldState.invalid}>
-															<SelectValue placeholder="Selecione a relacao" />
+															<SelectValue placeholder="Selecione a relação" />
 														</SelectTrigger>
 														<SelectContent>
 															{RELATIONSHIP_OPTIONS.map((opt) => (
