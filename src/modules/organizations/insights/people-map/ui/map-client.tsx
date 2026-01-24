@@ -1,3 +1,5 @@
+// @/modules/organizations/insights/people-map/ui/map-client.tsx
+
 "use client"
 
 import { pins } from "../shared/mocks/pins.mock"

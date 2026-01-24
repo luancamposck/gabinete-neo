@@ -1,12 +1,16 @@
+// @/modules/organizations/insights/people-map/ui/world-people-map-maplibre.tsx
+
 "use client"
 
 import "maplibre-gl/dist/maplibre-gl.css"
 
-import { useMemo, useState } from "react"
+import { ArrowRight } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
 import MapGL, { Layer, Marker, NavigationControl, Source } from "react-map-gl/maplibre"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import type { CityPin } from "../shared/types/pins"
 
 type SizePreset = "compact" | "normal" | "large"
@@ -16,6 +20,9 @@ const sizePresetClass: Record<SizePreset, string> = {
 	normal: "text-xs px-3 py-2 max-w-[220px]",
 	large: "text-sm px-4 py-3 max-w-[280px]"
 }
+
+const PULSE_LIGHT_BLUE = "#93c5fd"
+const PULSE_DARK_BLUE = "#1d293d"
 
 function buildHubLinesGeoJson(pins: CityPin[]) {
 	if (pins.length < 2) {
@@ -46,9 +53,29 @@ function buildHubLinesGeoJson(pins: CityPin[]) {
 	} as const
 }
 
+function addPulseToLines(geoJson: ReturnType<typeof buildHubLinesGeoJson>) {
+	return {
+		...geoJson,
+		features: geoJson.features.map((feature) => ({
+			...feature,
+			properties: {
+				...feature.properties,
+				pulse: Math.random() * 0.6 + 0.2
+			}
+		}))
+	}
+}
+
+function getFirstName(fullName: string) {
+	const cleaned = fullName.trim()
+	if (!cleaned) return "pessoa"
+	return cleaned.split(/\s+/)[0] ?? cleaned
+}
+
 export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8, size = "normal", scale = 1 }: { pins: CityPin[]; minZoomToShowCards?: number; size?: SizePreset; scale?: number }) {
 	const [openPinId, setOpenPinId] = useState<string | null>(null)
 	const [zoom, setZoom] = useState<number>(minZoomToShowCards)
+	const [linesGeoJson, setLinesGeoJson] = useState(() => addPulseToLines(buildHubLinesGeoJson(pins)))
 	const showCards = zoom >= minZoomToShowCards
 
 	const selected = useMemo(() => pins.find((p) => p.id === openPinId) ?? null, [pins, openPinId])
@@ -61,7 +88,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 					type: "raster",
 					tiles: ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png", "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"],
 					tileSize: 256,
-					attribution: "© OpenStreetMap contributors"
+					attribution: "Â© OpenStreetMap contributors"
 				}
 			},
 			layers: [
@@ -72,21 +99,56 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 		[]
 	)
 
-	// 1) GeoJSON das linhas (mock: hub -> todos)
-	const linesGeoJson = useMemo(() => buildHubLinesGeoJson(pins), [pins])
-
-	// 2) Layer style das linhas
 	const linesLayer: any = useMemo(
 		() => ({
 			id: "referral-lines",
 			type: "line",
 			paint: {
 				"line-width": 2,
-				"line-opacity": 0.45
+				"line-opacity": 0.25,
+				"line-color": PULSE_DARK_BLUE
 			}
 		}),
 		[]
 	)
+
+	const glowLinesLayer: any = useMemo(
+		() => ({
+			id: "referral-lines-glow",
+			type: "line",
+			paint: {
+				"line-width": 6,
+				"line-blur": 6,
+				"line-opacity": ["interpolate", ["linear"], ["get", "pulse"], 0, 0.2, 1, 0.7],
+				"line-color": ["interpolate", ["linear"], ["get", "pulse"], 0, PULSE_LIGHT_BLUE, 1, PULSE_DARK_BLUE]
+			}
+		}),
+		[]
+	)
+
+	useEffect(() => {
+		setLinesGeoJson(addPulseToLines(buildHubLinesGeoJson(pins)))
+	}, [pins])
+
+	useEffect(() => {
+		let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+		const schedule = () => {
+			timeoutId = setTimeout(
+				() => {
+					setLinesGeoJson((current) => addPulseToLines(current))
+					schedule()
+				},
+				700 + Math.random() * 800
+			)
+		}
+
+		schedule()
+
+		return () => {
+			if (timeoutId) clearTimeout(timeoutId)
+		}
+	}, [])
 
 	return (
 		<div className="w-full h-[650px] rounded-xl overflow-hidden border">
@@ -103,8 +165,9 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 					<NavigationControl />
 				</div>
 
-				{/* Linhas primeiro (fica “atrás” dos pins) */}
+				{/* Linhas primeiro (fica atras dos pins) */}
 				<Source id="lines-source" type="geojson" data={linesGeoJson as any}>
+					<Layer {...glowLinesLayer} />
 					<Layer {...linesLayer} />
 				</Source>
 
@@ -116,7 +179,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 						<Marker key={p.id} latitude={p.lat} longitude={p.lng} anchor="center">
 							<div className="pointer-events-auto">
 								<div
-									className="h-3 w-3 rounded-full border bg-primary shadow"
+									className="h-3 w-3 rounded-full border bg-foreground dark:bg-secondary shadow"
 									style={{
 										transform: `scale(${Math.max(0.8, Math.min(1.6, scale))})`
 									}}
@@ -131,7 +194,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 											transformOrigin: "top left"
 										}}
 									>
-										<div className="font-semibold text-sm">
+										<div className="font-semibold text-sm text-center text-foreground dark:text-secondary">
 											{p.city}
 											{p.state ? `/${p.state}` : ""} • {p.country}
 										</div>
@@ -142,7 +205,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 										</div>
 
 										{p.users.length > 3 && (
-											<Button variant="secondary" size="sm" className="mt-2 h-7 px-2 text-xs" onClick={() => setOpenPinId(p.id)}>
+											<Button variant="secondary" size="sm" className="mt-2 h-7 px-2 text-xs w-full" onClick={() => setOpenPinId(p.id)}>
 												Ver mais
 											</Button>
 										)}
@@ -157,7 +220,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 			<Dialog open={!!selected} onOpenChange={(v) => !v && setOpenPinId(null)}>
 				<DialogContent className="max-w-lg">
 					<DialogHeader>
-						<DialogTitle>{selected ? `${selected.city}${selected.state ? `/${selected.state}` : ""} • ${selected.country}` : ""}</DialogTitle>
+						<DialogTitle>{selected ? `${selected.city}${selected.state ? `/${selected.state}` : ""} â€¢ ${selected.country}` : ""}</DialogTitle>
 					</DialogHeader>
 
 					{selected && (
@@ -166,8 +229,18 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 
 							<div className="grid gap-2">
 								{selected.users.map((u) => (
-									<div key={u.id} className="rounded-md border px-3 py-2 text-sm">
-										{u.name}
+									<div key={u.id} className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm">
+										<span>{u.name}</span>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<button type="button" className="text-muted-foreground hover:text-foreground transition-colors" aria-label={`Visualizar perfil de ${getFirstName(u.name)}`}>
+													<ArrowRight className="h-4 w-4" />
+												</button>
+											</TooltipTrigger>
+											<TooltipContent side="left" align="center">
+												Visualizar perfil de {getFirstName(u.name)}
+											</TooltipContent>
+										</Tooltip>
 									</div>
 								))}
 							</div>
