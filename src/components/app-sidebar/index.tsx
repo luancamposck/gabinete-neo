@@ -1,4 +1,4 @@
-import { ChevronRight, Users, ListTodo } from "lucide-react"
+import { ChevronRight, ListTodo, Users } from "lucide-react"
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.action"
@@ -163,7 +163,12 @@ const navMain = [
 			{
 				title: "Minha constelação",
 				url: "/dashboard/network/my-network"
+			},
+			{
+				title: "Mapa Espacial",
+				url: "/dashboard/network/map"
 			}
+
 			// {
 			// 	title: "Mapa espacial ",
 			// 	url: "#"
