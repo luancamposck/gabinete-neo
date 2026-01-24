@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { OrganizationInvitesTable } from "@/components/data-tables/organization-invites/organization-invites-table"
 import { InviteLinkBox } from "@/components/invite-link-box"
 import { createClient } from "@/lib/supabase/server"
+import { MyReferralLinkButton } from "@/modules/organizations/referrals/ui/my-referral-link-button"
 import { findOrganizationMembershipByUserRepo } from "@/repositories/organization-menberships/organization-menberships.repo"
 import { listOrganizationInvitesService } from "@/services/organization-invite/list-organization-invites.service"
 
@@ -85,9 +86,7 @@ const MyInvitesPage = async () => {
 				<h1 className="text-2xl font-semibold tracking-tight">Meus convites</h1>
 				<p className="text-sm text-muted-foreground">Confira aqui todos os convites a sua constelação.</p>
 			</header>
-
-			<InviteLinkBox className="max-w-xl" />
-
+			<MyReferralLinkButton />
 			<section className="space-y-2">
 				<h2 className="text-sm font-medium text-muted-foreground">Convites da constelação</h2>
 				<OrganizationInvitesTable data={invites} />

@@ -179,6 +179,55 @@ export type Database = {
 					}
 				]
 			}
+			organization_referrals: {
+				Row: {
+					created_at: string
+					id: string
+					invited_user_id: string
+					inviter_user_id: string
+					organization_id: string
+					relationship_to_inviter: string | null
+				}
+				Insert: {
+					created_at?: string
+					id?: string
+					invited_user_id: string
+					inviter_user_id: string
+					organization_id: string
+					relationship_to_inviter?: string | null
+				}
+				Update: {
+					created_at?: string
+					id?: string
+					invited_user_id?: string
+					inviter_user_id?: string
+					organization_id?: string
+					relationship_to_inviter?: string | null
+				}
+				Relationships: [
+					{
+						foreignKeyName: "organization_referrals_invited_user_id_fkey"
+						columns: ["invited_user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "organization_referrals_inviter_user_id_fkey"
+						columns: ["inviter_user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "organization_referrals_organization_id_fkey"
+						columns: ["organization_id"]
+						isOneToOne: false
+						referencedRelation: "organizations"
+						referencedColumns: ["id"]
+					}
+				]
+			}
 			organization_task_assignments: {
 				Row: {
 					created_at: string
