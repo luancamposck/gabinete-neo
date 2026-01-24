@@ -8,10 +8,17 @@ const GENERIC_CREATE_MEMBERSHIP_ERROR = "Não foi possível criar o vínculo do 
 const CREATE_MEMBERSHIP_SUCCESS = "Vínculo criado com sucesso."
 const prefixLog = "[createOrganizationMembershipService]:"
 
-export async function createOrganizationMembershipService(params: { userId: string; organizationId: string }): OperationResponse<{ userId: string; organizationId: string }> {
+type CreateOrganizationMembershipServiceParams = {
+	userId: string
+	organizationId: string
+	invitedByUserId?: string
+}
+
+export async function createOrganizationMembershipService(params: CreateOrganizationMembershipServiceParams): OperationResponse<{ userId: string; organizationId: string }> {
 	const insertMembershipParams: MembershipInsert = {
 		user_id: params.userId,
 		organization_id: params.organizationId,
+		invited_by_user_id: params.invitedByUserId,
 		role: "MEMBER",
 		is_active: true
 	}
