@@ -5,9 +5,5 @@ import type { UserInsert } from "@/modules/accounts/users/shared/types/db"
 export async function insertUserAdminRepo(insertUserParams: UserInsert) {
 	const supabaseAdmin = createAdminClient()
 
-	return supabaseAdmin
-		.from("users")
-		.insert(insertUserParams as any)
-		.select("id")
-		.single()
+	return supabaseAdmin.from("users").insert(insertUserParams).select("id").single()
 }
