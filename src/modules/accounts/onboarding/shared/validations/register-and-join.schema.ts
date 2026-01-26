@@ -8,6 +8,11 @@ import { phoneSchemaClient, phoneSchemaServer } from "@/modules/accounts/users/p
 const RELATIONSHIP_VALUES = RELATIONSHIP_OPTIONS.map((opt) => opt.value) as [RelationshipValue, ...RelationshipValue[]]
 
 const relationshipToInviterSchema = z.enum(RELATIONSHIP_VALUES)
+const inviteCodeSchema = z
+	.string()
+	.trim()
+	.toLowerCase()
+	.regex(/^[0-9a-z]{10}$/)
 
 export const registerAndJoinSchemaClient = z
 	.object({
@@ -49,6 +54,6 @@ export const registerAndJoinSchemaServer = z.object({
 	// Endereço
 	address: addressSchemaServer,
 
-	relationshipToInviter: relationshipToInviterSchema.optional(),
-	ref: z.uuid().optional()
+	ref: inviteCodeSchema.optional(),
+	relationshipToInviter: relationshipToInviterSchema.optional()
 })

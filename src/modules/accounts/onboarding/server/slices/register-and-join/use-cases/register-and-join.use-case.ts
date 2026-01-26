@@ -4,6 +4,7 @@ import type { RegisterAndJoinParams } from "@/modules/accounts/onboarding/shared
 import { createUserProfileService } from "@/modules/accounts/users/profiles/server/services/create-user-profile.service"
 import type { CreateUserProfileParams } from "@/modules/accounts/users/profiles/shared/types/inputs"
 import { createUserService } from "@/modules/accounts/users/server/services/create-user.service"
+import { getUserIdByInviteCodeService } from "@/modules/accounts/users/server/services/get-user-id-by-invite-code.service"
 import type { CreateUserParams } from "@/modules/accounts/users/shared/types/inputs"
 import { deleteAuthUserService } from "@/modules/auth/server/services/delete-auth-user.service"
 import { signUpService } from "@/modules/auth/server/services/sign-up.service"
@@ -22,11 +23,6 @@ type RegisterAndJoinUseCaseRes = {
 const prefixLog = "[registerAndJoinUseCase]:"
 const INVALID_REF_MESSAGE = "Link de indicação inválido."
 const GENERIC_ERROR_MESSAGE = "Erro inesperado ao finalizar o cadastro."
-
-function isUuidLike(value: string) {
-	// Checagem simples (você pode trocar por z.string().uuid() se preferir)
-	return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
-}
 
 export async function registerAndJoinUseCase(params: RegisterAndJoinParams): Promise<OperationResponse<RegisterAndJoinUseCaseRes>> {
 	try {
@@ -47,14 +43,15 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinParams): Pro
 		// ------------------------------------------------------------
 		// 0.1) Validar ref (se existir) E garantir que pertence à org
 		// ------------------------------------------------------------
-		const rawRef = (params.ref ?? "").trim()
-		const inviterUserId = rawRef.length > 0 ? rawRef : null
+		const rawRef = (params.ref ?? "").trim().toLowerCase()
+		let inviterUserId: string | null = null
 
-		if (inviterUserId && isUuidLike(inviterUserId) === false) {
-			return { success: false, message: INVALID_REF_MESSAGE }
-		}
+		if (rawRef.length > 0) {
+			const inviterRes = await getUserIdByInviteCodeService({ inviteCode: rawRef })
+			if (inviterRes.success === false) return inviterRes
 
-		if (inviterUserId) {
+			inviterUserId = inviterRes.data.userId
+
 			const inviterMembershipRes = await isUserMemberOfOrganizationService({
 				organizationId,
 				userId: inviterUserId

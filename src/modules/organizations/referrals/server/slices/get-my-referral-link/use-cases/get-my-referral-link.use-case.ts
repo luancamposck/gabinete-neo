@@ -1,5 +1,6 @@
 // @/modules/organizations/referrals/server/slices/get-my-referral-link/use-cases/get-my-referral-link.use-case.ts
 
+import { getUserInviteCodeByUserIdService } from "@/modules/accounts/users/server/services/get-user-invite-code-by-user-id.service"
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
@@ -54,8 +55,11 @@ export async function getMyReferralLinkUseCase(): OperationResponse<GetMyReferra
 			}
 		}
 
-		// 5) Montar URL do referral (ref = userId)
-		const referralUrl = `https://${host}/?ref=${userId}`
+		// 5) Obter invite_code e montar URL do referral
+		const inviteCodeRes = await getUserInviteCodeByUserIdService({ userId })
+		if (inviteCodeRes.success === false) return inviteCodeRes
+
+		const referralUrl = `https://${host}/?ref=${inviteCodeRes.data.inviteCode}`
 
 		return {
 			success: true,

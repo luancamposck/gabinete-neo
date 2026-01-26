@@ -44,6 +44,8 @@ export const RegisterAndJoinForm = () => {
 	const [isFetchingUserCep, setIsFetchingUserCep] = useState<boolean>(false)
 	const searchParams = useSearchParams()
 
+	// Exemplo no client: const ref = useSearchParams().get("ref") ?? undefined
+	// e registerAndJoinAction({ ...formValues, ref })
 	const ref = searchParams.get("ref")?.trim() || undefined
 	const showRelationshipField = Boolean(ref)
 
