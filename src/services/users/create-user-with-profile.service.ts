@@ -64,7 +64,8 @@ export async function createUserWithProfileService(params: CreateUserServicePara
 		const publicUserParams: PublicUserInsert = {
 			id: authUserResData.user.id,
 			email: params.email,
-			name: params.name
+			name: params.name,
+			invite_code: ""
 		}
 
 		const { data: publicUserResData, error: publicUserResError } = await insertPublicUserAdminRepo(publicUserParams)
