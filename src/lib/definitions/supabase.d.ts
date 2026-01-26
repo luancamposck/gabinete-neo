@@ -434,6 +434,7 @@ export type Database = {
 					created_at: string
 					email: string
 					id: string
+					invite_code: string
 					name: string
 					updated_at: string
 				}
@@ -441,6 +442,7 @@ export type Database = {
 					created_at?: string
 					email: string
 					id: string
+					invite_code: string
 					name: string
 					updated_at?: string
 				}
@@ -448,6 +450,7 @@ export type Database = {
 					created_at?: string
 					email?: string
 					id?: string
+					invite_code?: string
 					name?: string
 					updated_at?: string
 				}
@@ -458,7 +461,7 @@ export type Database = {
 			[_ in never]: never
 		}
 		Functions: {
-			[_ in never]: never
+			generate_invite_code: { Args: { len?: number }; Returns: string }
 		}
 		Enums: {
 			organization_task_status: "NOT_STARTED" | "IN_PROGRESS" | "CANCELLED" | "COMPLETED"
