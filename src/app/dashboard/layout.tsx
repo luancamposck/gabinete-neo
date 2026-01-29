@@ -11,6 +11,8 @@ import { getPendingOrganizationInvitesByUserIdAdminRepo } from "@/repositories/o
 import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
 
 const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
+	const isDevEnviroment = process.env.NODE_ENV === "development"
+
 	const cookieStore = await cookies()
 	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
@@ -49,9 +51,11 @@ const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNod
 			<AppSidebar />
 
 			<SidebarInset className="relative overflow-auto">
-				<div className="pointer-events-none absolute inset-0 overflow-hidden md:rounded-xl">
-					<Vortex backgroundColor="transparent" className="flex size-full" rangeY={300} baseRadius={2} particleCount={50} rangeSpeed={1.5} baseHue={200} />
-				</div>
+				{isDevEnviroment && (
+					<div className="pointer-events-none absolute inset-0 overflow-hidden md:rounded-xl">
+						<Vortex backgroundColor="transparent" className="flex size-full" rangeY={300} baseRadius={2} particleCount={50} rangeSpeed={1.5} baseHue={200} />
+					</div>
+				)}
 
 				<header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height) py-2">
 					<div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">

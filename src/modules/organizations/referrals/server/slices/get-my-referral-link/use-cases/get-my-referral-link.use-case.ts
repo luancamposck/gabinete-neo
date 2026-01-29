@@ -59,7 +59,9 @@ export async function getMyReferralLinkUseCase(): OperationResponse<GetMyReferra
 		const inviteCodeRes = await getUserInviteCodeByUserIdService({ userId })
 		if (inviteCodeRes.success === false) return inviteCodeRes
 
-		const referralUrl = `https://${host}/?ref=${inviteCodeRes.data.inviteCode}`
+		const { inviteCode } = inviteCodeRes.data
+		const isDevEnviroment = process.env.NODE_ENV === "development"
+		const referralUrl = isDevEnviroment ? `http://localhost:3000/?ref=${inviteCode}` : `https://${host}/?ref=${inviteCode}`
 
 		return {
 			success: true,
