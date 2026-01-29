@@ -1,18 +1,13 @@
 // @/modules/accounts/onboarding/server/slices/register-and-join/use-cases/register-and-join.use-case.ts
 
+import { createPublicUserAndProfileStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/create-public-user-and-profile.step"
+import { ensureMembershipStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/ensure-membership.step"
+import { recordReferralStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/record-referral.step"
+import { resolveInviterByRefStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/resolve-inviter-by-ref.step"
+import { resolveOrganizationIdByHostStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/resolve-organization-id-by-host.step"
+import { signUpOrSignInStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/sign-up-or-sign-in.step"
+
 import type { RegisterAndJoinParams } from "@/modules/accounts/onboarding/shared/types/inputs"
-import { createUserProfileService } from "@/modules/accounts/users/profiles/server/services/create-user-profile.service"
-import type { CreateUserProfileParams } from "@/modules/accounts/users/profiles/shared/types/inputs"
-import { createUserService } from "@/modules/accounts/users/server/services/create-user.service"
-import { getUserIdByInviteCodeService } from "@/modules/accounts/users/server/services/get-user-id-by-invite-code.service"
-import type { CreateUserParams } from "@/modules/accounts/users/shared/types/inputs"
-import { deleteAuthUserService } from "@/modules/auth/server/services/delete-auth-user.service"
-import { signUpService } from "@/modules/auth/server/services/sign-up.service"
-import { createOrganizationMembershipService } from "@/modules/organizations/memberships/server/services/create-membership.service"
-import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
-import { createOrganizationReferralService } from "@/modules/organizations/referrals/server/services/create-referral.service"
-import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
-import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 type RegisterAndJoinUseCaseRes = {
@@ -21,134 +16,135 @@ type RegisterAndJoinUseCaseRes = {
 }
 
 const prefixLog = "[registerAndJoinUseCase]:"
-const INVALID_REF_MESSAGE = "Link de indicação inválido."
+const SUCCESS_MESSAGE = "Cadastro concluído com sucesso."
 const GENERIC_ERROR_MESSAGE = "Erro inesperado ao finalizar o cadastro."
 
-export async function registerAndJoinUseCase(params: RegisterAndJoinParams): Promise<OperationResponse<RegisterAndJoinUseCaseRes>> {
+export async function registerAndJoinUseCase(params: RegisterAndJoinParams): OperationResponse<RegisterAndJoinUseCaseRes> {
 	try {
-		// ------------------------------------------------------------
-		// 0) Resolver organizationId via host (app_domain)
-		// ------------------------------------------------------------
-		const host = await getRequestHost()
-		if (!host) {
-			console.error(`${prefixLog} missing request host`)
-			return { success: false, message: "Não foi possível identificar o domínio da requisição." }
-		}
+		// ============================================================
+		// 0) Descobrir a organização pelo domínio atual (app_domain)
+		//
+		// Possibilidades:
+		// - Host ausente: falha imediata (não dá pra saber a org).
+		// - app_domain não encontrado: service retorna erro.
+		// - Sucesso: temos organizationId e seguimos.
+		// ============================================================
+		const orgStepRes = await resolveOrganizationIdByHostStep()
+		if (orgStepRes.success === false) return orgStepRes
 
-		const orgRes = await getOrganizationIdByAppDomainService({ appDomain: host })
-		if (orgRes.success === false) return orgRes
+		const { organizationId } = orgStepRes.data
 
-		const organizationId = orgRes.data.organizationId
+		// ============================================================
+		// 0.1) Resolver ref (best-effort)
+		//
+		// Possibilidades:
+		// - Sem ref: inviterUserId = null (segue normal).
+		// - Ref inválida / inviter não pertence à org / erro técnico:
+		//   -> inviterUserId = null (NÃO bloqueia cadastro).
+		// - Ref válida: inviterUserId preenchido.
+		// ============================================================
+		const inviterStepRes = await resolveInviterByRefStep({
+			organizationId,
+			ref: params.ref
+		})
 
-		// ------------------------------------------------------------
-		// 0.1) Validar ref (se existir) E garantir que pertence à org
-		// ------------------------------------------------------------
-		const rawRef = (params.ref ?? "").trim().toLowerCase()
-		let inviterUserId: string | null = null
+		// Esse step sempre retorna success:true (best-effort).
+		const inviterUserId = inviterStepRes.data.inviterUserId
 
-		if (rawRef.length > 0) {
-			const inviterRes = await getUserIdByInviteCodeService({ inviteCode: rawRef })
-			if (inviterRes.success === false) return inviterRes
-
-			inviterUserId = inviterRes.data.userId
-
-			const inviterMembershipRes = await isUserMemberOfOrganizationService({
-				organizationId,
-				userId: inviterUserId
-			})
-
-			if (inviterMembershipRes.success === false) {
-				// falha técnica (repo/service), mantém comportamento padrão
-				return inviterMembershipRes
-			}
-
-			if (inviterMembershipRes.data.isMember === false) {
-				return { success: false, message: INVALID_REF_MESSAGE }
-			}
-		}
-
-		// ------------------------------------------------------------
-		// 1) Criar usuário no Auth
-		// ------------------------------------------------------------
-		const signUpServiceRes = await signUpService({
+		// ============================================================
+		// 1) SignUp OU SignIn (quando email já existe)
+		//
+		// Possibilidades:
+		// - SignUp OK: mode = "new" (usuário novo no Auth).
+		// - Email já existe: tenta SignIn:
+		//   - SignIn OK: mode = "existing" (usuário já existia).
+		//   - SignIn falha: retorna mensagem neutra (sem vazar se email existe).
+		// - Outro erro de signUp (senha fraca etc): retorna o erro da service.
+		// ============================================================
+		const authStepRes = await signUpOrSignInStep({
 			email: params.email,
 			password: params.password
 		})
-		if (signUpServiceRes.success === false) return signUpServiceRes
+		if (authStepRes.success === false) return authStepRes
 
-		const userId = signUpServiceRes.data.userId
+		const { userId, mode } = authStepRes.data
 
-		// ------------------------------------------------------------
-		// 2) Criar public.users
-		// ------------------------------------------------------------
-		const createUserServiceParams: CreateUserParams = {
-			id: userId,
-			email: params.email,
-			name: params.name
-		}
+		// ============================================================
+		// 2 + 3) (Somente usuário novo) Criar public.users + user_profiles
+		//
+		// Possibilidades:
+		// - Se mode === "new": cria public.users e user_profiles.
+		//   - Se falhar: faz rollback deletando auth.user (deleteAuthUserService).
+		// - Se mode === "existing": NÃO encosta em public.users/profile
+		//   (evita sobrescrever dados de alguém que já tem conta).
+		// ============================================================
+		if (mode === "new") {
+			const createPublicRes = await createPublicUserAndProfileStep({
+				userId,
+				email: params.email,
+				name: params.name,
 
-		const createUserServiceRes = await createUserService(createUserServiceParams)
-		if (createUserServiceRes.success === false) {
-			await deleteAuthUserService({ userId })
-			return createUserServiceRes
-		}
-
-		// ------------------------------------------------------------
-		// 3) Criar user_profiles
-		// ------------------------------------------------------------
-		const createUserProfileParams: CreateUserProfileParams = {
-			userId,
-			phone: params.phone,
-			cep: params.cep,
-			state: params.state,
-			city: params.city,
-			neighborhood: params.neighborhood,
-			street: params.street,
-			number: params.number,
-			complement: params.complement
-		}
-
-		const createUserProfileServiceRes = await createUserProfileService(createUserProfileParams)
-		if (createUserProfileServiceRes.success === false) {
-			await deleteAuthUserService({ userId })
-			return createUserProfileServiceRes
-		}
-
-		// ------------------------------------------------------------
-		// 4) Criar membership (role MEMBER) + invited_by_user_id (se houver)
-		// ------------------------------------------------------------
-		const membershipRes = await createOrganizationMembershipService({
-			organizationId,
-			userId,
-			invitedByUserId: inviterUserId ?? undefined
-		})
-
-		if (membershipRes.success === false) {
-			await deleteAuthUserService({ userId })
-			return membershipRes
-		}
-
-		// ------------------------------------------------------------
-		// 5) Registrar referral (se houver ref)
-		// ------------------------------------------------------------
-		if (inviterUserId) {
-			const referralRes = await createOrganizationReferralService({
-				organizationId,
-				inviterUserId,
-				invitedUserId: userId,
-				relationshipToInviter: params.relationshipToInviter ?? null
+				phone: params.phone,
+				cep: params.cep,
+				state: params.state,
+				city: params.city,
+				neighborhood: params.neighborhood,
+				street: params.street,
+				number: params.number,
+				complement: params.complement
 			})
 
-			// Aqui eu recomendo não quebrar o cadastro se falhar referral.
-			// Mas se você quiser hard-fail, é só tratar como os outros.
-			if (referralRes.success === false) {
-				console.error(`${prefixLog} referral failed after membership`, referralRes.message)
-			}
+			if (createPublicRes.success === false) return createPublicRes
 		}
 
+		// ============================================================
+		// 4) Garantir membership na org atual
+		//
+		// Possibilidades:
+		// - Usuário já é membro: joinedNow = false (não cria referral de novo).
+		// - Usuário não é membro: cria membership agora:
+		//   - joinedNow = true
+		//   - membership recebe invitedByUserId se ref era válida
+		// - Se erro técnico:
+		//   - mode === "existing": step tenta signOut (pra não ficar logado “no lugar errado”)
+		//   - retorna falha genérica do fluxo
+		// ============================================================
+		const membershipStepRes = await ensureMembershipStep({
+			organizationId,
+			userId,
+			invitedByUserId: inviterUserId,
+			mode
+		})
+		if (membershipStepRes.success === false) return membershipStepRes
+
+		const { joinedNow } = membershipStepRes.data
+
+		// ============================================================
+		// 5) Registrar referral (best-effort)
+		//
+		// Regras:
+		// - Só registra se:
+		//   - inviterUserId existe (ref foi válida)
+		//   - joinedNow === true (evita duplicar referral ao abrir link de novo)
+		// - Se falhar, NÃO quebra o cadastro.
+		// ============================================================
+		await recordReferralStep({
+			organizationId,
+			inviterUserId,
+			invitedUserId: userId,
+			relationshipToInviter: params.relationshipToInviter ?? null,
+			joinedNow
+		})
+
+		// ============================================================
+		// Final
+		// - Independente de ter sido "new" ou "existing",
+		//   e independente do referral ter sido registrado,
+		//   o resultado de sucesso é o mesmo.
+		// ============================================================
 		return {
 			success: true,
-			message: "Registro e associação concluídos com sucesso.",
+			message: SUCCESS_MESSAGE,
 			data: { userId, organizationId }
 		}
 	} catch (error) {

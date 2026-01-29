@@ -16,7 +16,8 @@ export async function signInService(params: { email: string; password: string })
 			if (authUserError.code === "invalid_credentials") {
 				return {
 					success: false,
-					message: INVALID_CREDENTIALS_ERROR
+					message: INVALID_CREDENTIALS_ERROR,
+					code: "invalid_credentials"
 				}
 			}
 			return {

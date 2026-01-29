@@ -16,5 +16,6 @@ export type OperationResponse<T> = Promise<
 	| {
 			success: false
 			message: string
+			code?: string
 	  }
 >

@@ -14,12 +14,22 @@ export async function signUpService(params: { email: string; password: string })
 
 		if (authUserError || !authUserData) {
 			if (authUserError) {
+				console.log(authUserError)
 				console.error(`${prefixLog} ${authUserError.message}`)
 			}
 
-			const errorMessage = authUserError?.code === "email_exists" ? EMAIL_ALREADY_EXISTS_ERROR : GENERIC_SIGN_UP_ERROR
+			if (authUserError?.code === "email_exists") {
+				return {
+					success: false,
+					message: EMAIL_ALREADY_EXISTS_ERROR,
+					code: "email_exists"
+				}
+			}
 
-			return { success: false, message: errorMessage }
+			return {
+				success: false,
+				message: GENERIC_SIGN_UP_ERROR
+			}
 		}
 
 		const userId = authUserData.user.id
