@@ -3,4 +3,5 @@ export type CreateUserParams = {
 	id: string
 	email: string
 	name: string
+	username: string
 }

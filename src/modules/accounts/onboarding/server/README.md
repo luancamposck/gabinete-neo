@@ -45,7 +45,7 @@ Este diretorio contem a camada server-side do modulo **accounts/onboarding**.
 | `registerAndJoinAction` | `registerAndJoinUseCase` | valida `registerAndJoinSchemaServer` |
 | `registerAndJoinUseCase` | `getRequestHost` | resolve host/app_domain |
 | `registerAndJoinUseCase` | `getOrganizationIdByAppDomainService` | resolve organizationId |
-| `registerAndJoinUseCase` | `getUserIdByInviteCodeService` | somente se `ref` informado |
+| `registerAndJoinUseCase` | `getUserIdByUsernameService` | somente se `ref` informado |
 | `registerAndJoinUseCase` | `isUserMemberOfOrganizationService` | valida se o inviter pertence a org |
 | `registerAndJoinUseCase` | `signUpService` | cria usuario no auth |
 | `registerAndJoinUseCase` | `createUserService` | cria `public.users` |
@@ -59,9 +59,9 @@ Este diretorio contem a camada server-side do modulo **accounts/onboarding**.
 ### Fluxo: Register and Join
 1) `getRequestHost()`
 2) `getOrganizationIdByAppDomainService(appDomain)`
-3) Se `ref` informado: `getUserIdByInviteCodeService` + `isUserMemberOfOrganizationService`
+3) Se `ref` informado: `getUserIdByUsernameService` + `isUserMemberOfOrganizationService`
 4) `signUpService(email, password)`
-5) `createUserService(id, email, name)`
+5) `createUserService(id, email, name, username)`
 6) `createUserProfileService(userId, address, phone...)`
 7) `createOrganizationMembershipService(organizationId, userId, invitedByUserId?)`
 8) `createOrganizationReferralService(...)` *(opcional)*

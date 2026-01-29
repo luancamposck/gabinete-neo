@@ -47,7 +47,7 @@ Este diretorio contem a camada server-side do modulo **organizations/referrals**
 | `getMyReferralLinkUseCase` | `getOrganizationIdByAppDomainService` | resolve organizationId |
 | `getMyReferralLinkUseCase` | `getCurrentAuthUserService` | usuario logado |
 | `getMyReferralLinkUseCase` | `isUserMemberOfOrganizationService` | valida membership |
-| `getMyReferralLinkUseCase` | `getUserInviteCodeByUserIdService` | recupera invite_code |
+| `getMyReferralLinkUseCase` | `getUsernameByUserIdService` | recupera username |
 | `createOrganizationReferralService` | `insertOrganizationReferralAdminRepo` | cria referral |
 | `registerAndJoinUseCase` | `createOrganizationReferralService` | modulo accounts/onboarding |
 
@@ -58,8 +58,8 @@ Este diretorio contem a camada server-side do modulo **organizations/referrals**
 2) `getOrganizationIdByAppDomainService(appDomain)`
 3) `getCurrentAuthUserService()`
 4) `isUserMemberOfOrganizationService(organizationId, userId)`
-5) `getUserInviteCodeByUserIdService(userId)`
-6) Monta `referralUrl` com `https://{host}/?ref={inviteCode}`
+5) `getUsernameByUserIdService(userId)`
+6) Monta `referralUrl` com `https://{host}/?ref={username}`
 
 ### Fluxo: Create Referral (service)
 1) `createOrganizationReferralService(params)`

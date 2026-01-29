@@ -34,38 +34,38 @@ Este diretorio contem a camada server-side do modulo **accounts/users**.
 
 ## Services
 - `create-user.service` - `./services/create-user.service.ts`
-- `get-user-id-by-invite-code.service` - `./services/get-user-id-by-invite-code.service.ts`
-- `get-user-invite-code-by-user-id.service` - `./services/get-user-invite-code-by-user-id.service.ts`
+- `get-user-id-by-username.service` - `./services/get-user-id-by-username.service.ts`
+- `get-username-by-user-id.service` - `./services/get-username-by-user-id.service.ts`
 
 ## Repos
-- `find-user-id-by-invite-code.admin.repo` - `./repos/find-user-id-by-invite-code.admin.repo.ts`
-- `find-user-invite-code-by-user-id.admin.repo` - `./repos/find-user-invite-code-by-user-id.admin.repo.ts`
+- `find-user-id-by-username.admin.repo` - `./repos/find-user-id-by-username.admin.repo.ts`
+- `find-username-by-user-id.admin.repo` - `./repos/find-username-by-user-id.admin.repo.ts`
 - `insert-user.admin.repo` - `./repos/insert-user.admin.repo.ts`
 
 ## Call Matrix
 
 | Entry point | Chama | Observacoes |
 |---|---|---|
-| `createUserService` | `insertUserAdminRepo` | gera `invite_code` antes do insert |
-| `getUserIdByInviteCodeService` | `findUserIdByInviteCodeAdminRepo` | normaliza `inviteCode` |
-| `getUserInviteCodeByUserIdService` | `findUserInviteCodeByUserIdAdminRepo` | busca `invite_code` |
+| `createUserService` | `insertUserAdminRepo` | insere `username` e dados base do usuário |
+| `getUserIdByUsernameService` | `findUserIdByUsernameAdminRepo` | normaliza `username` |
+| `getUsernameByUserIdService` | `findUsernameByUserIdAdminRepo` | busca `username` |
 | `registerAndJoinUseCase` | `createUserService` | modulo accounts/onboarding |
-| `registerAndJoinUseCase` | `getUserIdByInviteCodeService` | valida ref |
-| `getMyReferralLinkUseCase` | `getUserInviteCodeByUserIdService` | modulo organizations/referrals |
+| `registerAndJoinUseCase` | `getUserIdByUsernameService` | valida ref |
+| `getMyReferralLinkUseCase` | `getUsernameByUserIdService` | modulo organizations/referrals |
 
 ## Fluxos
 
 ### Fluxo: Create User
 1) `createUserService(params)`
-2) `insertUserAdminRepo` (insere em `users` com `invite_code`)
+2) `insertUserAdminRepo` (insere em `users` com `username`)
 
-### Fluxo: Get User Id by Invite Code
-1) `getUserIdByInviteCodeService(inviteCode)`
-2) `findUserIdByInviteCodeAdminRepo`
+### Fluxo: Get User Id by Username
+1) `getUserIdByUsernameService(username)`
+2) `findUserIdByUsernameAdminRepo`
 
-### Fluxo: Get Invite Code by User Id
-1) `getUserInviteCodeByUserIdService(userId)`
-2) `findUserInviteCodeByUserIdAdminRepo`
+### Fluxo: Get Username by User Id
+1) `getUsernameByUserIdService(userId)`
+2) `findUsernameByUserIdAdminRepo`
 
 ## Nao usados
 - Itens sem referencia direta via import (relative ou `@/`).

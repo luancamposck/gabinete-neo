@@ -8,16 +8,19 @@ import { phoneSchemaClient, phoneSchemaServer } from "@/modules/accounts/users/p
 const RELATIONSHIP_VALUES = RELATIONSHIP_OPTIONS.map((opt) => opt.value) as [RelationshipValue, ...RelationshipValue[]]
 
 const relationshipToInviterSchema = z.enum(RELATIONSHIP_VALUES)
-const inviteCodeSchema = z
+const usernameSchema = z
 	.string()
 	.trim()
 	.toLowerCase()
-	.regex(/^[0-9a-z]{10}$/)
+	.min(3, "Username deve ter no mínimo 3 caracteres.")
+	.max(20, "Username deve ter no máximo 20 caracteres.")
+	.regex(/^[a-z0-9_]+$/, "Somente letras minúsculas, números e _.")
 
 export const registerAndJoinSchemaClient = z
 	.object({
 		// Dados do usuário
 		name: z.string().min(3, "Nome do usuário deve ter no mínimo 3 caracteres."),
+		username: usernameSchema,
 		phone: phoneSchemaClient,
 
 		// Login do usuário
@@ -45,6 +48,7 @@ export type RegisterAndJoinSchemaClientData = z.infer<typeof registerAndJoinSche
 export const registerAndJoinSchemaServer = z.object({
 	// Dados do usuário
 	name: z.string().min(3, "Nome do usuário deve ter no mínimo 3 caracteres."),
+	username: usernameSchema,
 	phone: phoneSchemaServer,
 
 	// Login do usuário
@@ -54,6 +58,6 @@ export const registerAndJoinSchemaServer = z.object({
 	// Endereço
 	address: addressSchemaServer,
 
-	ref: inviteCodeSchema.optional(),
+	ref: z.string().trim().toLowerCase().optional(),
 	relationshipToInviter: relationshipToInviterSchema.optional()
 })

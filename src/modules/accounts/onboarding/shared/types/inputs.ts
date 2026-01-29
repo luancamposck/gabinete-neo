@@ -4,6 +4,7 @@ export type RegisterAndJoinParams = {
 	password: string
 
 	name: string
+	username: string
 	phone: string
 
 	cep: string

@@ -83,6 +83,7 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinParams): Ope
 				userId,
 				email: params.email,
 				name: params.name,
+				username: params.username,
 
 				phone: params.phone,
 				cep: params.cep,

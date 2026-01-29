@@ -1,6 +1,6 @@
 // @/modules/accounts/onboarding/server/slices/register-and-join/steps/resolve-inviter-by-ref.step.ts
 
-import { getUserIdByInviteCodeService } from "@/modules/accounts/users/server/services/get-user-id-by-invite-code.service"
+import { getUserIdByUsernameService } from "@/modules/accounts/users/server/services/get-user-id-by-username.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
 
 type ResolveInviterByRefStepParams = {
@@ -41,10 +41,10 @@ export async function resolveInviterByRefStep(params: ResolveInviterByRefStepPar
 			}
 		}
 
-		const inviterRes = await getUserIdByInviteCodeService({ inviteCode: rawRef })
+		const inviterRes = await getUserIdByUsernameService({ username: rawRef })
 		if (inviterRes.success === false) {
 			// best-effort: ignora ref inválido/erro
-			console.error(`${prefixLog} getUserIdByInviteCodeService failed:`, inviterRes.message)
+			console.error(`${prefixLog} getUserIdByUsernameService failed:`, inviterRes.message)
 			return {
 				success: true,
 				message: "Indicação ignorada.",

@@ -13,6 +13,7 @@ type CreatePublicUserAndProfileStepParams = {
 	userId: string
 	email: string
 	name: string
+	username: string
 
 	phone: string
 	cep: string
@@ -37,7 +38,8 @@ export async function createPublicUserAndProfileStep(params: CreatePublicUserAnd
 		const createUserServiceParams: CreateUserParams = {
 			id: userId,
 			email: params.email,
-			name: params.name
+			name: params.name,
+			username: params.username
 		}
 
 		const createUserServiceRes = await createUserService(createUserServiceParams)

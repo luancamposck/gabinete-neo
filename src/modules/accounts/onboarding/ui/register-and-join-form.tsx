@@ -11,7 +11,7 @@ import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { brazilianStates } from "@/lib/constants/brazilian-states"
@@ -25,6 +25,7 @@ export const RegisterAndJoinForm = () => {
 	const baseId = useId()
 	const formId = `${baseId}-register-and-join-form`
 	const nameId = `${baseId}-name`
+	const usernameId = `${baseId}-username`
 	const phoneId = `${baseId}-phone`
 	const emailId = `${baseId}-email`
 	const confirmEmailId = `${baseId}-confirm-email`
@@ -42,6 +43,7 @@ export const RegisterAndJoinForm = () => {
 	const router = useRouter()
 	const [step, setStep] = useState<number>(1)
 	const [isFetchingUserCep, setIsFetchingUserCep] = useState<boolean>(false)
+	const [isUsernameTouched, setIsUsernameTouched] = useState<boolean>(false)
 	const searchParams = useSearchParams()
 
 	// Exemplo no client: const ref = useSearchParams().get("ref") ?? undefined
@@ -53,6 +55,7 @@ export const RegisterAndJoinForm = () => {
 		resolver: zodResolver(registerAndJoinSchemaClient),
 		defaultValues: {
 			name: "",
+			username: "",
 			phone: "",
 			email: "",
 			confirmEmail: "",
@@ -72,6 +75,13 @@ export const RegisterAndJoinForm = () => {
 	})
 
 	const { control, handleSubmit, formState, setValue, setFocus, trigger, resetField, reset } = registerAndJoinForm
+
+	const normalizeUsername = (value: string) =>
+		value
+			.trim()
+			.toLowerCase()
+			.replace(/\s+/g, "_")
+			.replace(/[^a-z0-9_]/g, "")
 
 	async function handleUserCepBlur(e: React.FocusEvent<HTMLInputElement>) {
 		const cep = e.target.value.replace(/\D/g, "")
@@ -115,7 +125,7 @@ export const RegisterAndJoinForm = () => {
 		let fieldsToValidate: FieldPath<RegisterAndJoinSchemaClientData>[] = []
 
 		if (currentStep === 1) {
-			fieldsToValidate = ["name", "phone", "email", "confirmEmail", "password", "confirmPassword"]
+			fieldsToValidate = ["name", "username", "phone", "email", "confirmEmail", "password", "confirmPassword"]
 		} else if (currentStep === 2) {
 			fieldsToValidate = ["address.cep", "address.street", "address.number", "address.neighborhood", "address.city", "address.state"]
 		}
@@ -130,6 +140,7 @@ export const RegisterAndJoinForm = () => {
 		try {
 			const result = await registerAndJoinAction({
 				name: data.name,
+				username: data.username,
 				phone: data.phone,
 				email: data.email,
 				password: data.password,
@@ -152,6 +163,7 @@ export const RegisterAndJoinForm = () => {
 
 				reset()
 				setStep(1)
+				setIsUsernameTouched(false)
 
 				if (result.data) {
 					router.push("/dashboard")
@@ -197,7 +209,42 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={nameId}>Nome do Usuario</FieldLabel>
-											<Input {...field} id={nameId} placeholder="Joao da Silva" aria-invalid={fieldState.invalid} />
+											<Input
+												{...field}
+												id={nameId}
+												placeholder="Joao da Silva"
+												aria-invalid={fieldState.invalid}
+												onChange={(event) => {
+													field.onChange(event)
+													if (!isUsernameTouched) {
+														const nextUsername = normalizeUsername(event.target.value)
+														setValue("username", nextUsername)
+													}
+												}}
+											/>
+											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										</Field>
+									)}
+								/>
+
+								<Controller
+									name="username"
+									control={control}
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid}>
+											<FieldLabel htmlFor={usernameId}>Username</FieldLabel>
+											<Input
+												{...field}
+												id={usernameId}
+												placeholder="ex: luanvitor"
+												aria-invalid={fieldState.invalid}
+												onChange={(event) => {
+													const nextUsername = normalizeUsername(event.target.value)
+													setIsUsernameTouched(true)
+													field.onChange(nextUsername)
+												}}
+											/>
+											<FieldDescription>Somente letras minúsculas, números e _</FieldDescription>
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}

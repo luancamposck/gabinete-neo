@@ -1,6 +1,6 @@
 // @/modules/organizations/referrals/server/slices/get-my-referral-link/use-cases/get-my-referral-link.use-case.ts
 
-import { getUserInviteCodeByUserIdService } from "@/modules/accounts/users/server/services/get-user-invite-code-by-user-id.service"
+import { getUsernameByUserIdService } from "@/modules/accounts/users/server/services/get-username-by-user-id.service"
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
@@ -55,13 +55,13 @@ export async function getMyReferralLinkUseCase(): OperationResponse<GetMyReferra
 			}
 		}
 
-		// 5) Obter invite_code e montar URL do referral
-		const inviteCodeRes = await getUserInviteCodeByUserIdService({ userId })
-		if (inviteCodeRes.success === false) return inviteCodeRes
+		// 5) Obter username e montar URL do referral
+		const usernameRes = await getUsernameByUserIdService({ userId })
+		if (usernameRes.success === false) return usernameRes
 
-		const { inviteCode } = inviteCodeRes.data
+		const { username } = usernameRes.data
 		const isDevEnviroment = process.env.NODE_ENV === "development"
-		const referralUrl = isDevEnviroment ? `http://localhost:3000/?ref=${inviteCode}` : `https://${host}/?ref=${inviteCode}`
+		const referralUrl = isDevEnviroment ? `http://localhost:3000/?ref=${username}` : `https://${host}/?ref=${username}`
 
 		return {
 			success: true,

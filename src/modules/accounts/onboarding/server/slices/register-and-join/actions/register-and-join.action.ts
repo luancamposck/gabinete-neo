@@ -28,6 +28,7 @@ export async function registerAndJoinAction(formData: unknown): OperationRespons
 
 	const registerAndJoinUseCaseResParams: RegisterAndJoinParams = {
 		name: parsed.data.name,
+		username: parsed.data.username,
 		phone: parsed.data.phone,
 
 		email: parsed.data.email,
