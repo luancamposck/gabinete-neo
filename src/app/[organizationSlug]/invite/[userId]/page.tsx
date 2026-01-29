@@ -5,7 +5,7 @@ import Image from "next/image"
 import { findOrganizationBySlugAction } from "@/actions/organization"
 import { findOrganizationMembershipByUserAndOrganizationAction } from "@/actions/organization-membership"
 import { findPublicUserByUserIdAction } from "@/actions/public-users"
-import { CreateUserWithInvitationForm } from "@/components/forms/organization-invite/create-user-with-Invitation-form"
+// import { CreateUserWithInvitationForm } from "@/components/forms/organization-invite/create-user-with-Invitation-form"
 import { Card } from "@/components/ui/card"
 
 import { InviteError } from "./invite-error"
@@ -94,7 +94,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
 				Você foi convidado por {inviterUserName} para entrar na constelação {organizationName}
 			</p>
 			<Card className="grid grid-cols-2 p-0">
-				<CreateUserWithInvitationForm inviterUserId={inviterUserId} organizationId={organizationId} />
+				{/* <CreateUserWithInvitationForm inviterUserId={inviterUserId} organizationId={organizationId} /> */}
 
 				<div className="bg-muted hidden md:flex md:flex-col md:justify-center md:items-center">
 					<Image src="/logo.png" width={300} height={300} alt="Gabinete NEO" />
