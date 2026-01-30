@@ -1,49 +1,58 @@
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 
-import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.action"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Vortex } from "@/components/vortex"
-import { getPendingOrganizationInvitesByUserIdAdminRepo } from "@/repositories/organization-invites/organization-invites.admin.repo"
-import { findOrganizationMembershipByUserIdAdminRepo } from "@/repositories/organization-menberships/organization-menberships.admin.repo"
+import { requireDashboardAccessAction } from "@/modules/auth/server/slices/dashboard-guard/actions/require-dashboard-acess.action"
 
 const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	const isDevEnviroment = process.env.NODE_ENV === "development"
 
 	const cookieStore = await cookies()
 	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+	const requestHeaders = await headers()
+	const rawUri = requestHeaders.get("x-forwarded-uri") ?? requestHeaders.get("x-url") ?? requestHeaders.get("referer")
+	let hasAutotry = false
 
-	const getCurrentAuthUserActionRes = await getCurrentAuthUserAction()
-
-	// Redireciona se não houver usuário logado
-	if (getCurrentAuthUserActionRes.success === false) {
-		redirect("/") // ou sua página de login
+	if (rawUri) {
+		try {
+			const url = rawUri.startsWith("http") ? new URL(rawUri) : new URL(rawUri, "http://local")
+			hasAutotry = url.searchParams.get("autotry") === "1"
+		} catch (err) {
+			console.error("[DashboardLayout] Failed to parse request URL for autotry:", err)
+			hasAutotry = false
+		}
 	}
 
-	const userId = getCurrentAuthUserActionRes.data.user.id
+	const res = await requireDashboardAccessAction()
 
-	const { data: hasMembership, error: membershipError } = await findOrganizationMembershipByUserIdAdminRepo({ userId })
+	if (res.success === false) {
+		switch (res.code) {
+			case "unauthenticated": {
+				return redirect("/") // ou "/auth"
+			}
 
-	if (membershipError) {
-		console.error(membershipError)
-		redirect("/")
-	}
+			case "org_not_found": {
+				const searchParams = new URLSearchParams({ from: "guard" })
+				if (hasAutotry) {
+					searchParams.set("autotry", "1")
+				}
+				return redirect(`/tenant-not-found?${searchParams.toString()}`)
+			}
 
-	if (!hasMembership) {
-		const { data: hasPendingInvites, error: pendingInvitesError } = await getPendingOrganizationInvitesByUserIdAdminRepo({ userId })
-		if (pendingInvitesError) {
-			console.error(pendingInvitesError)
-			redirect("/")
+			case "not_member": {
+				// página de “você está logado, mas não pertence a essa org”
+				return redirect("/join")
+			}
+
+			default: {
+				// deixa o error boundary do /dashboard lidar
+				throw new Error(res.message)
+			}
 		}
-
-		if (hasPendingInvites) {
-			redirect("/invite-pending")
-		}
-
-		redirect("/no-organization")
 	}
 
 	return (

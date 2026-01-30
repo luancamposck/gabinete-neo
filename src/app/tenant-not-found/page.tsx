@@ -1,18 +1,46 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Waves } from "@/components/waves"
+
+import { signOutAction } from "@/modules/auth/server/slices/sign-out/actions/sign-out.action"
+import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import { getRequestHost } from "@/shared/http/get-request-host"
 
 export const dynamic = "force-dynamic"
 
 const SUPPORT_URL = process.env.NEXT_PUBLIC_SUPPORT_URL ?? "https://wa.me/5599999999999"
 
-export default async function TenantNotFoundPage() {
-	const host = (await getRequestHost()) ?? "indisponível"
+type TenantNotFoundPageProps = {
+	searchParams: Record<string, string | string[] | undefined>
+}
+
+export default async function TenantNotFoundPage({ searchParams }: TenantNotFoundPageProps) {
+	const normalizedHost = await getRequestHost()
+
+	const host = normalizedHost ?? "indisponível"
 	const isDevEnvironment = process.env.NODE_ENV === "development"
+	const fromParam = Array.isArray(searchParams.from) ? searchParams.from[0] : searchParams.from
+	const autotryParam = Array.isArray(searchParams.autotry) ? searchParams.autotry[0] : searchParams.autotry
+	const fromGuard = fromParam === "guard"
+	const autotry = autotryParam === "1"
+
+	if (!fromGuard && !autotry && normalizedHost) {
+		const orgRes = await getOrganizationIdByAppDomainAction({ appDomain: normalizedHost })
+		if (orgRes.success) {
+			redirect("/dashboard?autotry=1")
+		}
+	}
+
+	async function handleSignOut() {
+		"use server"
+
+		await signOutAction()
+		redirect("/")
+	}
 
 	return (
 		<main className="relative min-h-screen overflow-hidden">
@@ -36,17 +64,22 @@ export default async function TenantNotFoundPage() {
 							Host detectado: <span className="font-medium text-foreground">{host}</span>
 						</div>
 
-						{isDevEnvironment && (
+						{isDevEnvironment ? (
 							<div className="rounded-md border border-dashed border-muted-foreground/50 bg-muted/30 px-4 py-3 text-left text-xs text-muted-foreground">
 								Cadastre este host em organizations.app_domain para habilitar o tenant.
 							</div>
-						)}
+						) : null}
 					</CardContent>
 
 					<CardFooter className="flex flex-col gap-3 sm:flex-row sm:justify-center">
 						<Button asChild className="w-full sm:w-auto">
-							<Link href="/">Voltar para o início</Link>
+							<Link href="/dashboard">Tentar novamente</Link>
 						</Button>
+						<form action={handleSignOut} className="w-full sm:w-auto">
+							<Button type="submit" variant="secondary" className="w-full sm:w-auto">
+								Sair
+							</Button>
+						</form>
 						<Button asChild variant="outline" className="w-full sm:w-auto">
 							<a href={SUPPORT_URL} target="_blank" rel="noreferrer">
 								Falar com suporte
