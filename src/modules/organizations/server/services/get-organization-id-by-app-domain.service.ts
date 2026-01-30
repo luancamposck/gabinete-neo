@@ -7,7 +7,7 @@ const GENERIC_ORG_LOOKUP_ERROR = "Não foi possível localizar a constelação. 
 const ORG_LOOKUP_SUCCESS = "Constelação encontrada com sucesso."
 const prefixLog = "[getOrganizationIdByAppDomainService]:"
 
-export async function getOrganizationIdByAppDomainService({ appDomain }: { appDomain: string }): OperationResponse<{ organizationId: string }> {
+export async function getOrganizationIdByAppDomainService({ appDomain }: { appDomain: string }): OperationResponse<{ organizationId: string }, "org_not_found" | "infra_error"> {
 	try {
 		const { data, error } = await findOrganizationIdByAppDomainAdminRepo({ appDomain })
 
@@ -15,7 +15,8 @@ export async function getOrganizationIdByAppDomainService({ appDomain }: { appDo
 			console.error(`${prefixLog} ${error.message}`)
 			return {
 				success: false,
-				message: GENERIC_ORG_LOOKUP_ERROR
+				message: GENERIC_ORG_LOOKUP_ERROR,
+				code: "infra_error"
 			}
 		}
 
@@ -25,7 +26,8 @@ export async function getOrganizationIdByAppDomainService({ appDomain }: { appDo
 			console.error(`${prefixLog} missing organization id after lookup`)
 			return {
 				success: false,
-				message: GENERIC_ORG_LOOKUP_ERROR
+				message: GENERIC_ORG_LOOKUP_ERROR,
+				code: "org_not_found"
 			}
 		}
 
@@ -40,7 +42,8 @@ export async function getOrganizationIdByAppDomainService({ appDomain }: { appDo
 		console.error(`${prefixLog} unexpected error:`, error)
 		return {
 			success: false,
-			message: GENERIC_ORG_LOOKUP_ERROR
+			message: GENERIC_ORG_LOOKUP_ERROR,
+			code: "infra_error"
 		}
 	}
 }
