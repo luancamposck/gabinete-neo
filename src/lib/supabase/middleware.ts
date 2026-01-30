@@ -41,7 +41,7 @@ async function updateSession(request: NextRequest) {
 	const pathname = request.nextUrl.pathname
 
 	// rotas públicas "fixas"
-	const publicPaths = ["/", "/_next", "/favicon.ico"]
+	const publicPaths = ["/", "/_next", "/favicon.ico", "/tenant-not-found"]
 
 	// rota pública dinâmica: /[organizationSlug]/invite
 	const segments = pathname.split("/").filter(Boolean)
