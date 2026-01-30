@@ -4,7 +4,7 @@ import { insertAuthUserAdminRepo } from "@/modules/auth/server/repos/auth.admin.
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const GENERIC_SIGN_UP_ERROR = "Não foi possível criar o usuário. Tente novamente mais tarde."
-const EMAIL_ALREADY_EXISTS_ERROR = "Este email já está registrado no sistema."
+const EMAIL_ALREADY_EXISTS_ERROR = "Este e-mail já está registrado no sistema."
 const SIGN_UP_SUCCESS = "Usuário criado com sucesso."
 const prefixLog = "[signUpService]:"
 
@@ -14,7 +14,6 @@ export async function signUpService(params: { email: string; password: string })
 
 		if (authUserError || !authUserData) {
 			if (authUserError) {
-				console.log(authUserError)
 				console.error(`${prefixLog} ${authUserError.message}`)
 			}
 

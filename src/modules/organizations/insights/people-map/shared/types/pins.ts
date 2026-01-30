@@ -1,3 +1,4 @@
+// @/modules/organizations/insights/people-map/shared/types/pins.ts
 export type CityPin = {
 	id: string
 	city: string

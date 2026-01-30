@@ -1,4 +1,5 @@
-import type { CityPin } from "../types/pins"
+// @/modules/organizations/insights/people-map/shared/mocks/pins.mock.ts
+import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 
 export const pins: CityPin[] = [
 	{

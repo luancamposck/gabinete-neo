@@ -1,4 +1,4 @@
-// @/modules/organizations/memberships/server/repos/find-membership-by-org-and-user.admin.repo.ts
+// @/modules/organizations/memberships/server/repos/find-membership-by-org-id-and-user-id.admin.repo.ts
 
 import { createAdminClient } from "@/lib/supabase/admin"
 

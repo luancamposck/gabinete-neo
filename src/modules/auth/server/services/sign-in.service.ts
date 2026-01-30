@@ -3,7 +3,7 @@ import { signInRepo } from "@/modules/auth/server/repos/auth.repo"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const GENERIC_SIGN_IN_ERROR = "Não foi possível entrar. Tente novamente mais tarde."
-const INVALID_CREDENTIALS_ERROR = "Email ou senha inválidos."
+const INVALID_CREDENTIALS_ERROR = "E-mail ou senha inválidos."
 const SIGN_IN_SUCCESS = "Login realizado com sucesso."
 const prefixLog = "[signInService]:"
 

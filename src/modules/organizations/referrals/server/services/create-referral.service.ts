@@ -6,7 +6,6 @@ import type { CreateOrganizationReferralParams } from "@/modules/organizations/r
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const GENERIC_CREATE_REFERRAL_ERROR = "Não foi possível registrar a indicação. Tente novamente mais tarde."
-
 const CREATE_REFERRAL_SUCCESS = "Indicação registrada com sucesso."
 const prefixLog = "[createOrganizationReferralService]:"
 

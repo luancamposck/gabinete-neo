@@ -11,7 +11,7 @@ import MapGL, { Layer, Marker, NavigationControl, Source } from "react-map-gl/ma
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import type { CityPin } from "../shared/types/pins"
+import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 
 type SizePreset = "compact" | "normal" | "large"
 
