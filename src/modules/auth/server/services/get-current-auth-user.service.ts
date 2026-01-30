@@ -9,7 +9,9 @@ const GET_CURRENT_AUTH_USER_SUCCESS = "Usuário atual obtido com sucesso."
 const CURRENT_AUTH_USER_NOT_FOUND = "Nenhum usuário autenticado."
 const prefixLog = "[getCurrentAuthUserService]:"
 
-export async function getCurrentAuthUserService(): OperationResponse<{ user: User }> {
+type ErrorCodes = "unauthenticated" | "infra_error"
+
+export async function getCurrentAuthUserService(): OperationResponse<{ user: User }, ErrorCodes> {
 	try {
 		const { data, error } = await getCurrentAuthUserRepo()
 
@@ -17,7 +19,8 @@ export async function getCurrentAuthUserService(): OperationResponse<{ user: Use
 			console.error(`${prefixLog} ${error.message}`)
 			return {
 				success: false,
-				message: GENERIC_GET_CURRENT_AUTH_USER_ERROR
+				message: GENERIC_GET_CURRENT_AUTH_USER_ERROR,
+				code: "infra_error"
 			}
 		}
 
@@ -25,7 +28,8 @@ export async function getCurrentAuthUserService(): OperationResponse<{ user: Use
 			console.error(`${prefixLog} Sem usuário logado`)
 			return {
 				success: false,
-				message: CURRENT_AUTH_USER_NOT_FOUND
+				message: CURRENT_AUTH_USER_NOT_FOUND,
+				code: "unauthenticated"
 			}
 		}
 
@@ -40,7 +44,8 @@ export async function getCurrentAuthUserService(): OperationResponse<{ user: Use
 		console.error(`${prefixLog} unexpected error:`, error)
 		return {
 			success: false,
-			message: GENERIC_GET_CURRENT_AUTH_USER_ERROR
+			message: GENERIC_GET_CURRENT_AUTH_USER_ERROR,
+			code: "infra_error"
 		}
 	}
 }
