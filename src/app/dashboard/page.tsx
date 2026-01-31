@@ -2,7 +2,6 @@ import { AlertTriangle, CalendarDays, CheckCircle, CircleAlert, DollarSign, File
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { getUserOrganizationService } from "@/services/organization"
 
 const STATS = [
 	{
@@ -122,17 +121,6 @@ const colorStyles = {
 } as const satisfies Record<AlertColor, { bg: string; border: string; badge: string }>
 
 const HomePage = async () => {
-	const getUserOrganizationServiceRes = await getUserOrganizationService()
-
-	if (!getUserOrganizationServiceRes.success || !getUserOrganizationServiceRes.data) {
-		const errorMessage = getUserOrganizationServiceRes.message
-		console.error(errorMessage)
-
-		return null
-	}
-
-	const { organizationId, organizationSlug } = getUserOrganizationServiceRes.data
-
 	return (
 		<div className="space-y-6">
 			<section>
