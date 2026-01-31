@@ -2,8 +2,8 @@
 
 import { motion } from "motion/react"
 import dynamic from "next/dynamic"
-import { useEffect, useRef } from "react"
 import { useTheme } from "next-themes"
+import { useEffect, useRef } from "react"
 import { createNoise3D } from "simplex-noise"
 
 interface VortexProps {
@@ -74,9 +74,7 @@ const VortexCore = (props: VortexProps) => {
 		return value?.trim() || undefined
 	}
 	const refreshThemeColors = () => {
-		const themePalette = ["--primary", "--accent", "--ring", "--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5"]
-			.map((token) => getCssVariable(token))
-			.filter(Boolean) as string[]
+		const themePalette = ["--primary", "--accent", "--ring", "--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5"].map((token) => getCssVariable(token)).filter(Boolean) as string[]
 
 		if (themePalette.length) {
 			paletteRef.current = themePalette

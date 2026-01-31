@@ -134,4 +134,3 @@ export const organizationTasksColumns: ColumnDef<OrganizationTaskDTO>[] = [
 		enableHiding: false
 	}
 ]
-
