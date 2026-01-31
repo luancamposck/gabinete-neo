@@ -32,7 +32,37 @@ const FALLBACK_INFRA_ERROR = {
 export async function requireDashboardAccessUseCase(): OperationResponse<RequireDashboardAccessUseCaseRes, RequireDashboardAccessCode> {
 	try {
 		// ============================================================
-		// 0) Resolver host + organizationId (tenant atual via app_domain)
+		// 0) Obter usuário autenticado
+		//
+		// Possibilidades:
+		// - sem user => unauthenticated (layout redireciona pro login)
+		// - erro técnico => infra_error (layout pode cair no error boundary)
+		// ============================================================
+		const authRes = await getCurrentAuthUserService()
+		if (authRes.success === false) {
+			if (authRes.code === "unauthenticated") {
+				return {
+					success: false,
+					code: "unauthenticated",
+					message: MSG_UNAUTHENTICATED
+				}
+			}
+
+			if (authRes.code === "infra_error") {
+				return {
+					success: false,
+					code: "infra_error",
+					message: MSG_INFRA_ERROR
+				}
+			}
+
+			return FALLBACK_INFRA_ERROR
+		}
+
+		const userId = authRes.data.user.id
+
+		// ============================================================
+		// 1) Resolver host + organizationId (tenant atual via app_domain)
 		//
 		// Possibilidades:
 		// - host ausente => org_not_found (não tem como resolver tenant)
@@ -70,36 +100,6 @@ export async function requireDashboardAccessUseCase(): OperationResponse<Require
 		}
 
 		const organizationId = orgRes.data.organizationId
-
-		// ============================================================
-		// 1) Obter usuário autenticado
-		//
-		// Possibilidades:
-		// - sem user => unauthenticated (layout redireciona pro login)
-		// - erro técnico => infra_error (layout pode cair no error boundary)
-		// ============================================================
-		const authRes = await getCurrentAuthUserService()
-		if (authRes.success === false) {
-			if (authRes.code === "unauthenticated") {
-				return {
-					success: false,
-					code: "unauthenticated",
-					message: MSG_UNAUTHENTICATED
-				}
-			}
-
-			if (authRes.code === "infra_error") {
-				return {
-					success: false,
-					code: "infra_error",
-					message: MSG_INFRA_ERROR
-				}
-			}
-
-			return FALLBACK_INFRA_ERROR
-		}
-
-		const userId = authRes.data.user.id
 
 		// ============================================================
 		// 2) Verificar membership do user na org atual
