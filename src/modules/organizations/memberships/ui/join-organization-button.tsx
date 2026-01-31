@@ -18,7 +18,7 @@ export const JoinOrganizationButton = () => {
 			const res = await joinCurrentOrganizationAction()
 
 			if (!res) {
-				throw new Error("Não foi possível entrar na organização.")
+				throw new Error("Não foi possível entrar na constelação.")
 			}
 
 			if (res.success === true) {
@@ -42,13 +42,13 @@ export const JoinOrganizationButton = () => {
 				throw new Error(res.message)
 			}
 
-			throw new Error(res.message ?? "Não foi possível entrar na organização.")
+			throw new Error(res.message ?? "Não foi possível entrar na constelação.")
 		})
 	}
 
 	return (
 		<Button type="button" className="w-full" onClick={handleJoin} disabled={isPending}>
-			{isPending ? "Entrando..." : "Entrar na organização"}
+			{isPending ? "Entrando..." : "Entrar na constelação"}
 		</Button>
 	)
 }

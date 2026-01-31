@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Waves } from "@/components/waves"
 import { getCurrentUserAction } from "@/modules/auth/server/slices/get-current-user/actions/get-current-user.action"
 import { signOutAction } from "@/modules/auth/server/slices/sign-out/actions/sign-out.action"
 import { JoinOrganizationButton } from "@/modules/organizations/memberships/ui/join-organization-button"
@@ -36,11 +37,14 @@ const JoinPage = async () => {
 	}
 
 	return (
-		<main className="flex min-h-screen items-center justify-center px-6 py-12">
+		<main className="relative min-h-screen overflow-hidden">
+			<Waves />
+
+			<section className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
 			<Card className="w-full max-w-xl border-white/10 bg-background/85 backdrop-blur shadow-lg">
 				<CardHeader className="space-y-2 text-center">
 					<CardTitle className="text-3xl sm:text-4xl">Acesso restrito</CardTitle>
-					<CardDescription className="text-base text-muted-foreground">Você está logado como {email} mas não pertence a este domínio.</CardDescription>
+					<CardDescription className="text-base text-muted-foreground">Você está logado como {email} mas não pertence a esta constelação.</CardDescription>
 				</CardHeader>
 
 				<CardContent className="space-y-4">
@@ -64,6 +68,7 @@ const JoinPage = async () => {
 					</Button>
 				</CardFooter>
 			</Card>
+			</section>
 		</main>
 	)
 }
