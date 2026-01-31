@@ -18,7 +18,7 @@ type TenantNotFoundPageProps = {
 	searchParams: Record<string, string | string[] | undefined>
 }
 
-export default async function TenantNotFoundPage({ searchParams }: TenantNotFoundPageProps) {
+const TenantNotFoundPage = async ({ searchParams }: TenantNotFoundPageProps) => {
 	const normalizedHost = await getRequestHost()
 
 	const host = normalizedHost ?? "indisponível"
@@ -30,7 +30,7 @@ export default async function TenantNotFoundPage({ searchParams }: TenantNotFoun
 
 	if (!fromGuard && !autotry && normalizedHost) {
 		const orgRes = await getOrganizationIdByAppDomainAction({ appDomain: normalizedHost })
-		if (orgRes.success) {
+		if (orgRes.success === true) {
 			redirect("/dashboard?autotry=1")
 		}
 	}
@@ -64,11 +64,11 @@ export default async function TenantNotFoundPage({ searchParams }: TenantNotFoun
 							Host detectado: <span className="font-medium text-foreground">{host}</span>
 						</div>
 
-						{isDevEnvironment ? (
+						{isDevEnvironment && (
 							<div className="rounded-md border border-dashed border-muted-foreground/50 bg-muted/30 px-4 py-3 text-left text-xs text-muted-foreground">
 								Cadastre este host em organizations.app_domain para habilitar o tenant.
 							</div>
-						) : null}
+						)}
 					</CardContent>
 
 					<CardFooter className="flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -91,3 +91,5 @@ export default async function TenantNotFoundPage({ searchParams }: TenantNotFoun
 		</main>
 	)
 }
+
+export default TenantNotFoundPage
