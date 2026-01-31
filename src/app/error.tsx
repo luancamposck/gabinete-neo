@@ -25,7 +25,7 @@ const DashboardLayoutError = ({ error, reset }: { error: Error & { digest?: stri
 	}, [])
 
 	return (
-		<main className="relative min-h-screen overflow-hidden">
+		<main className="relative min-h-screen overflow-hidden dark" style={{ colorScheme: "dark" }}>
 			<Waves />
 
 			<section className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
