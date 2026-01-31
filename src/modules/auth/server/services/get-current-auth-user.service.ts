@@ -2,6 +2,7 @@
 
 import type { User } from "@supabase/supabase-js"
 import { getCurrentAuthUserRepo } from "@/modules/auth/server/repos/get-user.repo"
+import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const GENERIC_GET_CURRENT_AUTH_USER_ERROR = "Não foi possível obter o usuário atual. Tente novamente mais tarde."
@@ -41,6 +42,8 @@ export async function getCurrentAuthUserService(): OperationResponse<{ user: Use
 			}
 		}
 	} catch (error) {
+		rethrowIfNextError(error)
+
 		console.error(`${prefixLog} unexpected error:`, error)
 		return {
 			success: false,

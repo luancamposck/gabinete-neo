@@ -12,6 +12,8 @@ import { getRequestHost } from "@/shared/http/get-request-host"
 
 const SUPPORT_URL = process.env.NEXT_PUBLIC_SUPPORT_URL ?? "https://wa.me/5599999999999"
 
+export const dynamic = "force-dynamic"
+
 const JoinPage = async () => {
 	const authRes = await getCurrentUserAction()
 
