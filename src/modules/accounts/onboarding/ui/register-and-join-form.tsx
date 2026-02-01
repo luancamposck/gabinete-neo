@@ -212,7 +212,7 @@ export const RegisterAndJoinForm = () => {
 											<Input
 												{...field}
 												id={nameId}
-												placeholder="Joao da Silva"
+												placeholder="Luan Campos"
 												aria-invalid={fieldState.invalid}
 												onChange={(event) => {
 													field.onChange(event)
@@ -236,7 +236,7 @@ export const RegisterAndJoinForm = () => {
 											<Input
 												{...field}
 												id={usernameId}
-												placeholder="ex: luanvitor"
+												placeholder="ex: luancamposck"
 												aria-invalid={fieldState.invalid}
 												onChange={(event) => {
 													const nextUsername = normalizeUsername(event.target.value)
@@ -294,7 +294,7 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={emailId}>Email do usuario</FieldLabel>
-											<Input {...field} id={emailId} type="email" placeholder="seu-email@suaempresa.com" aria-invalid={fieldState.invalid} />
+											<Input {...field} id={emailId} type="email" placeholder="seu-email@gmail.com" aria-invalid={fieldState.invalid} />
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
@@ -306,7 +306,7 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={confirmEmailId}>Confirmar email do usuario</FieldLabel>
-											<Input {...field} id={confirmEmailId} type="email" placeholder="confirme.contato@suaempresa.com" aria-invalid={fieldState.invalid} />
+											<Input {...field} id={confirmEmailId} type="email" placeholder="seu-email@gmail.com" aria-invalid={fieldState.invalid} />
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}

@@ -80,7 +80,7 @@ export const SignInForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={emailId}>Email</FieldLabel>
-											<Input {...field} id={emailId} placeholder="meu-email@example.com" type="email" autoComplete="email" aria-invalid={fieldState.invalid} disabled={isSubmitting} />
+											<Input {...field} id={emailId} placeholder="meu-email@gmail.com" type="email" autoComplete="email" aria-invalid={fieldState.invalid} disabled={isSubmitting} />
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
