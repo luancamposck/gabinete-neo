@@ -11,3 +11,14 @@ export type CreateUserProfileParams = {
 	number: string
 	complement?: string
 }
+
+export type UpdateUserAddressParams = {
+	userId: string
+	cep: string
+	state: string
+	city: string
+	neighborhood: string
+	street: string
+	number: string
+	complement?: string
+}
