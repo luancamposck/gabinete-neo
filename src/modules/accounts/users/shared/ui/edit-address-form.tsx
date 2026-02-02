@@ -121,7 +121,7 @@ export const EditAddressForm = ({ defaultValues }: EditAddressFormProps) => {
 					<PencilLine className="size-4" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-xl">
+			<DialogContent className="sm:max-w-xl max-h-[90%] overflow-auto">
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
 						<MapPin className="h-4 w-4 text-primary" />
