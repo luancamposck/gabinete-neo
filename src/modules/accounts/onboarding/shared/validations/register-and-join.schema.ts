@@ -8,7 +8,7 @@ import { phoneSchemaClient, phoneSchemaServer } from "@/modules/accounts/users/p
 const RELATIONSHIP_VALUES = RELATIONSHIP_OPTIONS.map((opt) => opt.value) as [RelationshipValue, ...RelationshipValue[]]
 
 const relationshipToInviterSchema = z.enum(RELATIONSHIP_VALUES)
-const usernameSchema = z
+export const usernameSchema = z
 	.string()
 	.trim()
 	.toLowerCase()
