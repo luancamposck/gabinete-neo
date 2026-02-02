@@ -1,3 +1,5 @@
+import { Suspense } from "react"
+
 import { Vortex } from "@/components/vortex"
 import { AuthTabs } from "@/modules/auth/ui/auth-tabs"
 
@@ -8,7 +10,9 @@ const HomePage = () => {
 				<Vortex backgroundColor="transparent" className="flex size-full" rangeY={300} baseRadius={2} particleCount={50} rangeSpeed={1.5} baseHue={200} />
 			</div>
 
-			<AuthTabs />
+			<Suspense fallback={<div>Carregando…</div>}>
+				<AuthTabs />
+			</Suspense>
 		</div>
 	)
 }
