@@ -3,9 +3,9 @@ import { redirect } from "next/navigation"
 import cn from "@/lib/utils/cn"
 import { formatCep, formatPhone } from "@/lib/utils/formatters"
 import { getMyAccountDataAction } from "@/modules/accounts/server/slices/my-account/actions/get-my-account-data.action"
-import { EditAddressForm } from "@/modules/accounts/users/shared/ui/edit-address-form"
-import { EditPasswordForm } from "@/modules/accounts/users/shared/ui/edit-password-form"
-import { EditUsernameForm } from "@/modules/accounts/users/shared/ui/edit-username-form"
+import { EditAddressForm } from "@/modules/accounts/users/ui/edit-address-form"
+import { EditPasswordForm } from "@/modules/accounts/users/ui/edit-password-form"
+import { EditUsernameForm } from "@/modules/accounts/users/ui/edit-username-form"
 
 const MyAccountPage = async () => {
 	const getAccountRes = await getMyAccountDataAction()
