@@ -5,39 +5,41 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
-import { signOutAuthUserAction } from "@/actions/auth/sign-out-auth-user.action"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
+import { signOutAction } from "@/modules/auth/server/slices/sign-out/actions/sign-out.action"
 
-export const NavFooter = ({
-	user
-}: {
+function getInitials(name: string) {
+	if (!name) return "??"
+	const names = name.split(" ")
+	const firstInitial = names[0]?.[0] || ""
+	const lastInitial = names.length > 1 ? names[names.length - 1]?.[0] : ""
+	return `${firstInitial}${lastInitial}`.toUpperCase()
+}
+
+type NavFooterParams = {
 	user: {
 		name: string
 		email: string
 	}
-}) => {
+}
+
+export const NavFooter = (params: NavFooterParams) => {
+	const { user } = params
+
 	const { isMobile } = useSidebar()
 	const router = useRouter()
 
 	async function handleSignOut() {
-		const signOutAuthUserActionRes = await signOutAuthUserAction()
-		if (signOutAuthUserActionRes.success) {
-			const { redirectTo } = signOutAuthUserActionRes.data
-			router.push(redirectTo)
-		} else {
+		const signOutRes = await signOutAction()
+		if (signOutRes.success === false) {
 			toast.error("Erro ao se deslogar", {
 				description: "Tente novamente mais tarde, se o erro permanecer contate o suporte."
 			})
+			return
 		}
-	}
 
-	const getInitials = (name: string) => {
-		if (!name) return "??"
-		const names = name.split(" ")
-		const firstInitial = names[0]?.[0] || ""
-		const lastInitial = names.length > 1 ? names[names.length - 1]?.[0] : ""
-		return `${firstInitial}${lastInitial}`.toUpperCase()
+		router.replace("/")
 	}
 
 	return (
@@ -75,7 +77,7 @@ export const NavFooter = ({
 							</DropdownMenuItem>
 							<DropdownMenuItem>
 								<Bell />
-								Notificatições
+								Notificações
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
