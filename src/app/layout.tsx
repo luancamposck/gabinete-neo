@@ -41,12 +41,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 	const { organization } = getOrgRes.data
 
-	// fallback caso não exista config pra esse host
 	const title = organization.name
+	const description = organization.description ?? ""
 
 	return {
 		title,
-		description: ""
+		description
 	}
 }
 
