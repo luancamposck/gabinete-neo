@@ -1,3 +1,5 @@
+import type { UserRow } from "./db"
+
 export type UserWithProfileView = {
 	created_at: string
 	email: string
@@ -19,3 +21,5 @@ export type UserWithProfileView = {
 		user_id: string
 	}
 }
+
+export type UserView = UserRow
