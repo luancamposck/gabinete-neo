@@ -133,7 +133,7 @@ export type Database = {
 					invited_by_user_id: string | null
 					is_active: boolean
 					organization_id: string
-					role: string
+					role_id: string
 					updated_at: string
 					user_id: string
 				}
@@ -142,7 +142,7 @@ export type Database = {
 					invited_by_user_id?: string | null
 					is_active?: boolean
 					organization_id: string
-					role: string
+					role_id: string
 					updated_at?: string
 					user_id: string
 				}
@@ -151,7 +151,7 @@ export type Database = {
 					invited_by_user_id?: string | null
 					is_active?: boolean
 					organization_id?: string
-					role?: string
+					role_id?: string
 					updated_at?: string
 					user_id?: string
 				}
@@ -168,6 +168,13 @@ export type Database = {
 						columns: ["organization_id"]
 						isOneToOne: false
 						referencedRelation: "organizations"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "organization_memberships_role_id_fkey"
+						columns: ["role_id"]
+						isOneToOne: false
+						referencedRelation: "roles"
 						referencedColumns: ["id"]
 					},
 					{
@@ -343,7 +350,9 @@ export type Database = {
 					app_domain: string
 					created_at: string
 					created_by_user_id: string | null
+					description: string | null
 					id: string
+					image_path: string | null
 					is_active: boolean
 					name: string
 					slug: string
@@ -353,7 +362,9 @@ export type Database = {
 					app_domain: string
 					created_at?: string
 					created_by_user_id?: string | null
+					description?: string | null
 					id?: string
+					image_path?: string | null
 					is_active?: boolean
 					name: string
 					slug: string
@@ -363,7 +374,9 @@ export type Database = {
 					app_domain?: string
 					created_at?: string
 					created_by_user_id?: string | null
+					description?: string | null
 					id?: string
+					image_path?: string | null
 					is_active?: boolean
 					name?: string
 					slug?: string
@@ -375,6 +388,86 @@ export type Database = {
 						columns: ["created_by_user_id"]
 						isOneToOne: false
 						referencedRelation: "users"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			permissions: {
+				Row: {
+					description: string
+					id: string
+					key: string
+				}
+				Insert: {
+					description: string
+					id?: string
+					key: string
+				}
+				Update: {
+					description?: string
+					id?: string
+					key?: string
+				}
+				Relationships: []
+			}
+			role_permissions: {
+				Row: {
+					permission_id: string
+					role_id: string
+				}
+				Insert: {
+					permission_id: string
+					role_id: string
+				}
+				Update: {
+					permission_id?: string
+					role_id?: string
+				}
+				Relationships: [
+					{
+						foreignKeyName: "role_permissions_permission_id_fkey"
+						columns: ["permission_id"]
+						isOneToOne: false
+						referencedRelation: "permissions"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "role_permissions_role_id_fkey"
+						columns: ["role_id"]
+						isOneToOne: false
+						referencedRelation: "roles"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			roles: {
+				Row: {
+					id: string
+					is_active: boolean
+					is_system: boolean
+					name: string
+					organization_id: string
+				}
+				Insert: {
+					id?: string
+					is_active?: boolean
+					is_system?: boolean
+					name: string
+					organization_id: string
+				}
+				Update: {
+					id?: string
+					is_active?: boolean
+					is_system?: boolean
+					name?: string
+					organization_id?: string
+				}
+				Relationships: [
+					{
+						foreignKeyName: "roles_organization_id_fkey"
+						columns: ["organization_id"]
+						isOneToOne: false
+						referencedRelation: "organizations"
 						referencedColumns: ["id"]
 					}
 				]
@@ -462,6 +555,14 @@ export type Database = {
 		}
 		Functions: {
 			generate_invite_code: { Args: { len?: number }; Returns: string }
+			has_membership_permission: {
+				Args: {
+					p_organization_id: string
+					p_permission_key: string
+					p_user_id: string
+				}
+				Returns: boolean
+			}
 		}
 		Enums: {
 			organization_task_status: "NOT_STARTED" | "IN_PROGRESS" | "CANCELLED" | "COMPLETED"
