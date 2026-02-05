@@ -11,7 +11,6 @@ type IsUserMemberOfOrganizationParams = {
 type IsUserMemberOfOrganizationRes = {
 	isMember: boolean
 	isActive: boolean
-	role?: "OWNER" | "ADMIN" | "MEMBER"
 }
 
 const prefixLog = "[isUserMemberOfOrganizationService]:"
@@ -50,8 +49,7 @@ export async function isUserMemberOfOrganizationService(params: IsUserMemberOfOr
 			message: OK_MESSAGE,
 			data: {
 				isMember: isActive,
-				isActive,
-				role: data.role as "OWNER" | "ADMIN" | "MEMBER"
+				isActive
 			}
 		}
 	} catch (err) {

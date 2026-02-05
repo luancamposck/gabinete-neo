@@ -10,5 +10,5 @@ type FindMembershipByOrgAndUserParams = {
 export async function findMembershipByOrgAndUserAdminRepo(params: FindMembershipByOrgAndUserParams) {
 	const supabaseAdmin = createAdminClient()
 
-	return supabaseAdmin.from("organization_memberships").select("is_active, role").eq("organization_id", params.organizationId).eq("user_id", params.userId).maybeSingle()
+	return supabaseAdmin.from("organization_memberships").select("is_active").eq("organization_id", params.organizationId).eq("user_id", params.userId).maybeSingle()
 }
