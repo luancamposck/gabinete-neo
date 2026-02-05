@@ -3,12 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
-import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
-import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { QueryProvider } from "@/providers/query-provider"
-import { getRequestHost } from "@/shared/http/get-request-host"
 
 import "./globals.css"
+import { getCurrentOrganizationAction } from "@/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action"
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -26,17 +24,7 @@ const METADATA_FALLBACK: Metadata = {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-	const host = await getRequestHost()
-	if (!host) {
-		return METADATA_FALLBACK
-	}
-
-	const getOrgIdRes = await getOrganizationIdByAppDomainService({ appDomain: host })
-	if (getOrgIdRes.success === false) return METADATA_FALLBACK
-
-	const { organizationId } = getOrgIdRes.data
-
-	const getOrgRes = await getOrganizationByIdService({ organizationId })
+	const getOrgRes = await getCurrentOrganizationAction()
 	if (getOrgRes.success === false) return METADATA_FALLBACK
 
 	const { organization } = getOrgRes.data
@@ -44,9 +32,23 @@ export async function generateMetadata(): Promise<Metadata> {
 	const title = organization.name
 	const description = organization.description ?? ""
 
+	if (!organization.imageUrl) {
+		return {
+			title,
+			description
+		}
+	}
+
 	return {
 		title,
-		description
+		description,
+		openGraph: {
+			images: [{ url: organization.imageUrl, width: 1200, height: 630, alt: title }]
+		},
+		twitter: {
+			card: "summary_large_image",
+			images: [organization.imageUrl] // URL absoluta
+		}
 	}
 }
 
