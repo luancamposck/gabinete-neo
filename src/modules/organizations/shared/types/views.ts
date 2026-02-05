@@ -1,3 +1,5 @@
+import type { OrganizationRow, OrganizationUpdate } from "./db"
+
 export type OrganizationWithMembershipView = {
 	app_domain: string
 	created_at: string
@@ -6,6 +8,7 @@ export type OrganizationWithMembershipView = {
 	is_active: boolean
 	name: string
 	slug: string
+	description: string | null
 	updated_at: string
 
 	organization_memberships: {
@@ -13,8 +16,11 @@ export type OrganizationWithMembershipView = {
 		invited_by_user_id: string | null
 		is_active: boolean
 		organization_id: string
-		role: string
+		role_id: string
 		updated_at: string
 		user_id: string
 	}
 }
+
+export type OrganizationView = OrganizationRow
+export type OrganizationUpdateView = OrganizationUpdate
