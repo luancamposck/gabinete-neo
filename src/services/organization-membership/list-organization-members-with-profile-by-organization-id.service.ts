@@ -1,10 +1,8 @@
 // src/services/organization-membership/list-organization-members-by-organization-id.service.ts
 
 import { listOrganizationMembersWithProfileByOrganizationIdRepo } from "@/repositories/organization-menberships/organization-menberships.repo"
-import type { OrganizationMemberWithUserProfile } from "@/types/domain/organization/organization-members-with-user-profile.types"
-import type { OperationResponse } from "@/types/operation-response"
 
-export async function listOrganizationMembersWithProfileByOrganizationIdService({ organizationId }: { organizationId: string }): Promise<OperationResponse<{ organizationMembers: OrganizationMemberWithUserProfile[] }>> {
+export async function listOrganizationMembersWithProfileByOrganizationIdService({ organizationId }: { organizationId: string }) {
 	try {
 		const { data: organizationMembersData, error: organizationMembersError } = await listOrganizationMembersWithProfileByOrganizationIdRepo({ organizationId })
 

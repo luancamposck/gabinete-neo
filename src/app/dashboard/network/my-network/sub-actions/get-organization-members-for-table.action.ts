@@ -43,7 +43,7 @@ export async function getOrganizationMembersForTable({ organizationId }: { organ
 		return {
 			organizationId: member.organization_id,
 			userId: member.user_id,
-			role: member.role,
+			role: "MEMBER",
 			isActive: member.is_active,
 			createdAt: member.created_at,
 			invitedByUserId: member.invited_by_user_id,

@@ -49,7 +49,7 @@ export async function approveOrganizationInviteService({ inviteId, approverUserI
 		}
 	}
 
-	if (approverMembership.organization_id !== invite.organization_id || !["OWNER", "ADMIN"].includes(approverMembership.role)) {
+	if (approverMembership.organization_id !== invite.organization_id) {
 		return {
 			success: false,
 			message: "Você não tem permissão para aprovar este convite."
@@ -72,9 +72,9 @@ export async function approveOrganizationInviteService({ inviteId, approverUserI
 	const insertMembershipRes = await insertOrganizationMenbershipsAdminRepo({
 		organization_id: invite.organization_id,
 		user_id: invite.requested_by_user_id,
-		role: invite.role, // 'MEMBER' | 'ADMIN'
 		is_active: true,
-		invited_by_user_id: invite.created_by_user_id
+		invited_by_user_id: invite.created_by_user_id,
+		role_id: ""
 	})
 
 	if (insertMembershipRes.error) {

@@ -19,7 +19,7 @@ export async function listOrganizationMembersWithProfileByOrganizationIdRepo({ o
 			`
       organization_id,
       user_id,
-      role,
+      role_id,
       is_active,
       created_at,
       updated_at,
@@ -57,7 +57,7 @@ export async function listOrganizationMembersByOrganizationIdRepo({ organization
 			`
       organization_id,
       user_id,
-      role,
+      role_id,
       is_active,
       created_at,
       user:users!organization_memberships_user_id_fkey (

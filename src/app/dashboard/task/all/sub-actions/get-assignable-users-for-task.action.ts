@@ -1,7 +1,6 @@
 // src/app/dashboard/task/all/sub-actions/get-assignable-users-for-task.action.ts
 "use server"
 
-import type { OrganizationMemberWithUser } from "@/types/domain/organization/organization-member.types"
 import type { OperationResponse } from "@/types/operation-response"
 import { getAssignableUsersForOrganizationTaskUseCase } from "@/use-cases/get-assignable-users-for-organization-task.use-case"
 
@@ -9,7 +8,7 @@ export interface AssignableUserForTaskDTO {
 	userId: string
 	name: string
 	email: string
-	role: OrganizationMemberWithUser["role"]
+	role: string
 	isActive: boolean
 }
 
@@ -41,7 +40,7 @@ export async function getAssignableUsersForTaskAction({ taskId }: { taskId: stri
 				userId: member.user_id,
 				name: user.name,
 				email: user.email,
-				role: member.role,
+				role: member.role_id,
 				isActive: member.is_active
 			}
 		})

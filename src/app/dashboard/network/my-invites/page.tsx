@@ -1,7 +1,6 @@
 // src/app/dashboard/network/my-network/page.tsx
 import { redirect } from "next/navigation"
 import { OrganizationInvitesTable } from "@/components/data-tables/organization-invites/organization-invites-table"
-import { InviteLinkBox } from "@/components/invite-link-box"
 import { createClient } from "@/lib/supabase/server"
 import { MyReferralLinkButton } from "@/modules/organizations/referrals/ui/my-referral-link-button"
 import { findOrganizationMembershipByUserRepo } from "@/repositories/organization-menberships/organization-menberships.repo"
@@ -71,7 +70,7 @@ const MyInvitesPage = async () => {
 					<p className="text-sm text-muted-foreground">Confira aqui toda a sua rede de contatos, crie links de convites e aprove usuários interessados.</p>
 				</header>
 
-				{organizationSlug && <InviteLinkBox className="max-w-xl" />}
+				{organizationSlug && <MyReferralLinkButton className="max-w-xl" />}
 
 				<p className="text-sm text-destructive">{invitesRes.message ?? "Não foi possível carregar os convites desta constelação."}</p>
 			</div>

@@ -17,7 +17,7 @@ import type { OrganizationMembershipsRow } from "./organization-memberships-base
 export interface OrganizationMemberWithUser {
 	organization_id: OrganizationMembershipsRow["organization_id"]
 	user_id: OrganizationMembershipsRow["user_id"]
-	role: OrganizationMembershipsRow["role"]
+	role_id: string
 	is_active: OrganizationMembershipsRow["is_active"]
 	created_at: OrganizationMembershipsRow["created_at"]
 

@@ -6,7 +6,7 @@ import type { OperationResponse } from "@/types/operation-response"
 interface OrganizationMembershipWithOrganization {
 	organization_id: string
 	user_id: string
-	role: string
+	role_id: string
 	is_active: boolean
 	created_at: string
 	invited_by_user_id: string | null

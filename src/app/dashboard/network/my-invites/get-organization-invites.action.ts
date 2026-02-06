@@ -58,13 +58,6 @@ export async function getOrganizationInvitesAction(input: GetOrganizationInvites
 		}
 	}
 
-	if (!["OWNER", "ADMIN"].includes(membership.role)) {
-		return {
-			success: false,
-			message: "Apenas administradores podem visualizar os convites da organização."
-		}
-	}
-
 	// 4) Buscar convites via service
 	const serviceRes = await listOrganizationInvitesService({ organizationId, status })
 

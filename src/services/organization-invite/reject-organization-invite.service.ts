@@ -50,7 +50,7 @@ export async function rejectOrganizationInviteService({ inviteId, approverUserId
 		}
 	}
 
-	if (approverMembership.organization_id !== invite.organization_id || !["OWNER", "ADMIN"].includes(approverMembership.role)) {
+	if (approverMembership.organization_id !== invite.organization_id) {
 		return {
 			success: false,
 			message: "Você não tem permissão para rejeitar este convite."

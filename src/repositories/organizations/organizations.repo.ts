@@ -21,7 +21,7 @@ export async function findOrganizationMembershipWithOrganizationByUserIdRepo({ u
 			`
       organization_id,
       user_id,
-      role,
+      role_id,
       is_active,
       created_at,
       invited_by_user_id,
