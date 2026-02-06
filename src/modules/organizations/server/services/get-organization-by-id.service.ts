@@ -2,13 +2,13 @@
 
 import { findOrganizationByIdAdminRepo } from "@/modules/organizations/server/repos/find-organization-by-id.admin.repo"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
-import type { OrganizationsRow } from "@/types/domain/organization/organization-base.types"
+import type { OrganizationRow } from "../../shared/types/db"
 
 const GENERIC_ORG_LOOKUP_ERROR = "Não foi possível localizar a constelação. Tente novamente mais tarde."
 const ORG_LOOKUP_SUCCESS = "Constelação encontrada com sucesso."
 const prefixLog = "[getOrganizationByIdService]:"
 
-export async function getOrganizationByIdService({ organizationId }: { organizationId: string }): OperationResponse<{ organization: OrganizationsRow }, "org_not_found" | "infra_error"> {
+export async function getOrganizationByIdService({ organizationId }: { organizationId: string }): OperationResponse<{ organization: OrganizationRow }, "org_not_found" | "infra_error"> {
 	try {
 		const { data, error } = await findOrganizationByIdAdminRepo({ organizationId })
 
