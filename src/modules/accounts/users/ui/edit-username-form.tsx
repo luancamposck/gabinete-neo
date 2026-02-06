@@ -11,8 +11,9 @@ import { z } from "zod"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { cn } from "@/lib/utils"
-import { editUsernameAction } from "@/modules/accounts/users/server/slices/edit-username/actions/edit-username.action"
 import { usernameSchema } from "@/modules/accounts/onboarding/shared/validations/register-and-join.schema"
+import { editUsernameAction } from "@/modules/accounts/users/server/slices/edit-username/actions/edit-username.action"
+import { useReferralLinkStorage } from "@/shared/hooks/use-referral-link-storage"
 
 const editUsernameSchema = z.object({
 	username: usernameSchema
@@ -30,6 +31,7 @@ export const EditUsernameForm = ({ defaultValue }: EditUsernameFormProps) => {
 
 	const [isEditing, setIsEditing] = useState<boolean>(false)
 	const router = useRouter()
+	const { clearReferralUrl } = useReferralLinkStorage()
 
 	const form = useForm<EditUsernameFormValues>({
 		resolver: zodResolver(editUsernameSchema),
@@ -85,6 +87,7 @@ export const EditUsernameForm = ({ defaultValue }: EditUsernameFormProps) => {
 			}
 
 			if (result.success) {
+				clearReferralUrl()
 				toast.success("Username atualizado", {
 					description: result.message
 				})

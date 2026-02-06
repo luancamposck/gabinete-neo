@@ -7,29 +7,27 @@ import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-
 import { getMyReferralLinkAction } from "@/modules/organizations/referrals/server/slices/get-my-referral-link/actions/get-my-referral-link.action"
+import { DEFAULT_REFERRAL_LINK_STORAGE_KEY, useReferralLinkStorage } from "@/shared/hooks/use-referral-link-storage"
 
 type Props = {
 	className?: string
 	storageKey?: string // se quiser customizar
 }
 
-export const MyReferralLinkButton = ({ className, storageKey = "gabinete:my_referral_link" }: Props) => {
+export const MyReferralLinkButton = ({ className, storageKey = DEFAULT_REFERRAL_LINK_STORAGE_KEY }: Props) => {
 	const [isPending, startTransition] = useTransition()
-	const [referralUrl, setReferralUrl] = useState<string>("")
+	const { referralUrl, setReferralUrl } = useReferralLinkStorage({
+		storageKey
+	})
 	const [copied, setCopied] = useState(false)
 	const resetTimerRef = useRef<number | null>(null)
 
 	useEffect(() => {
-		// opcional: cache persistente (pra chamar server action só 1x)
-		const cached = typeof window !== "undefined" ? window.localStorage.getItem(storageKey) : null
-		if (cached) setReferralUrl(cached)
-
 		return () => {
 			if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current)
 		}
-	}, [storageKey])
+	}, [])
 
 	function scheduleResetCopied() {
 		if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current)
@@ -65,7 +63,6 @@ export const MyReferralLinkButton = ({ className, storageKey = "gabinete:my_refe
 
 				const url = res.data.referralUrl
 				setReferralUrl(url)
-				window.localStorage.setItem(storageKey, url)
 
 				await copyToClipboard(url)
 				toast.success("Link copiado com sucesso")
