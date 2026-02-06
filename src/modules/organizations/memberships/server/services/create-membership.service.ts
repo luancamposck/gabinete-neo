@@ -19,7 +19,7 @@ export async function createOrganizationMembershipService(params: CreateOrganiza
 		user_id: params.userId,
 		organization_id: params.organizationId,
 		invited_by_user_id: params.invitedByUserId,
-		role: "MEMBER",
+		role_id: "977f80b0-b3e3-4d97-9f40-fa28894bf69a",
 		is_active: true
 	}
 

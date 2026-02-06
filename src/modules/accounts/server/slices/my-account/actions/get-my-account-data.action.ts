@@ -55,7 +55,7 @@ export async function getMyAccountDataAction(): GetMyAccountDataActiones {
 		membership: {
 			createdAt: organizationWithMembership.organization_memberships.created_at,
 			invitedByUserId: organizationWithMembership.organization_memberships.invited_by_user_id,
-			role: organizationWithMembership.organization_memberships.role,
+			role: "MEMBRO",
 			isActive: organizationWithMembership.organization_memberships.is_active
 		}
 	}
