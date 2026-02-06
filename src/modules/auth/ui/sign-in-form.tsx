@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { signInAction } from "@/modules/auth/server/slices/sign-in/actions/sign-in.action"
 import { type SignInSchemaData, signInSchema } from "@/modules/auth/shared/validations/sign-in.schema"
 
-export const SignInForm = () => {
+export const SignInForm = ({ organizationName }: { organizationName: string }) => {
 	const baseId = useId()
 	const formId = `${baseId}-sign-in-form`
 	const emailId = `${baseId}-email`
@@ -71,7 +71,7 @@ export const SignInForm = () => {
 						<FieldSet>
 							<div className="flex flex-col items-center text-center">
 								<h1 className="text-2xl font-bold">Bem-vindo de volta</h1>
-								<p className="text-muted-foreground text-balance">Faca login na sua conta Gabinete NEO</p>
+								<p className="text-muted-foreground text-balance">Faca login na sua conta {organizationName}</p>
 							</div>
 							<FieldGroup>
 								<Controller

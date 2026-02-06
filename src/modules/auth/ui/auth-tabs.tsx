@@ -25,13 +25,16 @@ export const AuthTabs = async (props: { searchParams: SearchParams }) => {
 
 	return (
 		<Tabs defaultValue={initialTab} className="w-full max-w-sm md:max-w-3xl">
+			<Image src={imageUrl} width={500} height={500} alt={organizationName} className="w-3/4 mx-auto md:hidden" />
+
 			<TabsList className="w-full bg-primary-foreground">
 				<TabsTrigger value="login">Login</TabsTrigger>
 				<TabsTrigger value="signup">Cadastro</TabsTrigger>
 			</TabsList>
+
 			<Card className="grid grid-cols-1 md:grid-cols-2 p-0">
 				<TabsContent value="login">
-					<SignInForm />
+					<SignInForm organizationName={organizationName} />
 				</TabsContent>
 				<TabsContent value="signup">
 					<RegisterAndJoinForm />
