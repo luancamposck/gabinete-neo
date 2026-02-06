@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -10,7 +10,12 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/public-assets/**",
       }
     ]
-  }
-};
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+}
 
-export default nextConfig;
+export default nextConfig
