@@ -52,6 +52,8 @@ export async function generateMetadata(): Promise<Metadata> {
 	}
 }
 
+export const dynamic = "force-dynamic"
+
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	return (
 		<html lang="pt-BR">

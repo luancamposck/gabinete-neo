@@ -8,6 +8,8 @@ import { Vortex } from "@/components/vortex"
 import { AppSidebar } from "@/modules/app-shell/ui/app-sidebar"
 import { requireDashboardAccessAction } from "@/modules/auth/server/slices/dashboard-guard/actions/require-dashboard-acess.action"
 
+export const dynamic = "force-dynamic"
+
 const DashboardLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	const isDevEnviroment = process.env.NODE_ENV === "development"
 
