@@ -92,7 +92,7 @@ export const SignInForm = ({ organizationName }: { organizationName: string }) =
 										<Field data-invalid={fieldState.invalid}>
 											<div className="flex items-center">
 												<FieldLabel htmlFor={passwordId}>Senha</FieldLabel>
-												<Link href="#" className="ml-auto text-sm underline-offset-2 hover:underline">
+												<Link href="/forgot-password" className="ml-auto text-sm underline-offset-2 hover:underline">
 													Esqueceu sua senha?
 												</Link>
 											</div>
