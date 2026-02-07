@@ -11,6 +11,7 @@ const prefixLog = "[createOrganizationMembershipService]:"
 type CreateOrganizationMembershipServiceParams = {
 	userId: string
 	organizationId: string
+	roleId: string
 	invitedByUserId?: string
 }
 
@@ -19,7 +20,7 @@ export async function createOrganizationMembershipService(params: CreateOrganiza
 		user_id: params.userId,
 		organization_id: params.organizationId,
 		invited_by_user_id: params.invitedByUserId,
-		role_id: "977f80b0-b3e3-4d97-9f40-fa28894bf69a",
+		role_id: params.roleId,
 		is_active: true
 	}
 

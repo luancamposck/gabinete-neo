@@ -4,3 +4,5 @@ import type { Tables, TablesInsert, TablesUpdate } from "@/lib/definitions/supab
 export type MembershipInsert = TablesInsert<"organization_memberships">
 export type MembershipRow = Tables<"organization_memberships">
 export type MembershipUpdate = TablesUpdate<"organization_memberships">
+
+export type RoleRow = Tables<"roles">

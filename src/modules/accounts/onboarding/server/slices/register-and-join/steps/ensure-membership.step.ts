@@ -2,6 +2,7 @@
 
 import { signOutService } from "@/modules/auth/server/services/sign-out.service"
 import { createOrganizationMembershipService } from "@/modules/organizations/memberships/server/services/create-membership.service"
+import { getRoleByNameService } from "@/modules/organizations/memberships/server/services/get-role-by-name.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
@@ -58,9 +59,21 @@ export async function ensureMembershipStep(params: EnsureMembershipStepParams): 
 			}
 		}
 
+		const getRoleRes = await getRoleByNameService({
+			name: "MEMBER",
+			organizationId
+		})
+
+		if (getRoleRes.success === false) {
+			return getRoleRes
+		}
+
+		const roleId = getRoleRes.data.role.id
+
 		const createMembershipRes = await createOrganizationMembershipService({
 			organizationId,
 			userId,
+			roleId,
 			invitedByUserId: invitedByUserId ?? undefined
 		})
 

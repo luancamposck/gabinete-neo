@@ -6,6 +6,7 @@ import { isUserMemberOfOrganizationService } from "@/modules/organizations/membe
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import { getRoleByNameService } from "../../../services/get-role-by-name.service"
 
 type JoinCurrentOrganizationUseCaseRes = {
 	host: string
@@ -108,7 +109,22 @@ export async function joinCurrentOrganizationUseCase(): OperationResponse<JoinCu
 			}
 		}
 
-		const createMembershipRes = await createOrganizationMembershipService({ organizationId, userId })
+		const getRoleRes = await getRoleByNameService({
+			name: "MEMBER",
+			organizationId
+		})
+
+		if (getRoleRes.success === false) {
+			if (getRoleRes.code === "role_not_found") {
+				console.warn(`${prefixLog} role MEMBER not found for organizationId: ${organizationId}`)
+			}
+
+			return FALLBACK_INFRA_ERROR
+		}
+
+		const roleId = getRoleRes.data.role.id
+
+		const createMembershipRes = await createOrganizationMembershipService({ organizationId, userId, roleId })
 
 		if (createMembershipRes.success === false) FALLBACK_INFRA_ERROR
 
