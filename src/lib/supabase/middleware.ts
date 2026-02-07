@@ -33,10 +33,7 @@ async function updateSession(request: NextRequest) {
 	// issues with users being randomly logged out.
 
 	// IMPORTANT: DO NOT REMOVE auth.getUser()
-
-	const {
-		data: { user }
-	} = await supabase.auth.getUser()
+	const { data } = await supabase.auth.getClaims()
 
 	return supabaseResponse
 }
