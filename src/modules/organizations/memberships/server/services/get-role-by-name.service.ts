@@ -1,8 +1,8 @@
 // @/modules/organizations/memberships/server/services/get-role-by-name.service.ts
 
 import { getRoleAdminRepo } from "@/modules/organizations/memberships/server/repos/get-role.admin.repo"
+import type { RoleView } from "@/modules/organizations/memberships/shared/types/views"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
-import type { RoleView } from "../../shared/types/views"
 
 type Params = {
 	organizationId: string

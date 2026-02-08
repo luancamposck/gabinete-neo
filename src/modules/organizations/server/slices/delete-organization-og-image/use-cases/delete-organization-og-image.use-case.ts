@@ -5,9 +5,9 @@ import { hasMembershipPermissionService } from "@/modules/auth/server/services/h
 import { deleteOrganizationOgImageService } from "@/modules/organizations/server/services/delete-organization-og-image.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getOrganizationImagePathService } from "@/modules/organizations/server/services/get-organization-image-path.service"
+import { updateOrganizationService } from "@/modules/organizations/server/services/update-organization.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
-import { updateOrganizationService } from "../../../services/update-organization.service"
 
 type DeleteOrganizationOgImageUseCaseRes = {
 	deleted: boolean

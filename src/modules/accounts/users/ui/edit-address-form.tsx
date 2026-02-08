@@ -16,8 +16,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { brazilianStates } from "@/lib/constants/brazilian-states"
 import { maskCep } from "@/lib/masks"
+import { editUserAddressAction } from "@/modules/accounts/users/profiles/server/slices/edit-user-address/actions/edit-user-address.action"
 import { addressSchemaClient } from "@/modules/accounts/users/profiles/shared/validations/address.schema"
-import { editUserAddressAction } from "../profiles/server/slices/edit-user-address/actions/edit-user-address.action"
 
 type AddressFormValues = z.infer<typeof addressSchemaClient>
 

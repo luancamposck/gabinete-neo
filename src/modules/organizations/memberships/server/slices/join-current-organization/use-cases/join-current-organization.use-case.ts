@@ -2,11 +2,11 @@
 
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { createOrganizationMembershipService } from "@/modules/organizations/memberships/server/services/create-membership.service"
+import { getRoleByNameService } from "@/modules/organizations/memberships/server/services/get-role-by-name.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
-import { getRoleByNameService } from "../../../services/get-role-by-name.service"
 
 type JoinCurrentOrganizationUseCaseRes = {
 	host: string

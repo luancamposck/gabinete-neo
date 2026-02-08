@@ -19,8 +19,8 @@ import {
 	SidebarMenuSubItem
 } from "@/components/ui/sidebar"
 import { getSidebarContextAction } from "@/modules/app-shell/server/slices/get-sidebar-context/actions/get-sidebar-context.action"
-import { navMain } from "../shared/navigation/nav-main"
-import { NavFooter } from "./nav-footer"
+import { navMain } from "@/modules/app-shell/shared/navigation/nav-main"
+import { NavFooter } from "@/modules/app-shell/ui/nav-footer"
 
 const AppSidebar = async () => {
 	const sidebarContextRes = await getSidebarContextAction({ permissionKey: "org.admin.read" })

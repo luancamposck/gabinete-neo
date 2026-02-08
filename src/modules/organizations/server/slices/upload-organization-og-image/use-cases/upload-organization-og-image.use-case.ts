@@ -2,13 +2,13 @@
 
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
+import { deleteOrganizationOgImageService } from "@/modules/organizations/server/services/delete-organization-og-image.service"
+import { getOrganizationImagePathService } from "@/modules/organizations/server/services/get-organization-image-path.service"
+import { updateOrganizationService } from "@/modules/organizations/server/services/update-organization.service"
 import { uploadOrganizationOgImageService } from "@/modules/organizations/server/services/upload-organization-og-image.service"
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
-import { deleteOrganizationOgImageService } from "../../../services/delete-organization-og-image.service"
-import { getOrganizationImagePathService } from "../../../services/get-organization-image-path.service"
-import { updateOrganizationService } from "../../../services/update-organization.service"
 
 type UploadOrganizationOgImageUseCaseRes = {
 	path: string

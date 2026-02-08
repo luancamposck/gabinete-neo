@@ -1,6 +1,6 @@
+import { findOrganizationWithMemberhipRepo } from "@/modules/organizations/server/repos/find-organization-with-membership.repo"
+import type { OrganizationWithMembershipView } from "@/modules/organizations/shared/types/views"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
-import type { OrganizationWithMembershipView } from "../../shared/types/views"
-import { findOrganizationWithMemberhipRepo } from "../repos/find-organization-with-membership.repo"
 
 const GENERIC_ERROR = "Não foi possível obter a organização. Tente novamente mais tarde."
 const NOT_FOUND_MESSAGE = "Organização não encontrada."

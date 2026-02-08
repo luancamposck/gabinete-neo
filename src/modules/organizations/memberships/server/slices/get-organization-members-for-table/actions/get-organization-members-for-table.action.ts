@@ -1,8 +1,8 @@
 // @/modules/organizations/memberships/server/slices/get-organization-members-for-table/actions/get-organization-members-for-table.action.ts
 "use server"
 
-import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import { getOrganizationMembersForTableUseCase } from "@/modules/organizations/memberships/server/slices/get-organization-members-for-table/use-cases/get-organization-members-for-table.use-case"
+import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 type ErrorCodes = "org_not_found" | "infra_error"

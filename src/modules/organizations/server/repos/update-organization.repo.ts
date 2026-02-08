@@ -2,7 +2,7 @@
 // Repo genérico para atualizar dados da organização.
 
 import { createClient } from "@/lib/supabase/server"
-import type { OrganizationUpdate } from "../../shared/types/db"
+import type { OrganizationUpdate } from "@/modules/organizations/shared/types/db"
 
 type UpdateOrganizationRepoParams = {
 	organizationId: string

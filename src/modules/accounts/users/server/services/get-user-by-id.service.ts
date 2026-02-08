@@ -1,8 +1,8 @@
 // @/modules/accounts/users/server/services/get-user-by-id.service.ts
 
 import { findUserByIdRepo } from "@/modules/accounts/users/server/repos/find-user-by-id.repo"
+import type { UserView } from "@/modules/accounts/users/shared/types/views"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
-import type { UserView } from "../../shared/types/views"
 
 const GENERIC_ERROR = "Não foi possível obter o usuário. Tente novamente mais tarde."
 const NOT_FOUND_MESSAGE = "Usuário não encontrado."

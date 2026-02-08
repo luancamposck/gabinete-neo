@@ -1,4 +1,4 @@
-import type { UserRow } from "./db"
+import type { UserRow } from "@/modules/accounts/users/shared/types/db"
 
 export type UserWithProfileView = {
 	created_at: string

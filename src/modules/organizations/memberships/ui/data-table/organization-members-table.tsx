@@ -8,9 +8,9 @@ import { DataTable } from "@/components/ui/data-table"
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
 import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 
-import { organizationMembersColumns } from "./columns"
-import { OrganizationMembersTableToolbar } from "./organization-members-table-toolbar"
-import { usePersistedTableState } from "./use-persisted-table-state"
+import { organizationMembersColumns } from "@/modules/organizations/memberships/ui/data-table/columns"
+import { OrganizationMembersTableToolbar } from "@/modules/organizations/memberships/ui/data-table/organization-members-table-toolbar"
+import { usePersistedTableState } from "@/modules/organizations/memberships/ui/data-table/use-persisted-table-state"
 
 const ORGANIZATION_MEMBERS_TABLE_STORAGE_KEY = "organization-members-table-state"
 

@@ -8,9 +8,8 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatPhone } from "@/lib/utils/formatters"
 import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
-
-import { OrganizationMemberAddressPopover } from "./organization-member-address-popover"
-import { OrganizationMemberActions } from "./organization-member-actions"
+import { OrganizationMemberActions } from "@/modules/organizations/memberships/ui/data-table/organization-member-actions"
+import { OrganizationMemberAddressPopover } from "@/modules/organizations/memberships/ui/data-table/organization-member-address-popover"
 
 function formatDate(value: string | null | undefined) {
 	if (!value) return "-"

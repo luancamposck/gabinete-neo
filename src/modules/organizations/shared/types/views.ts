@@ -1,4 +1,4 @@
-import type { OrganizationRow, OrganizationUpdate } from "./db"
+import type { OrganizationRow, OrganizationUpdate } from "@/modules/organizations/shared/types/db"
 
 export type OrganizationWithMembershipView = {
 	app_domain: string
