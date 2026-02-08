@@ -1,20 +1,20 @@
 // src/types/dto/organization-member.dto.ts
 
 export interface OrganizationMemberAddressDTO {
-	cep: string | null
-	street: string | null
-	number: string | null
+	cep: string
+	street: string
+	number: string
 	complement: string | null
-	neighborhood: string | null
-	city: string | null
-	state: string | null
+	neighborhood: string
+	city: string
+	state: string
 }
 
 export interface OrganizationMemberUserDTO {
 	id: string
-	name: string | null
+	name: string
 	email: string
-	phone: string | null
+	phone: string
 	address: OrganizationMemberAddressDTO
 }
 

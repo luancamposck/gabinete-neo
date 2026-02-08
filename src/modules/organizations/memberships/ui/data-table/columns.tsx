@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatPhone } from "@/lib/utils/formatters"
-import type { OrganizationMemberDTO } from "@/types/dto/organization-member.dto"
+import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 
-import { OrganizationMemberAddressPopover } from "../organization-member-address-popover.sub-component"
+import { OrganizationMemberAddressPopover } from "./organization-member-address-popover"
 import { OrganizationMemberActions } from "./organization-member-actions"
 
 function formatDate(value: string | null | undefined) {
@@ -26,14 +26,20 @@ function formatDate(value: string | null | undefined) {
 	}).format(date)
 }
 
-export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
+const roleLabelMap: Record<string, string> = {
+	OWNER: "Owner",
+	ADMIN: "Admin",
+	MEMBER: "Membro"
+}
+
+export const organizationMembersColumns: ColumnDef<OrganizationMemberTableRow>[] = [
 	{
 		accessorKey: "userName",
 		header: "Nome",
-		accessorFn: (row) => row.user.name ?? row.user.email,
+		accessorFn: (row) => row.user.name || row.user.email,
 		cell: ({ row }) => {
 			const member = row.original
-			const name = member.user.name ?? "Sem nome cadastrado"
+			const name = member.user.name || "Sem nome cadastrado"
 
 			return (
 				<div className="flex flex-col">
@@ -45,7 +51,7 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 	{
 		accessorKey: "phone",
 		header: "Telefone",
-		accessorFn: (row) => row.user.phone ?? "",
+		accessorFn: (row) => row.user.phone,
 		cell: ({ row }) => {
 			const phone = row.original.user.phone
 
@@ -67,8 +73,8 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 		header: "Localização",
 		cell: ({ row }) => {
 			const address = row.original.user.address
-			const city = address?.city
-			const state = address?.state
+			const city = address.city
+			const state = address.state
 
 			const locationLabel = city || state ? `${city ?? ""}${city && state ? " / " : ""}${state ?? ""}` : "-"
 
@@ -84,9 +90,9 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 	{
 		accessorKey: "state",
 		header: "Estado",
-		accessorFn: (row) => row.user.address?.state ?? "",
+		accessorFn: (row) => row.user.address.state,
 		cell: ({ row }) => {
-			const state = row.original.user.address?.state
+			const state = row.original.user.address.state
 			return <span className="text-sm text-muted-foreground">{state || "-"}</span>
 		},
 		enableHiding: true,
@@ -94,12 +100,13 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberDTO>[] = [
 		filterFn: (row, id, value) => (value as string[]).includes((row.getValue(id) as string) ?? "")
 	},
 	{
-		accessorKey: "role",
+		id: "role",
 		header: "Permissão",
+		accessorFn: (row) => row.role.name,
 		cell: ({ row }) => {
-			const role = row.original.role
-
-			const label = role === "OWNER" ? "Owner" : role === "ADMIN" ? "Admin" : "Membro"
+			const roleName = row.original.role.name
+			const roleKey = roleName.toUpperCase()
+			const label = roleLabelMap[roleKey] ?? roleName
 
 			return (
 				<Badge variant="outline" className="text-xs font-medium">

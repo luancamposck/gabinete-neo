@@ -1,23 +1,23 @@
 "use client"
 
 import { rankItem } from "@tanstack/match-sorter-utils"
-import { type ColumnDef, type FilterFn, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
+import { type FilterFn, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { useState } from "react"
 
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
-import { usePersistedTableState } from "@/hooks/use-persisted-table-state"
-import type { OrganizationMemberDTO } from "@/types/dto/organization-member.dto"
+import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 
 import { organizationMembersColumns } from "./columns"
 import { OrganizationMembersTableToolbar } from "./organization-members-table-toolbar"
+import { usePersistedTableState } from "./use-persisted-table-state"
 
 const ORGANIZATION_MEMBERS_TABLE_STORAGE_KEY = "organization-members-table-state"
 
-const fuzzyFilter: FilterFn<OrganizationMemberDTO> = (row, _columnId, value, addMeta) => {
-	const name = row.original.user.name ?? ""
-	const email = row.original.user.email ?? ""
-	const phone = row.original.user.phone ?? ""
+const fuzzyFilter: FilterFn<OrganizationMemberTableRow> = (row, _columnId, value, addMeta) => {
+	const name = row.original.user.name
+	const email = row.original.user.email
+	const phone = row.original.user.phone
 	const haystack = `${name} ${email} ${phone}`.trim()
 
 	const itemRank = rankItem(haystack, String(value))
@@ -28,7 +28,7 @@ const fuzzyFilter: FilterFn<OrganizationMemberDTO> = (row, _columnId, value, add
 }
 
 interface OrganizationMembersTableProps {
-	data: OrganizationMemberDTO[]
+	data: OrganizationMemberTableRow[]
 }
 
 export const OrganizationMembersTable = ({ data }: OrganizationMembersTableProps) => {
@@ -47,7 +47,7 @@ export const OrganizationMembersTable = ({ data }: OrganizationMembersTableProps
 
 	const table = useReactTable({
 		data: data ?? [],
-		columns: organizationMembersColumns as ColumnDef<OrganizationMemberDTO>[],
+		columns: organizationMembersColumns,
 		filterFns: {
 			fuzzy: fuzzyFilter
 		},

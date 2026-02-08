@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { formatCep, formatPhone } from "@/lib/utils/formatters"
-import type { OrganizationMemberDTO } from "@/types/dto/organization-member.dto"
+import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 
 interface OrganizationMemberActionsProps {
-	member: OrganizationMemberDTO
+	member: OrganizationMemberTableRow
 }
 
 const formatDateTime = (value: string | null | undefined) => {
@@ -38,20 +38,21 @@ export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsP
 	const { user, role, isActive, createdAt } = member
 	const address = user.address
 
-	const roleLabel = roleLabelMap[role] ?? role
+	const roleKey = role.name.toUpperCase()
+	const roleLabel = roleLabelMap[roleKey] ?? role.name
 	const statusLabel = isActive ? "Ativo" : "Inativo"
 
 	const locationLabel = useMemo(() => {
-		const city = address?.city?.trim()
-		const state = address?.state?.trim()
+		const city = address.city?.trim()
+		const state = address.state?.trim()
 		if (!city && !state) return "—"
 		return `${city ?? ""}${city && state ? " / " : ""}${state ?? ""}`
-	}, [address?.city, address?.state])
+	}, [address.city, address.state])
 
 	return (
 		<Sheet>
 			<SheetTrigger asChild>
-				<Button variant="ghost" size="icon" className="h-8 w-8 p-0" aria-label="Visualizar usuÇ­rio">
+				<Button variant="ghost" size="icon" className="h-8 w-8 p-0" aria-label="Visualizar usuário">
 					<Eye className="h-4 w-4" />
 				</Button>
 			</SheetTrigger>
@@ -60,7 +61,7 @@ export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsP
 				<SheetHeader className="pb-0">
 					<SheetTitle className="flex items-center gap-2">
 						<UserIcon className="h-4 w-4 text-primary" />
-						<span>{user.name || "UsuÇ­rio sem nome"}</span>
+						<span>{user.name || "Usuário sem nome"}</span>
 					</SheetTitle>
 					<SheetDescription>{user.email}</SheetDescription>
 				</SheetHeader>
@@ -110,10 +111,10 @@ export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsP
 						</div>
 						<div className="mt-2 space-y-1 text-sm">
 							<p className="text-foreground">{locationLabel}</p>
-							<p className="text-muted-foreground">{address?.street ? `${address.street}${address.number ? `, ${address.number}` : ""}` : "Rua não informada"}</p>
-							<p className="text-muted-foreground">{address?.neighborhood || "Bairro não informado"}</p>
-							<p className="text-muted-foreground">{address?.complement?.trim() || "Complemento não informado"}</p>
-							<p className="text-muted-foreground">CEP: {address?.cep ? formatCep(address.cep) : "Não informado"}</p>
+							<p className="text-muted-foreground">{address.street ? `${address.street}${address.number ? `, ${address.number}` : ""}` : "Rua não informada"}</p>
+							<p className="text-muted-foreground">{address.neighborhood || "Bairro não informado"}</p>
+							<p className="text-muted-foreground">{address.complement?.trim() || "Complemento não informado"}</p>
+							<p className="text-muted-foreground">CEP: {address.cep ? formatCep(address.cep) : "Não informado"}</p>
 						</div>
 					</div>
 				</div>

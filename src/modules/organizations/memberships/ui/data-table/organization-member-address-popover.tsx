@@ -4,10 +4,10 @@ import { MapPin } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import type { OrganizationMemberAddressDTO } from "@/types/dto/organization-member.dto"
+import type { OrganizationMemberTableAddress } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 
 interface OrganizationMemberAddressPopoverProps {
-	address: OrganizationMemberAddressDTO | null | undefined
+	address: OrganizationMemberTableAddress | null | undefined
 }
 
 export function OrganizationMemberAddressPopover({ address }: OrganizationMemberAddressPopoverProps) {
