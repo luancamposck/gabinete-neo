@@ -1,6 +1,10 @@
 export const PERMISSIONS = {
 	ORG_ADMIN_READ: "org.admin.read",
-	ORG_ADMIN_UPDATE: "org.admin.update"
+	ORG_ADMIN_UPDATE: "org.admin.update",
+	ORG_MEMBERSHIP_ROLE_UPDATE: "org.membership.role.update",
+	ORG_MEMBERSHIP_ROLE_UPDATE_PRIVILEGED: "org.membership.role.update.privileged",
+	ORG_MEMBERSHIP_STATUS_UPDATE: "org.membership.status.update",
+	ORG_MEMBERSHIP_STATUS_UPDATE_PRIVILEGED: "org.membership.status.update.privileged"
 } as const
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
