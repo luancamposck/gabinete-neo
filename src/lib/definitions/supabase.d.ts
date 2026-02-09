@@ -563,6 +563,10 @@ export type Database = {
 				}
 				Returns: boolean
 			}
+			list_membership_permissions: {
+				Args: { p_organization_id: string; p_user_id: string }
+				Returns: string[]
+			}
 		}
 		Enums: {
 			organization_task_status: "NOT_STARTED" | "IN_PROGRESS" | "CANCELLED" | "COMPLETED"
