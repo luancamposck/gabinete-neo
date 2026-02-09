@@ -1,6 +1,6 @@
 "use client"
 
-import { CalendarClock, Eye, Mail, MapPin, Shield, User as UserIcon } from "lucide-react"
+import { CalendarClock, Eye, Mail, MapPin, Shield, User as UserIcon, UserPlus } from "lucide-react"
 import { useMemo } from "react"
 
 import { Badge } from "@/components/ui/badge"
@@ -35,8 +35,9 @@ const roleLabelMap: Record<string, string> = {
 }
 
 export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsProps) => {
-	const { user, role, isActive, createdAt } = member
+	const { user, role, isActive, joinedAt, invitedByUserName } = member
 	const address = user.address
+	const invitedByLabel = invitedByUserName?.trim() || "Não informado"
 
 	const roleKey = role.name.toUpperCase()
 	const roleLabel = roleLabelMap[roleKey] ?? role.name
@@ -89,7 +90,7 @@ export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsP
 								<CalendarClock className="h-3.5 w-3.5" />
 								<span>Entrou em</span>
 							</div>
-							<p className="mt-2 text-sm font-medium text-foreground">{formatDateTime(createdAt)}</p>
+							<p className="mt-2 text-sm font-medium text-foreground">{formatDateTime(joinedAt)}</p>
 						</div>
 					</div>
 
@@ -116,6 +117,14 @@ export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsP
 							<p className="text-muted-foreground">{address.complement?.trim() || "Complemento não informado"}</p>
 							<p className="text-muted-foreground">CEP: {address.cep ? formatCep(address.cep) : "Não informado"}</p>
 						</div>
+					</div>
+
+					<div className="rounded-lg border bg-card p-3 shadow-sm">
+						<div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							<UserPlus className="h-3.5 w-3.5" />
+							<span>Convidado por</span>
+						</div>
+						<p className="mt-2 text-sm text-foreground">{invitedByLabel}</p>
 					</div>
 				</div>
 			</SheetContent>

@@ -13,6 +13,7 @@ export type OrganizationMemberTableUser = {
 	name: string
 	email: string
 	phone: string
+	createdAt: string
 	address: OrganizationMemberTableAddress
 }
 
@@ -25,10 +26,9 @@ export type OrganizationMemberTableRole = {
 
 export type OrganizationMemberTableRow = {
 	organizationId: string
-	userId: string
 	role: OrganizationMemberTableRole
 	isActive: boolean
-	createdAt: string
+	joinedAt: string
 	invitedByUserName: string | null
 	user: OrganizationMemberTableUser
 }

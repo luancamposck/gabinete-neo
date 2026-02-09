@@ -80,7 +80,7 @@ export const OrganizationMembersTable = ({ data }: OrganizationMembersTableProps
 		state: "Estado",
 		role: "Permissão",
 		isActive: "Status",
-		createdAt: "Entrou em"
+		joinedAt: "Entrou em"
 	}
 
 	const toolbar = (

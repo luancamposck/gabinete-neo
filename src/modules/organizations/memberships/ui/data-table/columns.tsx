@@ -130,7 +130,7 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberTableRow>[]
 		filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id)))
 	},
 	{
-		accessorKey: "createdAt",
+		accessorKey: "joinedAt",
 		header: ({ column }) => (
 			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0">
 				Entrou em
@@ -138,8 +138,8 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberTableRow>[]
 			</Button>
 		),
 		cell: ({ row }) => {
-			const createdAt = row.original.createdAt
-			return <span className="text-xs text-muted-foreground">{formatDate(createdAt)}</span>
+			const joinedAt = row.original.joinedAt
+			return <span className="text-xs text-muted-foreground">{formatDate(joinedAt)}</span>
 		}
 	},
 	{

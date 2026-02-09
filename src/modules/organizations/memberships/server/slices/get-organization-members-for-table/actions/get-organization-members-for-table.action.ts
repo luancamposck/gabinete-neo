@@ -20,7 +20,6 @@ export async function getOrganizationMembersForTableAction(): OperationResponse<
 
 	const members: OrganizationMemberTableRow[] = useCaseRes.data.organizationMembers.map((member) => ({
 		organizationId: member.organization_id,
-		userId: member.user_id,
 		role: {
 			id: member.role.id,
 			name: member.role.name,
@@ -28,13 +27,14 @@ export async function getOrganizationMembersForTableAction(): OperationResponse<
 			isSystem: member.role.is_system
 		},
 		isActive: member.is_active,
-		createdAt: member.created_at,
+		joinedAt: member.created_at,
 		invitedByUserName: member.invited_by_user?.name ?? null,
 		user: {
 			id: member.user.id,
 			name: member.user.name,
 			email: member.user.email,
 			phone: member.user.profile.phone,
+			createdAt: member.user.created_at,
 			address: {
 				cep: member.user.profile.cep,
 				street: member.user.profile.street,
