@@ -3,7 +3,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, ArrowRight, UserPlus } from "lucide-react"
+import { ArrowLeft, ArrowRight, AtSign, Building2, Flag, Hash, House, Lock, Mail, MapPin, Phone, User, UserPlus } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useId, useState } from "react"
 import { Controller, type FieldPath, useForm } from "react-hook-form"
@@ -12,7 +12,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { brazilianStates } from "@/lib/constants/brazilian-states"
 import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
@@ -79,9 +79,20 @@ export const RegisterAndJoinForm = () => {
 	const normalizeUsername = (value: string) =>
 		value
 			.trim()
+			.normalize("NFD")
+			.replace(/[\u0300-\u036f]/g, "")
 			.toLowerCase()
-			.replace(/\s+/g, "_")
-			.replace(/[^a-z0-9_]/g, "")
+			.replace(/[^a-z0-9]/g, "")
+
+	const generateUsernameFromName = (name: string) => {
+		const words = name.trim().split(/\s+/).filter(Boolean)
+		if (words.length === 0) return ""
+		if (words.length === 1) return normalizeUsername(words[0])
+
+		const firstName = words[0]
+		const lastName = words[words.length - 1]
+		return normalizeUsername(`${firstName}${lastName}`)
+	}
 
 	async function handleUserCepBlur(e: React.FocusEvent<HTMLInputElement>) {
 		const cep = e.target.value.replace(/\D/g, "")
@@ -209,19 +220,26 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={nameId}>Nome do Usuario</FieldLabel>
-											<Input
-												{...field}
-												id={nameId}
-												placeholder="Luan Campos"
-												aria-invalid={fieldState.invalid}
-												onChange={(event) => {
-													field.onChange(event)
-													if (!isUsernameTouched) {
-														const nextUsername = normalizeUsername(event.target.value)
-														setValue("username", nextUsername)
-													}
-												}}
-											/>
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<User className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput
+													{...field}
+													id={nameId}
+													placeholder="Luan Campos"
+													aria-invalid={fieldState.invalid}
+													onChange={(event) => {
+														field.onChange(event)
+														if (!isUsernameTouched) {
+															const nextUsername = generateUsernameFromName(event.target.value)
+															setValue("username", nextUsername)
+														}
+													}}
+												/>
+											</InputGroup>
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
@@ -233,18 +251,25 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={usernameId}>Username</FieldLabel>
-											<Input
-												{...field}
-												id={usernameId}
-												placeholder="ex: luancamposck"
-												aria-invalid={fieldState.invalid}
-												onChange={(event) => {
-													const nextUsername = normalizeUsername(event.target.value)
-													setIsUsernameTouched(true)
-													field.onChange(nextUsername)
-												}}
-											/>
-											<FieldDescription>Somente letras minúsculas, números e _</FieldDescription>
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<AtSign className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput
+													{...field}
+													id={usernameId}
+													placeholder="ex: luancamposck"
+													aria-invalid={fieldState.invalid}
+													onChange={(event) => {
+														const nextUsername = normalizeUsername(event.target.value)
+														setIsUsernameTouched(true)
+														field.onChange(nextUsername)
+													}}
+												/>
+											</InputGroup>
+											<FieldDescription>Somente letras minúsculas e números, sem espaços.</FieldDescription>
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
@@ -254,14 +279,21 @@ export const RegisterAndJoinForm = () => {
 									<Controller
 										name="phone"
 										control={control}
-										render={({ field, fieldState }) => (
-											<Field data-invalid={fieldState.invalid}>
-												<FieldLabel htmlFor={phoneId}>Celular</FieldLabel>
-												<Input {...field} id={phoneId} placeholder="(11) 99999-9999" aria-invalid={fieldState.invalid} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
-												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-											</Field>
-										)}
-									/>
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid}>
+											<FieldLabel htmlFor={phoneId}>Celular</FieldLabel>
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<Phone className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput {...field} id={phoneId} placeholder="(11) 99999-9999" aria-invalid={fieldState.invalid} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
+											</InputGroup>
+											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										</Field>
+									)}
+								/>
 									{showRelationshipField && (
 										<Controller
 											name="relationshipToInviter"
@@ -294,7 +326,14 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={emailId}>Email do usuario</FieldLabel>
-											<Input {...field} id={emailId} type="email" placeholder="seu-email@gmail.com" aria-invalid={fieldState.invalid} />
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<Mail className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput {...field} id={emailId} type="email" placeholder="seu-email@gmail.com" aria-invalid={fieldState.invalid} />
+											</InputGroup>
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
@@ -306,7 +345,14 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={confirmEmailId}>Confirmar email do usuario</FieldLabel>
-											<Input {...field} id={confirmEmailId} type="email" placeholder="seu-email@gmail.com" aria-invalid={fieldState.invalid} />
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<Mail className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput {...field} id={confirmEmailId} type="email" placeholder="seu-email@gmail.com" aria-invalid={fieldState.invalid} />
+											</InputGroup>
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
@@ -318,7 +364,14 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={passwordId}>Senha</FieldLabel>
-											<Input {...field} id={passwordId} type="password" placeholder="********" aria-invalid={fieldState.invalid} />
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<Lock className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput {...field} id={passwordId} type="password" placeholder="********" aria-invalid={fieldState.invalid} />
+											</InputGroup>
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
@@ -330,7 +383,14 @@ export const RegisterAndJoinForm = () => {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor={confirmPasswordId}>Confirmar senha</FieldLabel>
-											<Input {...field} id={confirmPasswordId} type="password" placeholder="********" aria-invalid={fieldState.invalid} />
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<Lock className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput {...field} id={confirmPasswordId} type="password" placeholder="********" aria-invalid={fieldState.invalid} />
+											</InputGroup>
 											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 										</Field>
 									)}
@@ -347,7 +407,14 @@ export const RegisterAndJoinForm = () => {
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid} className="md:col-span-1">
 												<FieldLabel htmlFor={cepId}>CEP</FieldLabel>
-												<Input {...field} id={cepId} placeholder="00000-000" aria-invalid={fieldState.invalid} onChange={(e) => field.onChange(maskCep(e.target.value))} onBlur={handleUserCepBlur} />
+												<InputGroup>
+													<InputGroupAddon align="inline-start">
+														<InputGroupText>
+															<Hash className="h-4 w-4" />
+														</InputGroupText>
+													</InputGroupAddon>
+													<InputGroupInput {...field} id={cepId} placeholder="00000-000" aria-invalid={fieldState.invalid} onChange={(e) => field.onChange(maskCep(e.target.value))} onBlur={handleUserCepBlur} />
+												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
 										)}
@@ -358,7 +425,14 @@ export const RegisterAndJoinForm = () => {
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid} className="md:col-span-2">
 												<FieldLabel htmlFor={streetId}>Rua</FieldLabel>
-												<Input {...field} id={streetId} placeholder="Avenida Paulista" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+												<InputGroup>
+													<InputGroupAddon align="inline-start">
+														<InputGroupText>
+															<MapPin className="h-4 w-4" />
+														</InputGroupText>
+													</InputGroupAddon>
+													<InputGroupInput {...field} id={streetId} placeholder="Avenida Paulista" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
 										)}
@@ -371,7 +445,14 @@ export const RegisterAndJoinForm = () => {
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid}>
 												<FieldLabel htmlFor={numberId}>Numero</FieldLabel>
-												<Input {...field} id={numberId} placeholder="123" aria-invalid={fieldState.invalid} />
+												<InputGroup>
+													<InputGroupAddon align="inline-start">
+														<InputGroupText>
+															<Hash className="h-4 w-4" />
+														</InputGroupText>
+													</InputGroupAddon>
+													<InputGroupInput {...field} id={numberId} placeholder="123" aria-invalid={fieldState.invalid} />
+												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
 										)}
@@ -382,7 +463,14 @@ export const RegisterAndJoinForm = () => {
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid} className="md:col-span-2">
 												<FieldLabel htmlFor={complementId}>Complemento (Opcional)</FieldLabel>
-												<Input {...field} id={complementId} placeholder="Apto 101, Bloco B" aria-invalid={fieldState.invalid} />
+												<InputGroup>
+													<InputGroupAddon align="inline-start">
+														<InputGroupText>
+															<House className="h-4 w-4" />
+														</InputGroupText>
+													</InputGroupAddon>
+													<InputGroupInput {...field} id={complementId} placeholder="Apto 101, Bloco B" aria-invalid={fieldState.invalid} />
+												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
 										)}
@@ -395,7 +483,14 @@ export const RegisterAndJoinForm = () => {
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid}>
 												<FieldLabel htmlFor={neighborhoodId}>Bairro</FieldLabel>
-												<Input {...field} id={neighborhoodId} placeholder="Bela Vista" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+												<InputGroup>
+													<InputGroupAddon align="inline-start">
+														<InputGroupText>
+															<House className="h-4 w-4" />
+														</InputGroupText>
+													</InputGroupAddon>
+													<InputGroupInput {...field} id={neighborhoodId} placeholder="Bela Vista" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
 										)}
@@ -406,7 +501,14 @@ export const RegisterAndJoinForm = () => {
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid}>
 												<FieldLabel htmlFor={cityId}>Cidade</FieldLabel>
-												<Input {...field} id={cityId} placeholder="Sao Paulo" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+												<InputGroup>
+													<InputGroupAddon align="inline-start">
+														<InputGroupText>
+															<Building2 className="h-4 w-4" />
+														</InputGroupText>
+													</InputGroupAddon>
+													<InputGroupInput {...field} id={cityId} placeholder="Sao Paulo" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
 										)}
@@ -418,7 +520,8 @@ export const RegisterAndJoinForm = () => {
 											<Field data-invalid={fieldState.invalid}>
 												<FieldLabel htmlFor={stateId}>Estado</FieldLabel>
 												<Select onValueChange={field.onChange} value={field.value} disabled={isFetchingUserCep}>
-													<SelectTrigger id={stateId} aria-invalid={fieldState.invalid}>
+													<SelectTrigger id={stateId} aria-invalid={fieldState.invalid} className="gap-2">
+														<Flag className="h-4 w-4 text-muted-foreground" />
 														<SelectValue placeholder="Selecione o estado" />
 													</SelectTrigger>
 													<SelectContent>
