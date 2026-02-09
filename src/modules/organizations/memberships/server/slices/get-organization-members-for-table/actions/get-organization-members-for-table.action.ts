@@ -1,13 +1,14 @@
 // @/modules/organizations/memberships/server/slices/get-organization-members-for-table/actions/get-organization-members-for-table.action.ts
 "use server"
 
+import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { getOrganizationMembersForTableUseCase } from "@/modules/organizations/memberships/server/slices/get-organization-members-for-table/use-cases/get-organization-members-for-table.use-case"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "infra_error"
 
-export async function getOrganizationMembersForTableAction(): OperationResponse<{ members: OrganizationMemberTableRow[]; permissionsKeys: string[]; roles: OrganizationRoleOption[] }, ErrorCodes> {
+export async function getOrganizationMembersForTableAction(): OperationResponse<{ members: OrganizationMemberTableRow[]; permissionsKeys: PermissionKey[]; roles: OrganizationRoleOption[] }, ErrorCodes> {
 	const useCaseRes = await getOrganizationMembersForTableUseCase()
 
 	if (useCaseRes.success === false) {

@@ -2,6 +2,7 @@
 
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { listMembershipPermissionsService } from "@/modules/auth/server/services/list-membership-permissions.service"
+import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import type { OrganizationMemberWithUserProfileAndRole } from "@/modules/organizations/memberships/server/repos/list-organization-members-with-profile-and-role-by-organization-id.repo"
 import { listOrganizationMembersWithProfileAndRoleByOrganizationIdService } from "@/modules/organizations/memberships/server/services/list-organization-members-with-profile-and-role-by-organization-id.service"
 import { listRolesByOrganizationIdService } from "@/modules/organizations/memberships/server/services/list-roles-by-organization-id.service"
@@ -11,7 +12,7 @@ import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 type GetOrganizationMembersForTableUseCaseRes = {
-	permissionsKeys: string[]
+	permissionsKeys: PermissionKey[]
 	roles: RoleView[]
 	organizationMembers: OrganizationMemberWithUserProfileAndRole[]
 }
