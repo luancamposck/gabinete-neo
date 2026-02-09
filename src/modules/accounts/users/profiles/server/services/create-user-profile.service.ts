@@ -7,6 +7,7 @@ import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const GENERIC_CREATE_PROFILE_ERROR = "Não foi possível criar o perfil do usuário. Tente novamente mais tarde."
 const CREATE_PROFILE_SUCCESS = "Perfil do usuário criado com sucesso."
+const DUPLICATED_PHONE_NUMBER_ERROR = "Telefone já cadastrado para outro usuário."
 const prefixLog = "[createUserProfileService]:"
 
 export async function createUserProfileService(params: CreateUserProfileParams): OperationResponse<{ userId: string }> {
@@ -21,6 +22,12 @@ export async function createUserProfileService(params: CreateUserProfileParams):
 		const { data: insertUserData, error: insertUserError } = await insertUserProfileAdminRepo(insertUserProfileAdminRepoParams)
 
 		if (insertUserError) {
+			if (insertUserError.code === "23505") {
+				return {
+					success: false,
+					message: DUPLICATED_PHONE_NUMBER_ERROR
+				}
+			}
 			console.error(`${prefixLog} ${insertUserError.message}`)
 			return {
 				success: false,
