@@ -1,219 +1,193 @@
-# Organization Members Data Table - Guia Técnico
+# Members Data Table - Guia Técnico
 
-Este guia explica como a tabela de membros da organização funciona, quais componentes participam, e como evoluir com segurança.
+Guia atualizado da tabela de membros da organização (`ui/data-table`).
 
 ## Visão geral
 
-A tabela é construída com `@tanstack/react-table` e recebe dados já normalizados no formato `OrganizationMemberTableRow[]`.
+A tabela usa `@tanstack/react-table` com:
+- busca global fuzzy (nome, e-mail, telefone)
+- filtros facetados (estado e status)
+- ordenação
+- paginação client-side
+- persistência parcial de estado em `localStorage`
+- ações por linha condicionadas por permissão
 
-Arquivos principais desta pasta:
-- `organization-members-table.tsx`: composição da tabela e estado do TanStack.
-- `organization-members-table-toolbar.tsx`: busca global e filtros facetados.
-- `columns.tsx`: definição de colunas, renderização de células e regras de filtro.
-- `organization-member-actions.tsx`: ações por linha (sheet de detalhes do membro).
-- `organization-member-address-popover.tsx`: popover com endereço completo.
-- `use-persisted-table-state.ts`: persistência de sorting/filtros/visibilidade em `localStorage`.
+## Estrutura atual
 
-Dependências de UI reutilizadas:
-- `@/components/ui/data-table.tsx`: renderiza cabeçalho, linhas, estado vazio e paginação.
-- `@/components/ui/data-table-pagination.tsx`: controle de paginação e tamanho de página.
-- `@/components/ui/data-table-faceted-filter.tsx`: filtro multi-seleção por coluna.
-- `@/components/ui/data-table-view-options.tsx`: alternância de visibilidade de colunas.
+- `table/members-table.tsx`
+  - Componente raiz da tabela.
+  - Monta `useReactTable`.
+  - Injeta `meta` com permissões.
+
+- `table/members-table-toolbar.tsx`
+  - Busca global.
+  - Filtros facetados de `state` e `isActive`.
+  - Limpeza de filtros.
+
+- `table/use-persisted-table-state.ts`
+  - Persiste `sorting`, `columnFilters` e `columnVisibility`.
+
+- `columns/members-columns.tsx`
+  - Definição de colunas e `filterFn` por coluna.
+  - Renderização da célula de ações.
+
+- `actions/member-actions-cell.tsx`
+  - Renderiza botão de detalhes (Eye).
+  - Renderiza menu de configurações (Settings) quando permitido.
+
+- `actions/member-settings-menu.tsx`
+  - Dropdown com ação “Mudar Cargo”.
+
+- `sheets/member-details-sheet.tsx`
+  - Sheet com dados completos do membro.
+  - Exibe card “Convidado por”.
+  - Exibe card administrativo opcional.
+
+- `sheets/member-role-change-sheet.tsx`
+  - Sheet de simulação de troca de cargo.
+
+- `shared/member-address-popover.tsx`
+  - Popover de endereço completo.
+
+- `shared/member-admin-actions-card.tsx`
+  - Card de ações administrativas.
+
+- `table-meta.types.ts`
+  - Contrato de `table.options.meta` (`hasPermission`, `canManageMembers`).
 
 ## Fluxo de dados
 
-1. O backend chama `getOrganizationMembersForTableAction` em:
-   - `src/modules/organizations/memberships/server/slices/get-organization-members-for-table/actions/get-organization-members-for-table.action.ts`
-2. A action converte o retorno do use case para `OrganizationMemberTableRow[]`.
-3. O componente `OrganizationMembersTable` recebe `data` via props.
-4. `useReactTable` cria os modelos de:
-   - linhas base (`getCoreRowModel`)
-   - filtro (`getFilteredRowModel`)
-   - ordenação (`getSortedRowModel`)
-   - paginação (`getPaginationRowModel`)
-   - facetas para filtros (`getFacetedRowModel`, `getFacetedUniqueValues`)
-5. O `DataTable` renderiza a tabela e o `DataTablePagination`.
+1. Server action `getOrganizationMembersForTableAction` retorna:
+   - `members: OrganizationMemberTableRow[]`
+   - `permissionsKeys: string[]`
+2. `MembersTable` recebe esses dados por props.
+3. `MembersTable` cria `permissionsSet` e injeta `tableMeta` no TanStack.
+4. `membersColumns` usa `table.options.meta` para definir se a coluna de ações permite gestão.
+5. `MemberActionsCell` abre:
+   - `MemberDetailsSheet` (sempre)
+   - `MemberSettingsMenu` + `MemberRoleChangeSheet` (somente com permissão)
 
-## Componente raiz da tabela
-
-Arquivo: `organization-members-table.tsx`
+## Componente raiz (`members-table.tsx`)
 
 Responsabilidades:
-- Registrar colunas (`organizationMembersColumns`).
-- Definir filtro global fuzzy (`fuzzyFilter`) com `rankItem` usando:
-  - nome
-  - e-mail
-  - telefone
-- Controlar estados do TanStack:
+- Configura coluna, filtros e modelos do TanStack.
+- Define `fuzzyFilter` global com `rankItem`.
+- Mantém estados:
   - `sorting`
   - `columnFilters`
   - `columnVisibility`
-  - `globalFilter`
   - `rowSelection`
-- Persistir parte do estado via `usePersistedTableState`.
+  - `globalFilter`
+- Define estado inicial:
+  - `sorting`: `joinedAt` ascendente (`desc: false`)
+  - `columnVisibility.state = false`
+- Usa chave de persistência:
+  - `organization-members-table-state`
 
-Configuração padrão atual:
-- Chave de persistência: `organization-members-table-state`.
-- Ordenação inicial: `createdAt` ascendente (`desc: false`).
-- Coluna `state` inicia oculta (`columnVisibility.state = false`).
+## Permissões e `table.meta`
+
+`MembersTable` cria `tableMeta` com:
+- `hasPermission(permission)`
+- `canManageMembers` (baseado em `PERMISSIONS.ORG_MEMBERSHIP_ROLE_UPDATE`)
+
+Na coluna `actions`:
+- `canManageMembers = false`:
+  - apenas botão de visualizar detalhes
+- `canManageMembers = true`:
+  - visualizar detalhes + menu de configuração + sheet de mudança de cargo
+
+## Toolbar e filtros
+
+`members-table-toolbar.tsx`:
+- Input de busca global: filtra por nome/e-mail/telefone.
+- Filtro de estado (`state`): opções dinâmicas via `getFacetedUniqueValues()`.
+- Filtro de status (`isActive`): opções fixas:
+  - `true` => Ativo
+  - `false` => Inativo
+- Botão “Limpar filtros”:
+  - `table.resetColumnFilters()`
+  - `table.setGlobalFilter("")`
+
+## Colunas
+
+Definidas em `columns/members-columns.tsx`:
+- `userName` (Nome)
+- `phone` (Telefone)
+- `email` (E-mail)
+- `location` (Localização + `MemberAddressPopover`)
+- `state` (Estado, ocultável, sem sorting, com filtro de múltipla seleção)
+- `role` (Permissão, badge)
+- `isActive` (Status, filtro por `"true"/"false"`)
+- `joinedAt` (Entrou em, ordenável)
+- `actions` (célula de ações)
+
+Observações:
+- Datas são formatadas em `pt-BR`.
+- `role` usa mapeamento (`OWNER`, `ADMIN`, `MEMBER`).
+
+## Sheets e ações de linha
+
+### `MemberDetailsSheet`
+Exibe:
+- nome e e-mail
+- permissão e status
+- “Entrou em”
+- contato
+- endereço
+- “Convidado por” (`invitedByUserName`, com fallback `Não informado`)
+- `MemberAdminActionsCard` quando `showAdminActions` for `true`
+
+### `MemberRoleChangeSheet`
+- Estado atual: interface de simulação (sem mutação persistente).
+- Ações de cargo e botão “Salvar alteração (simulação)” desabilitado.
 
 ## Persistência de estado
 
-Arquivo: `use-persisted-table-state.ts`
-
-Persistido em `localStorage`:
+`use-persisted-table-state.ts` persiste no `localStorage`:
 - `sorting`
 - `columnFilters`
 - `columnVisibility`
 
-Comportamento:
-- No mount, tenta recuperar estado salvo (com fallback para `initialState`).
-- A cada mudança, salva novamente no `localStorage`.
-- `globalFilter` e `rowSelection` **não** são persistidos.
+Não persiste:
+- `globalFilter`
+- `rowSelection`
+- paginação
 
-## Toolbar e filtros
+## Componentes de base reutilizados
 
-Arquivo: `organization-members-table-toolbar.tsx`
-
-Funcionalidades:
-- Campo de busca global (`Input`) para nome/e-mail/telefone.
-- Filtro facetado de Estado (`state`), gerado dinamicamente com valores únicos da coluna.
-- Filtro facetado de Status (`isActive`) com opções fixas:
-  - `true` => Ativo
-  - `false` => Inativo
-- Botão `Limpar filtros`:
-  - executa `table.resetColumnFilters()`
-  - limpa busca global via `table.setGlobalFilter("")`
-
-## Colunas da tabela
-
-Arquivo: `columns.tsx`
-
-### Colunas e comportamento
-
-- `userName` (Nome)
-  - `accessorFn`: `row.user.name || row.user.email`
-  - Exibe fallback `Sem nome cadastrado`.
-
-- `phone` (Telefone)
-  - Formata com `formatPhone`.
-  - Exibe `-` quando vazio.
-
-- `email` (E-mail)
-  - Exibição simples do e-mail.
-
-- `location` (Localização)
-  - Exibe resumo `cidade / estado`.
-  - Mostra `OrganizationMemberAddressPopover` para endereço completo.
-
-- `state` (Estado)
-  - Usa `row.user.address.state`.
-  - `enableSorting: false`.
-  - Filtro multi-seleção customizado (`includes` em array de estados).
-  - É ocultável (`enableHiding: true`).
-
-- `role` (Permissão)
-  - Badge com tradução parcial:
-    - `OWNER` -> Owner
-    - `ADMIN` -> Admin
-    - `MEMBER` -> Membro
-
-- `isActive` (Status)
-  - Indicador visual (dot + label Ativo/Inativo).
-  - Filtro customizado por string (`"true"`/`"false"`).
-
-- `createdAt` (Entrou em)
-  - Header clicável para alternar sorting.
-  - Formata data/hora pt-BR.
-
-- `actions`
-  - Renderiza `OrganizationMemberActions`.
-  - Não ordenável e não ocultável.
-
-## Ações por membro
-
-Arquivo: `organization-member-actions.tsx`
-
-A coluna de ações abre um `Sheet` com detalhes do usuário:
-- nome e e-mail
-- permissão e status
-- data de entrada na organização
-- contato (e-mail/telefone)
-- endereço (com CEP formatado)
-
-Não há mutações de dados nesse componente; ele é somente leitura.
-
-## Popover de endereço
-
-Arquivo: `organization-member-address-popover.tsx`
-
-Regras:
-- Se `address` não existir, não renderiza.
-- Se existir mas estiver semanticamente vazio (todos os campos sem valor), não renderiza.
-- Quando renderiza, mostra bloco de "Endereço completo" com os campos disponíveis.
-
-## Paginação
-
-Renderizada por `DataTablePagination`.
-
-Funcionalidades:
-- Exibe contagem de linhas selecionadas e filtradas.
-- Permite trocar `pageSize` (10, 20, 30, 40, 50).
-- Navegação entre páginas:
-  - primeira
-  - anterior
-  - próxima
-  - última
-
-Observação: a paginação é client-side porque os dados chegam completos para o `useReactTable`.
-
-## Visibilidade de colunas
-
-`DataTableViewOptions` usa `columnNameMap` definido em `organization-members-table.tsx` para labels amigáveis no menu `Colunas`.
-
-Somente colunas com `accessorFn` e `getCanHide()` entram na lista de alternância.
-
-## Estado vazio
-
-Quando não há linhas após filtro, `DataTable` mostra:
-- `Nenhum resultado.`
+A tabela depende dos componentes compartilhados:
+- `@/components/ui/data-table`
+- `@/components/ui/data-table-pagination`
+- `@/components/ui/data-table-faceted-filter`
+- `@/components/ui/data-table-view-options`
 
 ## Extensões comuns
 
 ### Adicionar nova coluna
+1. Criar em `columns/members-columns.tsx`.
+2. Atualizar `columnNameMap` em `table/members-table.tsx`.
+3. Se necessário, adicionar filtro na toolbar.
+4. Garantir payload no tipo `OrganizationMemberTableRow` + action server.
 
-1. Criar item em `organizationMembersColumns` (`columns.tsx`).
-2. Adicionar label em `columnNameMap` (`organization-members-table.tsx`) para aparecer corretamente em `Colunas`.
-3. Se a coluna precisar de filtro facetado, incluir controle na toolbar.
-4. Garantir que o backend preencha o campo no tipo `OrganizationMemberTableRow`.
+### Adicionar nova ação administrativa
+1. Adicionar item em `actions/member-settings-menu.tsx`.
+2. Criar sheet/componente correspondente.
+3. Orquestrar abertura em `actions/member-actions-cell.tsx`.
+4. Proteger por permissão via `table.meta`.
 
-### Adicionar novo filtro
+### Transformar mudança de cargo em feature real
+1. Conectar `member-role-change-sheet.tsx` a action server.
+2. Tratar loading, erro e sucesso.
+3. Atualizar cache/revalidação da listagem.
 
-1. Definir `filterFn` na coluna (se necessário).
-2. Expor o filtro no toolbar com `DataTableFacetedFilter`.
-3. Validar conversão de tipo (ex.: boolean para string) na comparação do filtro.
+## Checklist rápido
 
-### Persistir novos estados da tabela
-
-O hook atual persiste apenas sorting/filtros/visibilidade.
-Se quiser persistir mais estados (ex.: paginação), ampliar `PersistedTableState` e sincronização no `useEffect`.
-
-## Pontos de atenção
-
-- O filtro global fuzzy considera apenas nome, e-mail e telefone.
-- `createdAt` assume string parseável por `Date`.
-- `state` e `isActive` usam filtros por array; mantenha formato consistente ao setar valores.
-- `columnVisibility` é mesclado com `initialState`, então defaults novos continuam aplicáveis mesmo com estado antigo salvo.
-
-## Checklist rápido para manutenção
-
-- Mudou tipo de dado? Atualize:
+- Mudou contrato de dados? Atualizar:
   - `organization-members-table.types.ts`
-  - action de mapeamento no server
-  - coluna correspondente na UI
-- Mudou filtros? Teste:
-  - combinação entre busca global + facetas
-  - botão `Limpar filtros`
-- Mudou colunas? Verifique:
-  - menu `Colunas`
-  - ordenação/filtro/hiding conforme esperado
+  - action `get-organization-members-for-table.action.ts`
+  - colunas/sheets afetados
+- Mudou permissões? Validar:
+  - visibilidade das ações no `MemberActionsCell`
+- Mudou filtros? Testar:
+  - busca global + filtros facetados
+  - botão “Limpar filtros”

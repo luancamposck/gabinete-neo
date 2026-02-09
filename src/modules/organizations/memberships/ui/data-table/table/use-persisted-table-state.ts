@@ -3,13 +3,18 @@
 import type { ColumnFiltersState, SortingState, VisibilityState } from "@tanstack/react-table"
 import { useEffect, useState } from "react"
 
-interface PersistedTableState {
+type PersistedTableState = {
 	sorting: SortingState
 	columnFilters: ColumnFiltersState
 	columnVisibility: VisibilityState
 }
 
-export function usePersistedTableState({ storageKey, initialState }: { storageKey: string; initialState: Partial<PersistedTableState> }) {
+type UsePersistedTableStateParams = {
+	storageKey: string
+	initialState: Partial<PersistedTableState>
+}
+
+export const usePersistedTableState = ({ storageKey, initialState }: UsePersistedTableStateParams) => {
 	const [sorting, setSorting] = useState<SortingState>(() => {
 		if (typeof window === "undefined") return initialState.sorting || []
 		const saved = window.localStorage.getItem(storageKey)

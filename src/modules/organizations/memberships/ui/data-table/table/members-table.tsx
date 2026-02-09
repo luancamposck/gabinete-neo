@@ -2,17 +2,17 @@
 
 import { rankItem } from "@tanstack/match-sorter-utils"
 import { type FilterFn, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
-import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
+import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
+import { membersColumns } from "@/modules/organizations/memberships/ui/data-table/columns/members-columns"
+import { MembersTableToolbar } from "@/modules/organizations/memberships/ui/data-table/table/members-table-toolbar"
+import { usePersistedTableState } from "@/modules/organizations/memberships/ui/data-table/table/use-persisted-table-state"
+import type { MembersTableMeta } from "@/modules/organizations/memberships/ui/data-table/table-meta.types"
 
-import { organizationMembersColumns } from "@/modules/organizations/memberships/ui/data-table/columns"
-import { OrganizationMembersTableToolbar } from "@/modules/organizations/memberships/ui/data-table/organization-members-table-toolbar"
-import { usePersistedTableState } from "@/modules/organizations/memberships/ui/data-table/use-persisted-table-state"
-
-const ORGANIZATION_MEMBERS_TABLE_STORAGE_KEY = "organization-members-table-state"
+const TABLE_STORAGE_KEY = "organization-members-table-state"
 
 const fuzzyFilter: FilterFn<OrganizationMemberTableRow> = (row, _columnId, value, addMeta) => {
 	const name = row.original.user.name
@@ -21,33 +21,49 @@ const fuzzyFilter: FilterFn<OrganizationMemberTableRow> = (row, _columnId, value
 	const haystack = `${name} ${email} ${phone}`.trim()
 
 	const itemRank = rankItem(haystack, String(value))
-
 	addMeta?.({ itemRank })
-
 	return itemRank.passed
 }
 
-interface OrganizationMembersTableProps {
+type MembersTableProps = {
 	data: OrganizationMemberTableRow[]
+	permissionsKeys: string[]
+	roles: OrganizationRoleOption[]
 }
 
-export const OrganizationMembersTable = ({ data }: OrganizationMembersTableProps) => {
+export const MembersTable = ({ data, permissionsKeys, roles }: MembersTableProps) => {
 	const [rowSelection, setRowSelection] = useState({})
 	const [globalFilter, setGlobalFilter] = useState("")
 
 	const { sorting, setSorting, columnFilters, setColumnFilters, columnVisibility, setColumnVisibility } = usePersistedTableState({
-		storageKey: ORGANIZATION_MEMBERS_TABLE_STORAGE_KEY,
+		storageKey: TABLE_STORAGE_KEY,
 		initialState: {
 			columnVisibility: {
 				state: false
 			},
-			sorting: [{ id: "createdAt", desc: false }]
+			sorting: [{ id: "joinedAt", desc: false }]
 		}
 	})
 
+	useEffect(() => {
+		const hasLegacyCreatedAt = sorting.some((sort) => sort.id === "createdAt")
+		if (!hasLegacyCreatedAt) return
+
+		setSorting((prev) => prev.map((sort) => (sort.id === "createdAt" ? { ...sort, id: "joinedAt" } : sort)))
+	}, [sorting, setSorting])
+
+	const tableMeta = useMemo<MembersTableMeta>(
+		() => ({
+			permissionsKeys,
+			availableRoles: roles
+		}),
+		[permissionsKeys, roles]
+	)
+
 	const table = useReactTable({
 		data: data ?? [],
-		columns: organizationMembersColumns,
+		columns: membersColumns,
+		meta: tableMeta,
 		filterFns: {
 			fuzzy: fuzzyFilter
 		},
@@ -85,7 +101,7 @@ export const OrganizationMembersTable = ({ data }: OrganizationMembersTableProps
 
 	const toolbar = (
 		<div className="flex items-center justify-between gap-2 flex-wrap">
-			<OrganizationMembersTableToolbar table={table} />
+			<MembersTableToolbar table={table} />
 			<DataTableViewOptions table={table} columnNameMap={columnNameMap} />
 		</div>
 	)

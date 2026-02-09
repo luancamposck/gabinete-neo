@@ -1,20 +1,28 @@
 "use client"
 
-import { CalendarClock, Eye, Mail, MapPin, Shield, User as UserIcon, UserPlus } from "lucide-react"
+import { CalendarClock, Mail, MapPin, Shield, User as UserIcon, UserPlus } from "lucide-react"
 import { useMemo } from "react"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { formatCep, formatPhone } from "@/lib/utils/formatters"
 import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 
-interface OrganizationMemberActionsProps {
+type MemberDetailsSheetProps = {
 	member: OrganizationMemberTableRow
+	open: boolean
+	onOpenChange: (open: boolean) => void
 }
 
-const formatDateTime = (value: string | null | undefined) => {
+const roleLabelMap: Record<string, string> = {
+	OWNER: "Owner",
+	ADMIN: "Admin",
+	STAFF: "Interno",
+	MEMBER: "Membro"
+}
+
+function formatDateTime(value: string | null | undefined) {
 	if (!value) return "—"
 	const date = new Date(value)
 	if (Number.isNaN(date.getTime())) return "—"
@@ -28,13 +36,7 @@ const formatDateTime = (value: string | null | undefined) => {
 	}).format(date)
 }
 
-const roleLabelMap: Record<string, string> = {
-	OWNER: "Owner",
-	ADMIN: "Admin",
-	MEMBER: "Membro"
-}
-
-export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsProps) => {
+export const DetailsSheet = ({ member, open, onOpenChange }: MemberDetailsSheetProps) => {
 	const { user, role, isActive, joinedAt, invitedByUserName } = member
 	const address = user.address
 	const invitedByLabel = invitedByUserName?.trim() || "Não informado"
@@ -51,13 +53,7 @@ export const OrganizationMemberActions = ({ member }: OrganizationMemberActionsP
 	}, [address.city, address.state])
 
 	return (
-		<Sheet>
-			<SheetTrigger asChild>
-				<Button variant="ghost" size="icon" className="h-8 w-8 p-0" aria-label="Visualizar usuário">
-					<Eye className="h-4 w-4" />
-				</Button>
-			</SheetTrigger>
-
+		<Sheet open={open} onOpenChange={onOpenChange}>
 			<SheetContent side="right" className="sm:max-w-xl">
 				<SheetHeader className="pb-0">
 					<SheetTitle className="flex items-center gap-2">

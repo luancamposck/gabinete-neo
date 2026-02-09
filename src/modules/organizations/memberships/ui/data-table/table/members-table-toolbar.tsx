@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { DataTableFacetedFilter } from "@/components/ui/data-table-faceted-filter"
 import { Input } from "@/components/ui/input"
 
-interface OrganizationMembersTableToolbarProps<TData> {
+type MembersTableToolbarProps<TData> = {
 	table: Table<TData>
 }
 
@@ -17,7 +17,7 @@ const statusOptions = [
 	{ value: "false", label: "Inativo" }
 ]
 
-export const OrganizationMembersTableToolbar = <TData,>({ table }: OrganizationMembersTableToolbarProps<TData>) => {
+export const MembersTableToolbar = <TData,>({ table }: MembersTableToolbarProps<TData>) => {
 	const isFiltered = table.getState().columnFilters.length > 0
 	const globalFilter = (table.getState().globalFilter as string) ?? ""
 	const stateColumn = table.getColumn("state")

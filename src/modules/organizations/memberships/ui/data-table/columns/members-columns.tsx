@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatPhone } from "@/lib/utils/formatters"
 import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
-import { OrganizationMemberActions } from "@/modules/organizations/memberships/ui/data-table/organization-member-actions"
-import { OrganizationMemberAddressPopover } from "@/modules/organizations/memberships/ui/data-table/organization-member-address-popover"
+import { MemberActionsCell } from "@/modules/organizations/memberships/ui/data-table/actions/member-actions-cell"
+import { MemberAddressPopover } from "@/modules/organizations/memberships/ui/data-table/shared/member-address-popover"
+import type { MembersTableMeta } from "@/modules/organizations/memberships/ui/data-table/table-meta.types"
 
 function formatDate(value: string | null | undefined) {
 	if (!value) return "-"
@@ -31,7 +32,7 @@ const roleLabelMap: Record<string, string> = {
 	MEMBER: "Membro"
 }
 
-export const organizationMembersColumns: ColumnDef<OrganizationMemberTableRow>[] = [
+export const membersColumns: ColumnDef<OrganizationMemberTableRow>[] = [
 	{
 		accessorKey: "userName",
 		header: "Nome",
@@ -80,8 +81,7 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberTableRow>[]
 			return (
 				<div className="flex items-center gap-2">
 					<span className="text-sm text-muted-foreground truncate max-w-[140px]">{locationLabel}</span>
-
-					<OrganizationMemberAddressPopover address={address} />
+					<MemberAddressPopover address={address} />
 				</div>
 			)
 		}
@@ -145,7 +145,13 @@ export const organizationMembersColumns: ColumnDef<OrganizationMemberTableRow>[]
 	{
 		id: "actions",
 		header: "",
-		cell: ({ row }) => <OrganizationMemberActions member={row.original} />,
+		cell: ({ row, table }) => {
+			const meta = table.options.meta as MembersTableMeta | undefined
+			const permissionsKeys = meta?.permissionsKeys ?? []
+			const availableRoles = meta?.availableRoles ?? []
+
+			return <MemberActionsCell member={row.original} permissionsKeys={permissionsKeys} availableRoles={availableRoles} />
+		},
 		enableSorting: false,
 		enableHiding: false
 	}

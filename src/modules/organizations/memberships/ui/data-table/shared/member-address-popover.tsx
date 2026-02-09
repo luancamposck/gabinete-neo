@@ -6,17 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import type { OrganizationMemberTableAddress } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 
-interface OrganizationMemberAddressPopoverProps {
+type MemberAddressPopoverProps = {
 	address: OrganizationMemberTableAddress | null | undefined
 }
 
-export function OrganizationMemberAddressPopover({ address }: OrganizationMemberAddressPopoverProps) {
+export const MemberAddressPopover = ({ address }: MemberAddressPopoverProps) => {
 	if (!address) return null
 
 	const { city, state, street, number, neighborhood, cep, complement } = address
 
 	const hasAddress = city || state || street || number || neighborhood || cep || (complement && complement.trim() !== "")
-
 	if (!hasAddress) return null
 
 	return (
