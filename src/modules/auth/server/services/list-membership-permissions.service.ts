@@ -1,11 +1,13 @@
 // @/modules/auth/server/services/list-membership-permissions.service.ts
 import { listMembershipPermissionsRepo } from "@/modules/auth/server/repos/list-membership-permissions.repo"
+import { PERMISSIONS, type PermissionKey } from "@/modules/auth/shared/permissions"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 const prefixLog = "[listMembershipPermissionsService]:"
 const GENERIC_ERROR = "Não foi possível listar permissões. Tente novamente mais tarde."
 const SUCCESS_MSG = "Permissões listadas com sucesso."
+const permissionKeysSet = new Set<PermissionKey>(Object.values(PERMISSIONS))
 
 type ErrorCodes = "infra_error"
 
@@ -14,7 +16,9 @@ type Params = {
 	userId: string
 }
 
-export async function listMembershipPermissionsService(params: Params): OperationResponse<{ permissionKeys: string[] }, ErrorCodes> {
+const isPermissionKey = (value: unknown): value is PermissionKey => typeof value === "string" && permissionKeysSet.has(value as PermissionKey)
+
+export async function listMembershipPermissionsService(params: Params): OperationResponse<{ permissionKeys: PermissionKey[] }, ErrorCodes> {
 	try {
 		const { data, error } = await listMembershipPermissionsRepo(params)
 
@@ -27,7 +31,7 @@ export async function listMembershipPermissionsService(params: Params): Operatio
 			}
 		}
 
-		const permissionKeys = Array.isArray(data) ? data.filter((key): key is string => typeof key === "string") : []
+		const permissionKeys = Array.isArray(data) ? data.filter(isPermissionKey) : []
 
 		return {
 			success: true,

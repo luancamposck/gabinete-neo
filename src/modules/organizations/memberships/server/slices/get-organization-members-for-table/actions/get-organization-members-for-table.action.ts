@@ -2,12 +2,12 @@
 "use server"
 
 import { getOrganizationMembersForTableUseCase } from "@/modules/organizations/memberships/server/slices/get-organization-members-for-table/use-cases/get-organization-members-for-table.use-case"
-import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
+import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
-type ErrorCodes = "org_not_found" | "infra_error"
+type ErrorCodes = "unauthenticated" | "org_not_found" | "infra_error"
 
-export async function getOrganizationMembersForTableAction(): OperationResponse<{ members: OrganizationMemberTableRow[] }, ErrorCodes> {
+export async function getOrganizationMembersForTableAction(): OperationResponse<{ members: OrganizationMemberTableRow[]; permissionsKeys: string[]; roles: OrganizationRoleOption[] }, ErrorCodes> {
 	const useCaseRes = await getOrganizationMembersForTableUseCase()
 
 	if (useCaseRes.success === false) {
@@ -47,11 +47,22 @@ export async function getOrganizationMembersForTableAction(): OperationResponse<
 		}
 	}))
 
+	const { permissionsKeys } = useCaseRes.data
+
+	const roles: OrganizationRoleOption[] = useCaseRes.data.roles.map((role) => ({
+		id: role.id,
+		name: role.name,
+		isActive: role.is_active,
+		isSystem: role.is_system
+	}))
+
 	return {
 		success: true,
 		message: useCaseRes.message,
 		data: {
-			members
+			members,
+			permissionsKeys,
+			roles
 		}
 	}
 }
