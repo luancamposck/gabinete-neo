@@ -46,6 +46,13 @@ const FALLBACK_INFRA_ERROR = {
 
 export async function getOrganizationRolesContextUseCase(): OperationResponse<GetOrganizationRolesContextUseCaseRes, ErrorCodes> {
 	try {
+		// ============================================================
+		// 0) Obter usuário autenticado
+		//
+		// Possibilidades:
+		// - sem user => unauthenticated
+		// - erro técnico => infra_error
+		// ============================================================
 		const authRes = await getCurrentAuthUserService()
 		if (authRes.success === false) {
 			if (authRes.code === "unauthenticated") {
@@ -65,6 +72,14 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 
 		const userId = authRes.data.user.id
 
+		// ============================================================
+		// 1) Resolver host + organizationId (tenant atual via app_domain)
+		//
+		// Possibilidades:
+		// - host ausente => org_not_found
+		// - org não encontrada => org_not_found
+		// - erro técnico => infra_error
+		// ============================================================
 		const host = await getRequestHost()
 		if (!host) {
 			return {
@@ -87,8 +102,16 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 			return FALLBACK_INFRA_ERROR
 		}
 
-		const organizationId = orgRes.data.organizationId
+		const { organizationId } = orgRes.data
 
+		// ============================================================
+		// 2) Validar permissão para leitura de cargos da organização
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sem permissão => not_allowed
+		// - com permissão => seguir fluxo
+		// ============================================================
 		const permissionCheckRes = await hasMembershipPermissionService({
 			organizationId,
 			userId,
@@ -107,6 +130,14 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 			}
 		}
 
+		// ============================================================
+		// 3) Carregar organização alvo pelo organizationId
+		//
+		// Possibilidades:
+		// - org não encontrada => org_not_found
+		// - erro técnico => infra_error
+		// - sucesso => organização disponível para o contexto
+		// ============================================================
 		const organizationRes = await getOrganizationByIdService({ organizationId })
 		if (organizationRes.success === false) {
 			if (organizationRes.code === "org_not_found") {
@@ -120,11 +151,25 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 			return FALLBACK_INFRA_ERROR
 		}
 
+		// ============================================================
+		// 4) Listar cargos da organização com suas permissões
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => roles disponíveis para renderização
+		// ============================================================
 		const rolesRes = await listRolesWithPermissionsByOrganizationIdService({ organizationId })
 		if (rolesRes.success === false) {
 			return FALLBACK_INFRA_ERROR
 		}
 
+		// ============================================================
+		// 5) Listar permissões do membership atual (usuário autenticado)
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => permissionKeys para habilitar ações na UI
+		// ============================================================
 		const membershipPermissionsRes = await listMembershipPermissionsService({
 			organizationId,
 			userId
@@ -134,6 +179,9 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 			return FALLBACK_INFRA_ERROR
 		}
 
+		// ============================================================
+		// OK: contexto de cargos carregado
+		// ============================================================
 		return {
 			success: true,
 			message: "Contexto de cargos carregado com sucesso.",

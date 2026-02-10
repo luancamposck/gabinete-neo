@@ -2,8 +2,6 @@
 
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { getOrganizationRolesContextUseCase } from "@/modules/organizations/memberships/server/slices/get-organization-roles-context/use-cases/get-organization-roles-context.use-case"
-import type { OrganizationDTO } from "@/modules/organizations/shared/types/dto"
-import { getPublicAssetUrl } from "@/shared/storage/get-public-asset-url"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 type RolePermission = {
@@ -23,7 +21,9 @@ type OrganizationRoleWithPermissions = {
 type ErrorCodes = "unauthenticated" | "org_not_found" | "not_allowed" | "infra_error"
 
 type GetOrganizationRolesContextActionRes = {
-	organization: OrganizationDTO
+	organization: {
+		name: string
+	}
 	roles: OrganizationRoleWithPermissions[]
 	permissionsKeys: PermissionKey[]
 }
@@ -36,31 +36,13 @@ export async function getOrganizationRolesContextAction(): OperationResponse<Get
 	}
 
 	const { organization } = useCaseRes.data
-	let imageUrl: string | null = null
-
-	try {
-		if (organization.image_path) {
-			imageUrl = await getPublicAssetUrl({ path: organization.image_path })
-		}
-	} catch (error) {
-		console.log(`[getOrganizationRolesContextAction]: ${error}`)
-	}
 
 	return {
 		success: true,
 		message: useCaseRes.message,
 		data: {
 			organization: {
-				id: organization.id,
-				name: organization.name,
-				slug: organization.slug,
-				description: organization.description,
-				appDomain: organization.app_domain,
-				imageUrl,
-				isActive: organization.is_active,
-				createdAt: organization.created_at,
-				updatedAt: organization.updated_at,
-				createdByUserId: organization.created_by_user_id
+				name: organization.name
 			},
 			roles: useCaseRes.data.roles.map((role) => ({
 				id: role.id,
