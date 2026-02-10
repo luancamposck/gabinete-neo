@@ -7,33 +7,37 @@ async function updateSession(request: NextRequest) {
 	})
 
 	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-	const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+	const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-	if (!supabaseUrl || !supabaseServiceRoleKey) {
-		throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable")
+	if (!supabaseUrl || !supabasePublishableKey) {
+		throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (or NEXT_PUBLIC_SUPABASE_ANON_KEY) environment variable")
 	}
 
-	const supabase = createServerClient(supabaseUrl, supabaseServiceRoleKey, {
+	const supabase = createServerClient(supabaseUrl, supabasePublishableKey, {
 		cookies: {
 			getAll() {
 				return request.cookies.getAll()
 			},
 			setAll(cookiesToSet) {
-				cookiesToSet.map(({ name, value }) => request.cookies.set(name, value))
+				cookiesToSet.forEach(({ name, value }) => {
+					request.cookies.set(name, value)
+				})
 				supabaseResponse = NextResponse.next({
 					request
 				})
-				cookiesToSet.map(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
+				cookiesToSet.forEach(({ name, value, options }) => {
+					supabaseResponse.cookies.set(name, value, options)
+				})
 			}
 		}
 	})
 
 	// Do not run code between createServerClient and
-	// supabase.auth.getUser(). A simple mistake could make it very hard to debug
+	// supabase.auth.getClaims(). A simple mistake could make it very hard to debug
 	// issues with users being randomly logged out.
 
-	// IMPORTANT: DO NOT REMOVE auth.getUser()
-	const { data } = await supabase.auth.getClaims()
+	// IMPORTANT: DO NOT REMOVE auth.getClaims()
+	await supabase.auth.getClaims()
 
 	return supabaseResponse
 }
