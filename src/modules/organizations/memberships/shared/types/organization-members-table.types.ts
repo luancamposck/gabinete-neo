@@ -24,6 +24,13 @@ export type OrganizationMemberTableRole = {
 	isSystem: boolean
 }
 
+export type OrganizationRoleOption = {
+	id: string
+	name: string
+	isActive: boolean
+	isSystem: boolean
+}
+
 export type OrganizationMemberTableRow = {
 	organizationId: string
 	role: OrganizationMemberTableRole

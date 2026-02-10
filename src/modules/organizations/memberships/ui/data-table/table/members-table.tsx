@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react"
 
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
+import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import { membersColumns } from "@/modules/organizations/memberships/ui/data-table/columns/members-columns"
 import { MembersTableToolbar } from "@/modules/organizations/memberships/ui/data-table/table/members-table-toolbar"
@@ -27,7 +28,7 @@ const fuzzyFilter: FilterFn<OrganizationMemberTableRow> = (row, _columnId, value
 
 type MembersTableProps = {
 	data: OrganizationMemberTableRow[]
-	permissionsKeys: string[]
+	permissionsKeys: PermissionKey[]
 	roles: OrganizationRoleOption[]
 }
 
