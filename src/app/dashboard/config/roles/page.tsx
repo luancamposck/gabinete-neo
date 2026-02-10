@@ -1,5 +1,7 @@
+import { PlusCircle } from "lucide-react"
+import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
-
+import { Button } from "@/components/ui/button"
 import { getOrganizationRolesContextAction } from "@/modules/organizations/memberships/server/slices/get-organization-roles-context/actions/get-organization-roles-context.action"
 import { RolesCards } from "@/modules/organizations/memberships/ui/roles/roles-cards"
 
@@ -26,19 +28,28 @@ const RolesConfigPage = async () => {
 		}
 	}
 
-	const { organization, roles, permissionsKeys } = rolesContextRes.data
+	const { organization, roles, permissionsKeys, availablePermissions } = rolesContextRes.data
 
 	return (
 		<div className="p-4 space-y-6">
-			<header className="space-y-1">
-				<h1 className="text-2xl font-semibold tracking-tight">Cargos e permissões</h1>
-				<p className="text-sm text-muted-foreground">Gerencie a visualização das permissões de cada cargo da organização {organization.name}.</p>
+			<header className="flex justify-between gap-y-1">
+				<div>
+					<h1 className="text-2xl font-semibold tracking-tight">Cargos e permissões</h1>
+					<p className="text-sm text-muted-foreground">Gerencie a visualização das permissões de cada cargo da organização {organization.name}.</p>
+				</div>
+
+				<Button asChild>
+					<Link href="/dashboard/config/roles/new">
+						<PlusCircle />
+						Criar novo cargo
+					</Link>
+				</Button>
 			</header>
 
 			<section className="space-y-2">
 				<h2 className="text-sm font-medium text-muted-foreground">{roles.length} cargos ativos na organização</h2>
 				<p className="text-xs text-muted-foreground">Seu usuário possui {permissionsKeys.length} permissões no contexto atual.</p>
-				<RolesCards roles={roles} />
+				<RolesCards roles={roles} permissionsKeys={permissionsKeys} availablePermissions={availablePermissions} />
 			</section>
 		</div>
 	)

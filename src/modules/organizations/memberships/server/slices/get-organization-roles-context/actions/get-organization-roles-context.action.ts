@@ -26,6 +26,7 @@ type GetOrganizationRolesContextActionRes = {
 	}
 	roles: OrganizationRoleWithPermissions[]
 	permissionsKeys: PermissionKey[]
+	availablePermissions: RolePermission[]
 }
 
 export async function getOrganizationRolesContextAction(): OperationResponse<GetOrganizationRolesContextActionRes, ErrorCodes> {
@@ -51,7 +52,8 @@ export async function getOrganizationRolesContextAction(): OperationResponse<Get
 				isSystem: role.is_system,
 				permissions: role.permissions
 			})),
-			permissionsKeys: useCaseRes.data.permissionsKeys
+			permissionsKeys: useCaseRes.data.permissionsKeys,
+			availablePermissions: useCaseRes.data.availablePermissions
 		}
 	}
 }

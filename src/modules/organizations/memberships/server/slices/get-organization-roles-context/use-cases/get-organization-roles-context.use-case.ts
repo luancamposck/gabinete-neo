@@ -1,6 +1,7 @@
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
 import { listMembershipPermissionsService } from "@/modules/auth/server/services/list-membership-permissions.service"
+import { listPermissionsService } from "@/modules/auth/server/services/list-permissions.service"
 import { PERMISSIONS, type PermissionKey } from "@/modules/auth/shared/permissions"
 import { listRolesWithPermissionsByOrganizationIdService } from "@/modules/organizations/memberships/server/services/list-roles-with-permissions-by-organization-id.service"
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
@@ -27,6 +28,7 @@ type GetOrganizationRolesContextUseCaseRes = {
 	organization: OrganizationView
 	roles: OrganizationRoleWithPermissions[]
 	permissionsKeys: PermissionKey[]
+	availablePermissions: RolePermission[]
 }
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "not_allowed" | "infra_error"
@@ -180,6 +182,18 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 		}
 
 		// ============================================================
+		// 6) Carregar catálogo de permissões disponíveis para edição
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => availablePermissions para formulário de edição
+		// ============================================================
+		const permissionsCatalogRes = await listPermissionsService()
+		if (permissionsCatalogRes.success === false) {
+			return FALLBACK_INFRA_ERROR
+		}
+
+		// ============================================================
 		// OK: contexto de cargos carregado
 		// ============================================================
 		return {
@@ -188,7 +202,8 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 			data: {
 				organization: organizationRes.data.organization,
 				roles: rolesRes.data.roles,
-				permissionsKeys: membershipPermissionsRes.data.permissionKeys
+				permissionsKeys: membershipPermissionsRes.data.permissionKeys,
+				availablePermissions: permissionsCatalogRes.data.permissions
 			}
 		}
 	} catch (error) {
