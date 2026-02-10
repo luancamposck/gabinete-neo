@@ -23,7 +23,7 @@ import { navMain } from "@/modules/app-shell/shared/navigation/nav-main"
 import { NavFooter } from "@/modules/app-shell/ui/nav-footer"
 
 const AppSidebar = async () => {
-	const sidebarContextRes = await getSidebarContextAction({ permissionKey: "org.admin.read" })
+	const sidebarContextRes = await getSidebarContextAction()
 
 	if (sidebarContextRes.success === false) {
 		switch (sidebarContextRes.code) {
@@ -42,7 +42,12 @@ const AppSidebar = async () => {
 		}
 	}
 
-	const { user, allowed: canViewAdminConfigs } = sidebarContextRes.data
+	const { user, permissionKeys } = sidebarContextRes.data
+
+	const canViewAdminConfigs = permissionKeys.includes("org.admin.read")
+	const canViewRolesConfigs = permissionKeys.includes("roles.read")
+
+	const showConfigCollapsible = canViewAdminConfigs || canViewRolesConfigs
 
 	return (
 		<Sidebar collapsible="icon" variant="inset">
@@ -83,7 +88,7 @@ const AppSidebar = async () => {
 								</SidebarMenuItem>
 							</Collapsible>
 						))}
-						{canViewAdminConfigs && (
+						{showConfigCollapsible && (
 							<Collapsible asChild defaultOpen={false} className="group/collapsible">
 								<SidebarMenuItem>
 									<CollapsibleTrigger asChild>
@@ -94,15 +99,29 @@ const AppSidebar = async () => {
 										</SidebarMenuButton>
 									</CollapsibleTrigger>
 									<CollapsibleContent>
-										<SidebarMenuSub>
-											<SidebarMenuSubItem>
-												<SidebarMenuSubButton asChild>
-													<Link href="/dashboard/config/organization">
-														<span>Gabinete</span>
-													</Link>
-												</SidebarMenuSubButton>
-											</SidebarMenuSubItem>
-										</SidebarMenuSub>
+										{canViewAdminConfigs && (
+											<SidebarMenuSub>
+												<SidebarMenuSubItem>
+													<SidebarMenuSubButton asChild>
+														<Link href="/dashboard/config/organization">
+															<span>Gabinete</span>
+														</Link>
+													</SidebarMenuSubButton>
+												</SidebarMenuSubItem>
+											</SidebarMenuSub>
+										)}
+
+										{canViewRolesConfigs && (
+											<SidebarMenuSub>
+												<SidebarMenuSubItem>
+													<SidebarMenuSubButton asChild>
+														<Link href="/dashboard/config/roles">
+															<span>Cargos e Permissões</span>
+														</Link>
+													</SidebarMenuSubButton>
+												</SidebarMenuSubItem>
+											</SidebarMenuSub>
+										)}
 									</CollapsibleContent>
 								</SidebarMenuItem>
 							</Collapsible>

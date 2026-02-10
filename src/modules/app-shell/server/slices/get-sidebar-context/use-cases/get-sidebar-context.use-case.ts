@@ -2,7 +2,7 @@
 
 import { getUserByIdService } from "@/modules/accounts/users/server/services/get-user-by-id.service"
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
-import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
+import { listMembershipPermissionsService } from "@/modules/auth/server/services/list-membership-permissions.service"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
@@ -14,21 +14,16 @@ type GetSidebarContextUseCaseRes = {
 		email: string
 		username: string
 	}
-	allowed: boolean
+	permissionKeys: PermissionKey[]
 }
 
 type GetSidebarContextCode = "unauthenticated" | "org_not_found" | "infra_error"
-
-type Params = {
-	permissionKey: PermissionKey
-}
 
 const prefixLog = "[getSidebarContextUseCase]:"
 
 const MSG_ORG_NOT_FOUND = "Não foi possível identificar a organização deste domínio."
 const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para continuar."
-const MSG_NOT_ALLOWED = "Você não tem permissão para acessar este recurso."
-const MSG_ALLOWED = "Permissão validada com sucesso."
+const MSG_SUCCESS = "Contexto da sidebar carregado com sucesso."
 const MSG_INFRA_ERROR = "Não foi possível validar seu acesso. Tente novamente em instantes."
 
 const FALLBACK_INFRA_ERROR = {
@@ -37,7 +32,7 @@ const FALLBACK_INFRA_ERROR = {
 	code: "infra_error"
 } as const
 
-export async function getSidebarContextUseCase(params: Params): OperationResponse<GetSidebarContextUseCaseRes, GetSidebarContextCode> {
+export async function getSidebarContextUseCase(): OperationResponse<GetSidebarContextUseCaseRes, GetSidebarContextCode> {
 	try {
 		// ============================================================
 		// 0) Obter usuário autenticado
@@ -115,21 +110,19 @@ export async function getSidebarContextUseCase(params: Params): OperationRespons
 		const organizationId = orgRes.data.organizationId
 
 		// ============================================================
-		// 3) Verificar permissão da membership na org atual
+		// 3) Listar permissões da membership na org atual
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
-		// - não tem permissão => allowed=false
-		// - tem permissão => ok
+		// - sucesso => permissionKeys disponíveis para controle de UI
 		// ============================================================
-		const permissionRes = await hasMembershipPermissionService({
+		const permissionsRes = await listMembershipPermissionsService({
 			organizationId,
-			userId,
-			permissionKey: params.permissionKey
+			userId
 		})
 
-		if (permissionRes.success === false) {
-			console.error(`${prefixLog} permission check failed:`, permissionRes.message)
+		if (permissionsRes.success === false) {
+			console.error(`${prefixLog} list permissions failed:`, permissionsRes.message)
 			return FALLBACK_INFRA_ERROR
 		}
 
@@ -142,14 +135,12 @@ export async function getSidebarContextUseCase(params: Params): OperationRespons
 		// ============================================================
 		// OK: contexto resolvido
 		// ============================================================
-		const { allowed } = permissionRes.data
-
 		return {
 			success: true,
-			message: allowed ? MSG_ALLOWED : MSG_NOT_ALLOWED,
+			message: MSG_SUCCESS,
 			data: {
 				user: userRes.data.user,
-				allowed
+				permissionKeys: permissionsRes.data.permissionKeys
 			}
 		}
 	} catch (error) {
