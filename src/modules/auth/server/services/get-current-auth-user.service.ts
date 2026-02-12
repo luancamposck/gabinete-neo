@@ -9,6 +9,7 @@ const GENERIC_GET_CURRENT_AUTH_USER_ERROR = "Não foi possível obter o usuário
 const GET_CURRENT_AUTH_USER_SUCCESS = "Usuário atual obtido com sucesso."
 const CURRENT_AUTH_USER_NOT_FOUND = "Nenhum usuário autenticado."
 const prefixLog = "[getCurrentAuthUserService]:"
+const AUTH_SESSION_MISSING_ERROR_NAME = "AuthSessionMissingError"
 
 type ErrorCodes = "unauthenticated" | "infra_error"
 
@@ -17,6 +18,16 @@ export async function getCurrentAuthUserService(): OperationResponse<{ user: Use
 		const { data, error } = await getCurrentAuthUserRepo()
 
 		if (error) {
+			const isUnauthenticatedByMissingSession = error.name === AUTH_SESSION_MISSING_ERROR_NAME || error.message === "Auth session missing!"
+
+			if (isUnauthenticatedByMissingSession) {
+				return {
+					success: false,
+					message: CURRENT_AUTH_USER_NOT_FOUND,
+					code: "unauthenticated"
+				}
+			}
+
 			console.error(`${prefixLog} ${error.message}`)
 			return {
 				success: false,
