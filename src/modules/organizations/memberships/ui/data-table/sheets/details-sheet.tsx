@@ -5,6 +5,7 @@ import { useMemo } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
 import { cn } from "@/lib/utils"
 import { formatCep, formatPhone } from "@/lib/utils/formatters"
 import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
@@ -22,6 +23,14 @@ const roleLabelMap: Record<string, string> = {
 	MEMBER: "Membro"
 }
 
+const relationshipLabelMap: Record<string, string> = RELATIONSHIP_OPTIONS.reduce(
+	(accumulator, option) => {
+		accumulator[option.value] = option.label
+		return accumulator
+	},
+	{} as Record<string, string>
+)
+
 function formatDateTime(value: string | null | undefined) {
 	if (!value) return "—"
 	const date = new Date(value)
@@ -37,9 +46,10 @@ function formatDateTime(value: string | null | undefined) {
 }
 
 export const DetailsSheet = ({ member, open, onOpenChange }: MemberDetailsSheetProps) => {
-	const { user, role, isActive, joinedAt, invitedByUserName } = member
+	const { user, role, isActive, joinedAt, invitedByUserName, relationshipToInviter } = member
 	const address = user.address
 	const invitedByLabel = invitedByUserName?.trim() || "Não informado"
+	const relationshipLabel = relationshipToInviter ? (relationshipLabelMap[relationshipToInviter] ?? relationshipToInviter) : "Não informado"
 
 	const roleKey = role.name.toUpperCase()
 	const roleLabel = roleLabelMap[roleKey] ?? role.name
@@ -121,6 +131,7 @@ export const DetailsSheet = ({ member, open, onOpenChange }: MemberDetailsSheetP
 							<span>Convidado por</span>
 						</div>
 						<p className="mt-2 text-sm text-foreground">{invitedByLabel}</p>
+						<p className="mt-1 text-xs text-muted-foreground">Parentesco: {relationshipLabel}</p>
 					</div>
 				</div>
 			</SheetContent>

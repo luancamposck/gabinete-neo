@@ -37,5 +37,6 @@ export type OrganizationMemberTableRow = {
 	isActive: boolean
 	joinedAt: string
 	invitedByUserName: string | null
+	relationshipToInviter: string | null
 	user: OrganizationMemberTableUser
 }

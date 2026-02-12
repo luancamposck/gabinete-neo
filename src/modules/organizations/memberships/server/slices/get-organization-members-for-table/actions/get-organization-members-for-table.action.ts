@@ -19,34 +19,41 @@ export async function getOrganizationMembersForTableAction(): OperationResponse<
 		}
 	}
 
-	const members: OrganizationMemberTableRow[] = useCaseRes.data.organizationMembers.map((member) => ({
-		organizationId: member.organization_id,
-		role: {
-			id: member.role.id,
-			name: member.role.name,
-			isActive: member.role.is_active,
-			isSystem: member.role.is_system
-		},
-		isActive: member.is_active,
-		joinedAt: member.created_at,
-		invitedByUserName: member.invited_by_user?.name ?? null,
-		user: {
-			id: member.user.id,
-			name: member.user.name,
-			email: member.user.email,
-			phone: member.user.profile.phone,
-			createdAt: member.user.created_at,
-			address: {
-				cep: member.user.profile.cep,
-				street: member.user.profile.street,
-				number: member.user.profile.number,
-				complement: member.user.profile.complement,
-				neighborhood: member.user.profile.neighborhood,
-				city: member.user.profile.city,
-				state: member.user.profile.state
+	const referralByInvitedUserId = new Map(useCaseRes.data.organizationReferrals.map((referral) => [referral.invited_user_id, referral] as const))
+
+	const members: OrganizationMemberTableRow[] = useCaseRes.data.organizationMembers.map((member) => {
+		const referral = referralByInvitedUserId.get(member.user.id)
+
+		return {
+			organizationId: member.organization_id,
+			role: {
+				id: member.role.id,
+				name: member.role.name,
+				isActive: member.role.is_active,
+				isSystem: member.role.is_system
+			},
+			isActive: member.is_active,
+			joinedAt: member.created_at,
+			invitedByUserName: referral?.inviter_user?.name ?? member.invited_by_user?.name ?? null,
+			relationshipToInviter: referral?.relationship_to_inviter ?? null,
+			user: {
+				id: member.user.id,
+				name: member.user.name,
+				email: member.user.email,
+				phone: member.user.profile.phone,
+				createdAt: member.user.created_at,
+				address: {
+					cep: member.user.profile.cep,
+					street: member.user.profile.street,
+					number: member.user.profile.number,
+					complement: member.user.profile.complement,
+					neighborhood: member.user.profile.neighborhood,
+					city: member.user.profile.city,
+					state: member.user.profile.state
+				}
 			}
 		}
-	}))
+	})
 
 	const { permissionsKeys } = useCaseRes.data
 

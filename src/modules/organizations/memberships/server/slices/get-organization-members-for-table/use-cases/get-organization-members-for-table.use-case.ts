@@ -7,6 +7,8 @@ import type { OrganizationMemberWithUserProfileAndRole } from "@/modules/organiz
 import { listOrganizationMembersWithProfileAndRoleByOrganizationIdService } from "@/modules/organizations/memberships/server/services/list-organization-members-with-profile-and-role-by-organization-id.service"
 import { listRolesByOrganizationIdService } from "@/modules/organizations/memberships/server/services/list-roles-by-organization-id.service"
 import type { RoleView } from "@/modules/organizations/memberships/shared/types/views"
+import type { OrganizationReferralWithInviterName } from "@/modules/organizations/referrals/server/repos/list-referrals-with-inviter-by-organization-id.admin.repo"
+import { listReferralsWithInviterByOrganizationIdService } from "@/modules/organizations/referrals/server/services/list-referrals-with-inviter-by-organization-id.service"
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
@@ -15,6 +17,7 @@ type GetOrganizationMembersForTableUseCaseRes = {
 	permissionsKeys: PermissionKey[]
 	roles: RoleView[]
 	organizationMembers: OrganizationMemberWithUserProfileAndRole[]
+	organizationReferrals: OrganizationReferralWithInviterName[]
 }
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "infra_error"
@@ -163,6 +166,19 @@ export async function getOrganizationMembersForTableUseCase(): OperationResponse
 		const organizationMembers = membersRes.data.organizationMembers ?? []
 
 		// ============================================================
+		// 5) Listar referrals da organização (quem convidou quem + parentesco)
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => referrals para enriquecer o contexto da tabela
+		// ============================================================
+		const referralsRes = await listReferralsWithInviterByOrganizationIdService({ organizationId })
+		if (referralsRes.success === false) {
+			console.error(`${prefixLog} referrals load failed:`, referralsRes.message)
+			return FALLBACK_INFRA_ERROR
+		}
+
+		// ============================================================
 		// OK: dados prontos para data-table
 		// ============================================================
 		return {
@@ -171,7 +187,8 @@ export async function getOrganizationMembersForTableUseCase(): OperationResponse
 			data: {
 				permissionsKeys,
 				roles,
-				organizationMembers
+				organizationMembers,
+				organizationReferrals: referralsRes.data.organizationReferrals ?? []
 			}
 		}
 	} catch (error) {

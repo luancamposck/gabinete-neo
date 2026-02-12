@@ -31,6 +31,7 @@ const mapUserRowToMemberTableRow = (user: OrganizationUserTableRow): Organizatio
 	isActive: user.isActive,
 	joinedAt: user.joinedAt,
 	invitedByUserName: user.invitedByUserName,
+	relationshipToInviter: user.relationshipToInviter,
 	user: user.user
 })
 
