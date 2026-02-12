@@ -6,8 +6,9 @@ import { recordReferralStep } from "@/modules/accounts/onboarding/server/slices/
 import { resolveInviterByRefStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/resolve-inviter-by-ref.step"
 import { resolveOrganizationIdByHostStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/resolve-organization-id-by-host.step"
 import { signUpOrSignInStep } from "@/modules/accounts/onboarding/server/slices/register-and-join/steps/sign-up-or-sign-in.step"
-
 import type { RegisterAndJoinParams } from "@/modules/accounts/onboarding/shared/types/inputs"
+import { sendWelcomeEmailService } from "@/modules/emails/server/services/send-welcome-email.service"
+import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
 
 type RegisterAndJoinUseCaseRes = {
@@ -18,6 +19,12 @@ type RegisterAndJoinUseCaseRes = {
 const prefixLog = "[registerAndJoinUseCase]:"
 const SUCCESS_MESSAGE = "Cadastro concluído com sucesso."
 const GENERIC_ERROR_MESSAGE = "Erro inesperado ao finalizar o cadastro."
+
+function buildDashboardUrl(host: string): string {
+	const isLocalHost = host.includes("localhost") || host.startsWith("127.0.0.1")
+	const protocol = isLocalHost ? "http" : "https"
+	return `${protocol}://${host}/dashboard`
+}
 
 export async function registerAndJoinUseCase(params: RegisterAndJoinParams): OperationResponse<RegisterAndJoinUseCaseRes> {
 	try {
@@ -32,7 +39,7 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinParams): Ope
 		const orgStepRes = await resolveOrganizationIdByHostStep()
 		if (orgStepRes.success === false) return orgStepRes
 
-		const { organizationId } = orgStepRes.data
+		const { host, organizationId } = orgStepRes.data
 
 		// ============================================================
 		// 0.1) Resolver ref (best-effort)
@@ -119,6 +126,29 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinParams): Ope
 		if (membershipStepRes.success === false) return membershipStepRes
 
 		const { joinedNow } = membershipStepRes.data
+
+		// ============================================================
+		// 4.1) Enviar boas-vindas ao entrar na organização (best-effort)
+		//
+		// Regras:
+		// - Só envia quando de fato entrou agora (joinedNow = true).
+		// - Falha de envio NÃO bloqueia o fluxo principal de cadastro.
+		// ============================================================
+		if (joinedNow) {
+			const organizationRes = await getOrganizationByIdService({ organizationId })
+			const organizationName = organizationRes.success ? organizationRes.data.organization.name : null
+
+			const sendWelcomeRes = await sendWelcomeEmailService({
+				to: params.email,
+				userName: params.name,
+				organizationName,
+				dashboardUrl: buildDashboardUrl(host)
+			})
+
+			if (sendWelcomeRes.success === false) {
+				console.error(`${prefixLog} failed to send welcome email: ${sendWelcomeRes.message}`)
+			}
+		}
 
 		// ============================================================
 		// 5) Registrar referral (best-effort)

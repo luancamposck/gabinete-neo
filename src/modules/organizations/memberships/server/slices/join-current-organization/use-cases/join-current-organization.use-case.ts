@@ -1,9 +1,11 @@
 // @/modules/organizations/memberships/server/slices/join-current-organization/use-cases/join-current-organization.use-case.ts
 
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
+import { sendWelcomeEmailService } from "@/modules/emails/server/services/send-welcome-email.service"
 import { createOrganizationMembershipService } from "@/modules/organizations/memberships/server/services/create-membership.service"
 import { getRoleByNameService } from "@/modules/organizations/memberships/server/services/get-role-by-name.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
+import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-reponse.types"
@@ -29,6 +31,12 @@ const FALLBACK_INFRA_ERROR = {
 	message: MSG_INFRA_ERROR,
 	code: "infra_error"
 } as const
+
+function buildDashboardUrl(host: string): string {
+	const isLocalHost = host.includes("localhost") || host.startsWith("127.0.0.1")
+	const protocol = isLocalHost ? "http" : "https"
+	return `${protocol}://${host}/dashboard`
+}
 
 export async function joinCurrentOrganizationUseCase(): OperationResponse<JoinCurrentOrganizationUseCaseRes, ErrorCodes> {
 	try {
@@ -126,7 +134,24 @@ export async function joinCurrentOrganizationUseCase(): OperationResponse<JoinCu
 
 		const createMembershipRes = await createOrganizationMembershipService({ organizationId, userId, roleId })
 
-		if (createMembershipRes.success === false) FALLBACK_INFRA_ERROR
+		if (createMembershipRes.success === false) return FALLBACK_INFRA_ERROR
+
+		if (userEmail) {
+			const organizationRes = await getOrganizationByIdService({ organizationId })
+			const organizationName = organizationRes.success ? organizationRes.data.organization.name : null
+			const userName = currentUserRes.data.user.user_metadata?.name as string | undefined
+
+			const sendWelcomeRes = await sendWelcomeEmailService({
+				to: userEmail,
+				userName,
+				organizationName,
+				dashboardUrl: buildDashboardUrl(host)
+			})
+
+			if (sendWelcomeRes.success === false) {
+				console.error(`${prefixLog} failed to send welcome email: ${sendWelcomeRes.message}`)
+			}
+		}
 
 		return {
 			success: true,
