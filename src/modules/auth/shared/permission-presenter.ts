@@ -12,6 +12,7 @@ type PermissionPresentation = {
 const FRIENDLY_PERMISSION_LABELS: Record<string, string> = {
 	"org.admin.read": "Visualizar configurações da organização",
 	"org.admin.update": "Editar configurações da organização",
+	"users.read": "Visualizar usuários da organização",
 	"roles.read": "Visualizar cargos",
 	"roles.update": "Editar cargos",
 	"org.membership.role.update": "Alterar cargo de membros",

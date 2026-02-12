@@ -2,6 +2,7 @@ import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-cu
 import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
 import { listPermissionsService } from "@/modules/auth/server/services/list-permissions.service"
 import { PERMISSIONS } from "@/modules/auth/shared/permissions"
+import { getMembershipByOrgAndUserIdWithRoleService } from "@/modules/organizations/memberships/server/services/get-membership-by-org-and-user-id-with-role.service"
 import { listRolesByOrganizationIdService } from "@/modules/organizations/memberships/server/services/list-roles-by-organization-id.service"
 import { syncRolePermissionsService } from "@/modules/organizations/memberships/server/services/sync-role-permissions.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
@@ -18,6 +19,7 @@ type ErrorCodes = "unauthenticated" | "org_not_found" | "forbidden" | "role_not_
 const MSG_ORG_NOT_FOUND = "Não foi possível identificar a organização deste domínio."
 const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para continuar."
 const MSG_FORBIDDEN = "Você não tem permissão para editar permissões de cargos."
+const MSG_FORBIDDEN_ADMIN_ROLE = "Apenas OWNER pode editar permissões do cargo ADMIN."
 const MSG_ROLE_NOT_FOUND = "O cargo informado não existe ou está inativo nesta organização."
 const MSG_ROLE_NOT_EDITABLE = "O cargo OWNER não pode ser editado nesta tela."
 const MSG_INVALID_PERMISSIONS = "A solicitação contém permissões inválidas para este ambiente."
@@ -31,6 +33,8 @@ const FALLBACK_INFRA_ERROR = {
 	code: "infra_error",
 	message: MSG_INFRA_ERROR
 } as const
+
+const isRoleName = (roleName: string, targetRoleName: string) => roleName.trim().toUpperCase() === targetRoleName
 
 const normalizePermissionKeys = (value: unknown) => {
 	if (!Array.isArray(value)) {
@@ -152,7 +156,7 @@ export async function updateRolePermissionsUseCase(params: UpdateRolePermissions
 			}
 		}
 
-		if (selectedRole.name.trim().toUpperCase() === "OWNER") {
+		if (isRoleName(selectedRole.name, "OWNER")) {
 			return {
 				success: false,
 				code: "role_not_editable",
@@ -161,7 +165,41 @@ export async function updateRolePermissionsUseCase(params: UpdateRolePermissions
 		}
 
 		// ============================================================
-		// 4) Normalizar payload de permissionKeys
+		// 4) Reforçar regra de edição do cargo ADMIN
+		//
+		// Regras:
+		// - ADMIN só pode ser editado por quem é OWNER
+		// - regra é server-side (autoridade final)
+		// ============================================================
+		if (isRoleName(selectedRole.name, "ADMIN")) {
+			const currentMembershipRes = await getMembershipByOrgAndUserIdWithRoleService({
+				organizationId,
+				userId: currentUserId
+			})
+
+			if (currentMembershipRes.success === false) {
+				if (currentMembershipRes.code === "membership_not_found") {
+					return {
+						success: false,
+						code: "forbidden",
+						message: MSG_FORBIDDEN
+					}
+				}
+
+				return FALLBACK_INFRA_ERROR
+			}
+
+			if (!isRoleName(currentMembershipRes.data.roleName, "OWNER")) {
+				return {
+					success: false,
+					code: "forbidden",
+					message: MSG_FORBIDDEN_ADMIN_ROLE
+				}
+			}
+		}
+
+		// ============================================================
+		// 5) Normalizar payload de permissionKeys
 		//
 		// Regras:
 		// - trim + dedupe
@@ -179,7 +217,7 @@ export async function updateRolePermissionsUseCase(params: UpdateRolePermissions
 		}
 
 		// ============================================================
-		// 5) Validar catálogo de permissões e mapear keys -> ids
+		// 6) Validar catálogo de permissões e mapear keys -> ids
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
@@ -205,7 +243,7 @@ export async function updateRolePermissionsUseCase(params: UpdateRolePermissions
 		const targetPermissionIds = normalizedPermissionKeys.map((permissionKey) => permissionIdByKey.get(permissionKey)).filter((permissionId): permissionId is string => Boolean(permissionId))
 
 		// ============================================================
-		// 6) Sincronizar role_permissions por diff (insert -> delete)
+		// 7) Sincronizar role_permissions por diff (insert -> delete)
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error

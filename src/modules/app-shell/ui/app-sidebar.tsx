@@ -45,9 +45,10 @@ const AppSidebar = async () => {
 	const { user, permissionKeys } = sidebarContextRes.data
 
 	const canViewAdminConfigs = permissionKeys.includes("org.admin.read")
+	const canViewUsersConfigs = permissionKeys.includes("users.read")
 	const canViewRolesConfigs = permissionKeys.includes("roles.read")
 
-	const showConfigCollapsible = canViewAdminConfigs || canViewRolesConfigs
+	const showConfigCollapsible = canViewAdminConfigs || canViewUsersConfigs || canViewRolesConfigs
 
 	return (
 		<Sidebar collapsible="icon" variant="inset">
@@ -105,6 +106,18 @@ const AppSidebar = async () => {
 													<SidebarMenuSubButton asChild>
 														<Link href="/dashboard/config/organization">
 															<span>Gabinete</span>
+														</Link>
+													</SidebarMenuSubButton>
+												</SidebarMenuSubItem>
+											</SidebarMenuSub>
+										)}
+
+										{canViewUsersConfigs && (
+											<SidebarMenuSub>
+												<SidebarMenuSubItem>
+													<SidebarMenuSubButton asChild>
+														<Link href="/dashboard/config/users">
+															<span>Usuários</span>
 														</Link>
 													</SidebarMenuSubButton>
 												</SidebarMenuSubItem>

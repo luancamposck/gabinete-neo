@@ -28,7 +28,7 @@ const RolesConfigPage = async () => {
 		}
 	}
 
-	const { organization, roles, permissionsKeys, availablePermissions } = rolesContextRes.data
+	const { organization, roles, permissionsKeys, availablePermissions, isCurrentUserOwner } = rolesContextRes.data
 
 	return (
 		<div className="p-4 space-y-6">
@@ -49,7 +49,7 @@ const RolesConfigPage = async () => {
 			<section className="space-y-2">
 				<h2 className="text-sm font-medium text-muted-foreground">{roles.length} cargos ativos na organização</h2>
 				<p className="text-xs text-muted-foreground">Seu usuário possui {permissionsKeys.length} permissões no contexto atual.</p>
-				<RolesCards roles={roles} permissionsKeys={permissionsKeys} availablePermissions={availablePermissions} />
+				<RolesCards roles={roles} permissionsKeys={permissionsKeys} availablePermissions={availablePermissions} isCurrentUserOwner={isCurrentUserOwner} />
 			</section>
 		</div>
 	)

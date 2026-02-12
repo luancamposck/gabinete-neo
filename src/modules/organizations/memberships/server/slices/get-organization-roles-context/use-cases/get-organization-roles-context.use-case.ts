@@ -3,6 +3,7 @@ import { hasMembershipPermissionService } from "@/modules/auth/server/services/h
 import { listMembershipPermissionsService } from "@/modules/auth/server/services/list-membership-permissions.service"
 import { listPermissionsService } from "@/modules/auth/server/services/list-permissions.service"
 import { PERMISSIONS, type PermissionKey } from "@/modules/auth/shared/permissions"
+import { getMembershipByOrgAndUserIdWithRoleService } from "@/modules/organizations/memberships/server/services/get-membership-by-org-and-user-id-with-role.service"
 import { listRolesWithPermissionsByOrganizationIdService } from "@/modules/organizations/memberships/server/services/list-roles-with-permissions-by-organization-id.service"
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
@@ -29,6 +30,7 @@ type GetOrganizationRolesContextUseCaseRes = {
 	roles: OrganizationRoleWithPermissions[]
 	permissionsKeys: PermissionKey[]
 	availablePermissions: RolePermission[]
+	isCurrentUserOwner: boolean
 }
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "not_allowed" | "infra_error"
@@ -45,6 +47,8 @@ const FALLBACK_INFRA_ERROR = {
 	message: MSG_INFRA_ERROR,
 	code: "infra_error"
 } as const
+
+const isOwnerRole = (roleName: string) => roleName.trim().toUpperCase() === "OWNER"
 
 export async function getOrganizationRolesContextUseCase(): OperationResponse<GetOrganizationRolesContextUseCaseRes, ErrorCodes> {
 	try {
@@ -133,7 +137,33 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 		}
 
 		// ============================================================
-		// 3) Carregar organização alvo pelo organizationId
+		// 3) Carregar membership atual para derivar se usuário é OWNER
+		//
+		// Possibilidades:
+		// - membership não encontrada => not_allowed
+		// - erro técnico => infra_error
+		// - sucesso => isCurrentUserOwner disponível para UI
+		// ============================================================
+		const currentMembershipRes = await getMembershipByOrgAndUserIdWithRoleService({
+			organizationId,
+			userId
+		})
+		if (currentMembershipRes.success === false) {
+			if (currentMembershipRes.code === "membership_not_found") {
+				return {
+					success: false,
+					code: "not_allowed",
+					message: MSG_NOT_ALLOWED
+				}
+			}
+
+			return FALLBACK_INFRA_ERROR
+		}
+
+		const isCurrentUserOwner = isOwnerRole(currentMembershipRes.data.roleName)
+
+		// ============================================================
+		// 4) Carregar organização alvo pelo organizationId
 		//
 		// Possibilidades:
 		// - org não encontrada => org_not_found
@@ -154,7 +184,7 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 		}
 
 		// ============================================================
-		// 4) Listar cargos da organização com suas permissões
+		// 5) Listar cargos da organização com suas permissões
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
@@ -166,7 +196,7 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 		}
 
 		// ============================================================
-		// 5) Listar permissões do membership atual (usuário autenticado)
+		// 6) Listar permissões do membership atual (usuário autenticado)
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
@@ -182,7 +212,7 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 		}
 
 		// ============================================================
-		// 6) Carregar catálogo de permissões disponíveis para edição
+		// 7) Carregar catálogo de permissões disponíveis para edição
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
@@ -203,7 +233,8 @@ export async function getOrganizationRolesContextUseCase(): OperationResponse<Ge
 				organization: organizationRes.data.organization,
 				roles: rolesRes.data.roles,
 				permissionsKeys: membershipPermissionsRes.data.permissionKeys,
-				availablePermissions: permissionsCatalogRes.data.permissions
+				availablePermissions: permissionsCatalogRes.data.permissions,
+				isCurrentUserOwner
 			}
 		}
 	} catch (error) {

@@ -39,11 +39,13 @@ type RolesCardsProps = {
 	roles: OrganizationRoleWithPermissions[]
 	permissionsKeys: string[]
 	availablePermissions: AvailablePermission[]
+	isCurrentUserOwner: boolean
 }
 
 const PRIVILEGED_PERMISSION_SUFFIX = ".privileged"
 
 const isOwnerRole = (roleName: string) => roleName.trim().toUpperCase() === "OWNER"
+const isAdminRole = (roleName: string) => roleName.trim().toUpperCase() === "ADMIN"
 const isPrivilegedPermission = (permissionKey: string) => permissionKey.endsWith(PRIVILEGED_PERMISSION_SUFFIX)
 
 const areSetsEqual = (setA: Set<string>, setB: Set<string>) => {
@@ -64,7 +66,7 @@ const sortByLabel = (a: { label: string }, b: { label: string }) => a.label.loca
 
 const normalizePermissionKeys = (permissionKeys: string[]) => [...new Set(permissionKeys.map((permissionKey) => permissionKey.trim()).filter((permissionKey) => permissionKey.length > 0))]
 
-export const RolesCards = ({ roles, permissionsKeys, availablePermissions }: RolesCardsProps) => {
+export const RolesCards = ({ roles, permissionsKeys, availablePermissions, isCurrentUserOwner }: RolesCardsProps) => {
 	const router = useRouter()
 	const canEditRolePermissions = permissionsKeys.includes(PERMISSIONS.ROLES_UPDATE)
 
@@ -76,7 +78,8 @@ export const RolesCards = ({ roles, permissionsKeys, availablePermissions }: Rol
 
 	const selectedRole = useMemo(() => roles.find((role) => role.id === selectedRoleId) ?? null, [roles, selectedRoleId])
 	const selectedRoleIsOwner = selectedRole ? isOwnerRole(selectedRole.name) : false
-	const canEditSelectedRole = Boolean(selectedRole) && canEditRolePermissions && !selectedRoleIsOwner
+	const selectedRoleIsAdmin = selectedRole ? isAdminRole(selectedRole.name) : false
+	const canEditSelectedRole = Boolean(selectedRole) && canEditRolePermissions && !selectedRoleIsOwner && !(selectedRoleIsAdmin && !isCurrentUserOwner)
 	const isDirty = useMemo(() => !areSetsEqual(initialPermissionKeys, draftPermissionKeys), [initialPermissionKeys, draftPermissionKeys])
 
 	const selectedRolePermissionOptions = useMemo(() => {
@@ -202,9 +205,11 @@ export const RolesCards = ({ roles, permissionsKeys, availablePermissions }: Rol
 					<SheetDescription>
 						{selectedRoleIsOwner
 							? "O cargo OWNER é protegido e pode apenas ser visualizado."
-							: canEditRolePermissions
-								? "Marque ou desmarque as permissões e salve ao final."
-								: "Você não possui permissão para editar cargos. Apenas visualização disponível."}
+							: selectedRoleIsAdmin && !isCurrentUserOwner
+								? "Apenas OWNER pode editar permissões do cargo ADMIN."
+								: canEditRolePermissions
+									? "Marque ou desmarque as permissões e salve ao final."
+									: "Você não possui permissão para editar cargos. Apenas visualização disponível."}
 					</SheetDescription>
 				</SheetHeader>
 				<ScrollArea className="mt-6 h-[65vh] px-8">

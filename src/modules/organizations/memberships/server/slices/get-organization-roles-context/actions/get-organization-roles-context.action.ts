@@ -27,6 +27,7 @@ type GetOrganizationRolesContextActionRes = {
 	roles: OrganizationRoleWithPermissions[]
 	permissionsKeys: PermissionKey[]
 	availablePermissions: RolePermission[]
+	isCurrentUserOwner: boolean
 }
 
 export async function getOrganizationRolesContextAction(): OperationResponse<GetOrganizationRolesContextActionRes, ErrorCodes> {
@@ -53,7 +54,8 @@ export async function getOrganizationRolesContextAction(): OperationResponse<Get
 				permissions: role.permissions
 			})),
 			permissionsKeys: useCaseRes.data.permissionsKeys,
-			availablePermissions: useCaseRes.data.availablePermissions
+			availablePermissions: useCaseRes.data.availablePermissions,
+			isCurrentUserOwner: useCaseRes.data.isCurrentUserOwner
 		}
 	}
 }
