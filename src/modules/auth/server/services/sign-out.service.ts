@@ -1,7 +1,7 @@
 // @/modules/auth/server/services/sign-out.service.ts
 
 import { signOutRepo } from "@/modules/auth/server/repos/sign-out.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_SIGN_OUT_ERROR = "Não foi possível sair. Tente novamente mais tarde."
 const SIGN_OUT_SUCCESS = "Logout realizado com sucesso."

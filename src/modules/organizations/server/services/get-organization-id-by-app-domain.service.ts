@@ -1,7 +1,7 @@
 // @/modules/organizations/server/services/get-organization-id-by-app-domain.service.ts
 
 import { findOrganizationIdByAppDomainAdminRepo } from "@/modules/organizations/server/repos/find-organization-id-by-app-domain.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ORG_LOOKUP_ERROR = "Não foi possível localizar a constelação. Tente novamente mais tarde."
 const ORG_LOOKUP_SUCCESS = "Constelação encontrada com sucesso."

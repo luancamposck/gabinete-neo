@@ -4,7 +4,7 @@
 
 import { editUserAddressUseCase } from "@/modules/accounts/users/profiles/server/slices/edit-user-address/use-cases/edit-user-address.use-case"
 import { addressSchemaServer } from "@/modules/accounts/users/profiles/shared/validations/address.schema"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const INVALID_INPUT_MESSAGE = "Dados inválidos. Verifique os campos e tente novamente."
 

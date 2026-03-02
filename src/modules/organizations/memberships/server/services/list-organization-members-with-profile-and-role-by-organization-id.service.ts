@@ -4,13 +4,13 @@ import {
 	listOrganizationMembersWithProfileAndRoleByOrganizationIdRepo,
 	type OrganizationMemberWithUserProfileAndRole
 } from "@/modules/organizations/memberships/server/repos/list-organization-members-with-profile-and-role-by-organization-id.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível obter os membros da organização. Tente novamente mais tarde."
 const OK_MESSAGE = "Membros obtidos com sucesso."
 const prefixLog = "[listOrganizationMembersWithProfileAndRoleByOrganizationIdService]:"
 
-export async function listOrganizationMembersWithProfileAndRoleByOrganizationIdService(params: { organizationId: string }): OperationResponse<{organizationMembers: OrganizationMemberWithUserProfileAndRole[]}> {
+export async function listOrganizationMembersWithProfileAndRoleByOrganizationIdService(params: { organizationId: string }): OperationResponse<{ organizationMembers: OrganizationMemberWithUserProfileAndRole[] }> {
 	try {
 		const { data, error } = await listOrganizationMembersWithProfileAndRoleByOrganizationIdRepo(params)
 

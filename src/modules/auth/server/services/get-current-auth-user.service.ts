@@ -3,7 +3,7 @@
 import type { User } from "@supabase/supabase-js"
 import { getCurrentAuthUserRepo } from "@/modules/auth/server/repos/get-user.repo"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_GET_CURRENT_AUTH_USER_ERROR = "Não foi possível obter o usuário atual. Tente novamente mais tarde."
 const GET_CURRENT_AUTH_USER_SUCCESS = "Usuário atual obtido com sucesso."

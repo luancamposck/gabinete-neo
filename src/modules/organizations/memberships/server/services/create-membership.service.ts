@@ -2,7 +2,7 @@
 
 import { insertOrganizationMembershipAdminRepo } from "@/modules/organizations/memberships/server/repos/insert-membership.admin.repo"
 import type { MembershipInsert } from "@/modules/organizations/memberships/shared/types/db"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_CREATE_MEMBERSHIP_ERROR = "Não foi possível criar o vínculo do usuário. Tente novamente mais tarde."
 const CREATE_MEMBERSHIP_SUCCESS = "Vínculo criado com sucesso."

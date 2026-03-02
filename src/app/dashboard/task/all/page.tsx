@@ -1,46 +1,32 @@
 import { redirect } from "next/navigation"
 
-import { getCurrentAuthUserAction } from "@/actions/auth/get-current-auth-user.action"
-import { getOrganizationMembershipByUserIdAction } from "@/actions/organization-membership"
-
-import { getTasksForTableAction } from "./sub-actions/get-tasks-for-table.action"
-import { OrganizationTasksTable } from "./sub-components/data-table/organization-tasks-table"
+import { getTasksForTableAction } from "@/modules/organizations/tasks/server/slices/get-tasks-for-table/actions/get-tasks-for-table.action"
+import { OrganizationTasksTable } from "@/modules/organizations/tasks/ui/data-table/organization-tasks-table"
 
 const AllTasksPage = async () => {
-	// 1) Pegar o usuário logado
-	const getCurrentAuthUserActionRes = await getCurrentAuthUserAction()
+	const tasksRes = await getTasksForTableAction()
 
-	if (getCurrentAuthUserActionRes.success === false) {
-		redirect("/")
+	if (tasksRes.success === false) {
+		switch (tasksRes.code) {
+			case "unauthenticated": {
+				return redirect("/")
+			}
+
+			case "org_not_found": {
+				return redirect("/tenant-not-found")
+			}
+
+			case "not_member": {
+				return redirect("/no-organization")
+			}
+
+			default: {
+				throw new Error(tasksRes.message)
+			}
+		}
 	}
 
-	const user = getCurrentAuthUserActionRes.data.user
-
-	// 2) Pegar membership do user
-	const getOrganizationMembershipByUserIdActionRes = await getOrganizationMembershipByUserIdAction({ userId: user.id })
-
-	if (getOrganizationMembershipByUserIdActionRes.success === false) {
-		return (
-			<div>
-				<h1>Algo deu errado</h1>
-			</div>
-		)
-	}
-
-	const membership = getOrganizationMembershipByUserIdActionRes.data.organizationMemberships
-	const organizationId = membership.organization_id
-
-	// 3) Pegar tasks da organization
-	const getTasksForTableActionRes = await getTasksForTableAction({ organizationId })
-	if (getTasksForTableActionRes.success === false) {
-		return (
-			<div>
-				<h1>Algo deu errado</h1>
-			</div>
-		)
-	}
-
-	const tasks = getTasksForTableActionRes.data.tasks
+	const { tasks } = tasksRes.data
 
 	return (
 		<div className="p-4 space-y-6">
@@ -51,7 +37,6 @@ const AllTasksPage = async () => {
 
 			<section className="space-y-2">
 				<h2 className="text-sm font-medium text-muted-foreground">Tarefas da constelação</h2>
-				{/* Futura data-table: */}
 				<OrganizationTasksTable data={tasks} />
 			</section>
 		</div>

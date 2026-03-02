@@ -3,7 +3,7 @@
 
 import { signInService } from "@/modules/auth/server/services/sign-in.service"
 import { signInSchema } from "@/modules/auth/shared/validations/sign-in.schema"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const INVALID_INPUT_MESSAGE = "Dados inválidos. Verifique os campos e tente novamente."
 

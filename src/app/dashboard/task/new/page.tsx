@@ -1,6 +1,6 @@
 import { Clock3, ShieldCheck, Sparkles, Users2 } from "lucide-react"
 
-import { CreateOrganizationTaskForm } from "@/components/forms/organization-task/create-organization-task-form"
+import { CreateOrganizationTaskForm } from "@/modules/organizations/tasks/ui/create-task-form"
 
 const highlightBadges = [
 	{ icon: Users2, label: "Equipe sincronizada" },

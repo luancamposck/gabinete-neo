@@ -1,5 +1,5 @@
 // @/modules/organizations/memberships/shared/types/db.ts
-import type { Tables, TablesInsert, TablesUpdate } from "@/lib/definitions/supabase"
+import type { Tables, TablesInsert, TablesUpdate } from "@/shared/types/supabase"
 
 export type MembershipInsert = TablesInsert<"organization_memberships">
 export type MembershipRow = Tables<"organization_memberships">

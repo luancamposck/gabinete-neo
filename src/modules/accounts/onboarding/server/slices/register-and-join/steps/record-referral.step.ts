@@ -1,7 +1,7 @@
 // @/modules/accounts/onboarding/server/slices/register-and-join/steps/record-referral.step.ts
 
 import { createOrganizationReferralService } from "@/modules/organizations/referrals/server/services/create-referral.service"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RecordReferralStepParams = {
 	organizationId: string

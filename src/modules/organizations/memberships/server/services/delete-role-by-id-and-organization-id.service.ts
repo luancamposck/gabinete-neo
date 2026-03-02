@@ -1,5 +1,5 @@
 import { deleteRoleByIdAndOrganizationIdAdminRepo } from "@/modules/organizations/memberships/server/repos/delete-role-by-id-and-organization-id.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type DeleteRoleByIdAndOrganizationIdServiceParams = {
 	roleId: string

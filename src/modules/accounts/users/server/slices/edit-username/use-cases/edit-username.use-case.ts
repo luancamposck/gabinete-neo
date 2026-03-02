@@ -2,7 +2,7 @@
 
 import { updateUsernameService } from "@/modules/accounts/users/server/services/update-username.service"
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type EditUsernameParams = {
 	username: string

@@ -2,7 +2,7 @@
 
 import { signInService } from "@/modules/auth/server/services/sign-in.service"
 import { signUpService } from "@/modules/auth/server/services/sign-up.service"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type SignUpOrSignInStepParams = {
 	email: string

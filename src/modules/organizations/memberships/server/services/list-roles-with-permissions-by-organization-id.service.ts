@@ -1,6 +1,6 @@
 import { listRolesWithPermissionsByOrganizationIdAdminRepo } from "@/modules/organizations/memberships/server/repos/list-roles-with-permissions-by-organization-id.admin.repo"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RolePermission = {
 	id: string

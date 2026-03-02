@@ -3,7 +3,7 @@
 import { updateUserAddressRepo } from "@/modules/accounts/users/profiles/server/repos/update-address.repo"
 import type { UserProfileUpdate } from "@/modules/accounts/users/profiles/shared/types/db"
 import type { UpdateUserAddressParams } from "@/modules/accounts/users/profiles/shared/types/inputs"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_UPDATE_ADDRESS_ERROR = "Nao foi possivel atualizar o endereco do usuario. Tente novamente mais tarde."
 const UPDATE_ADDRESS_SUCCESS = "Endereco atualizado com sucesso."

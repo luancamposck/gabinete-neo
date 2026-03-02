@@ -5,7 +5,7 @@ import { getOrganizationIdByAppDomainService } from "@/modules/organizations/ser
 import { getOrganizationWithMemberhipService } from "@/modules/organizations/server/services/get-organization-with-membership.service"
 import type { OrganizationWithMembershipView } from "@/modules/organizations/shared/types/views"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const MSG_ORG_NOT_FOUND = "Não foi possível identificar a organização deste domínio."
 const MSG_USER_NOT_FOUND = "Não foi possível identificar seu usuário."

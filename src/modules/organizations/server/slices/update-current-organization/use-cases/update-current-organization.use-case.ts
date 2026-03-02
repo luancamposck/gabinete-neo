@@ -6,7 +6,7 @@ import { updateOrganizationService } from "@/modules/organizations/server/servic
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import type { OrganizationUpdateView, OrganizationView } from "@/modules/organizations/shared/types/views"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UpdateCurrentOrganizationUseCaseRes = {
 	organization: OrganizationView

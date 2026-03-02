@@ -1,7 +1,7 @@
 // @/modules/auth/server/services/sign-up.service.ts
 
 import { insertAuthUserAdminRepo } from "@/modules/auth/server/repos/auth.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_SIGN_UP_ERROR = "Não foi possível criar o usuário. Tente novamente mais tarde."
 const EMAIL_ALREADY_EXISTS_ERROR = "Este e-mail já está registrado no sistema."

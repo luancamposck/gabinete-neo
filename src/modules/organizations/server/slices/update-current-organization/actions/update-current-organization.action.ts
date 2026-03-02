@@ -4,7 +4,7 @@
 import { updateCurrentOrganizationUseCase } from "@/modules/organizations/server/slices/update-current-organization/use-cases/update-current-organization.use-case"
 import type { OrganizationView } from "@/modules/organizations/shared/types/views"
 import { editOrganizationActionSchema } from "@/modules/organizations/shared/validations/edit-organization.schema"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const INVALID_INPUT_MESSAGE = "Dados inválidos. Verifique os campos e tente novamente."
 

@@ -1,7 +1,7 @@
 // @/modules/accounts/users/server/services/get-user-id-by-username.service.ts
 
 import { findUserIdByUsernameAdminRepo } from "@/modules/accounts/users/server/repos/find-user-id-by-username.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível obter o usuário. Tente novamente mais tarde."
 const NOT_FOUND_MESSAGE = "Usuário não encontrado."

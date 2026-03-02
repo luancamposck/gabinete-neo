@@ -4,7 +4,7 @@
 import { getCurrentOrganizationUseCase } from "@/modules/organizations/server/slices/get-current-organization/use-cases/get-current-organization.use-case"
 import type { OrganizationDTO } from "@/modules/organizations/shared/types/dto"
 import { getPublicAssetUrl } from "@/shared/storage/get-public-asset-url"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetCurrentOrganizationActionRes = {
 	organization: OrganizationDTO

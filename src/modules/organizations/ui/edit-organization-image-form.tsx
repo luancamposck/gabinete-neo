@@ -12,7 +12,7 @@ import type { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Field, FieldError } from "@/components/ui/field"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 import { deleteOrganizationOgImageAction } from "@/modules/organizations/server/slices/delete-organization-og-image/actions/delete-organization-og-image.action"
 import { uploadOrganizationOgImageAction } from "@/modules/organizations/server/slices/upload-organization-og-image/actions/upload-organization-og-image.action"
 import { MAX_ORGANIZATION_OG_IMAGE_SIZE_BYTES, ORGANIZATION_OG_IMAGE_MIME_TYPES, uploadOrganizationOgImageSchema } from "@/modules/organizations/shared/validations/upload-organization-og-image.schema"

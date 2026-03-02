@@ -9,7 +9,7 @@ import { getOrganizationByIdService } from "@/modules/organizations/server/servi
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import type { OrganizationView } from "@/modules/organizations/shared/types/views"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RolePermission = {
 	id: string

@@ -5,7 +5,7 @@
 import { registerAndJoinUseCase } from "@/modules/accounts/onboarding/server/slices/register-and-join/use-cases/register-and-join.use-case"
 import type { RegisterAndJoinParams } from "@/modules/accounts/onboarding/shared/types/inputs"
 import { registerAndJoinSchemaServer } from "@/modules/accounts/onboarding/shared/validations/register-and-join.schema"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const INVALID_INPUT_MESSAGE = "Dados inválidos. Verifique os campos e tente novamente."
 

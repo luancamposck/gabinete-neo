@@ -10,10 +10,10 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
-import { cn } from "@/lib/utils"
+import { useReferralLinkStorage } from "@/hooks/use-referral-link-storage"
+import { cn } from "@/lib/utils/cn"
 import { usernameSchema } from "@/modules/accounts/onboarding/shared/validations/register-and-join.schema"
 import { editUsernameAction } from "@/modules/accounts/users/server/slices/edit-username/actions/edit-username.action"
-import { useReferralLinkStorage } from "@/shared/hooks/use-referral-link-storage"
 
 const editUsernameSchema = z.object({
 	username: usernameSchema

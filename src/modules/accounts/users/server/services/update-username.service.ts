@@ -1,7 +1,7 @@
 // @/modules/accounts/users/server/services/update-username.service.ts
 
 import { updateUserRepo } from "@/modules/accounts/users/server/repos/update-user.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_UPDATE_USERNAME_ERROR = "Não foi possível atualizar o username. Tente novamente mais tarde."
 const USERNAME_ALREADY_EXISTS_ERROR = "Este username já está em uso."

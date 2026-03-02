@@ -2,7 +2,7 @@
 
 import { updateOrganizationRepo } from "@/modules/organizations/server/repos/update-organization.repo"
 import type { OrganizationUpdateView, OrganizationView } from "@/modules/organizations/shared/types/views"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_UPDATE_ERROR = "Não foi possível atualizar a constelação. Tente novamente mais tarde."
 const UPDATE_SUCCESS = "Constelação atualizada com sucesso."

@@ -6,7 +6,7 @@ import { listMembershipPermissionsService } from "@/modules/auth/server/services
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetSidebarContextUseCaseRes = {
 	user: {

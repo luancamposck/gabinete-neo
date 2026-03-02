@@ -4,6 +4,11 @@ import type { OrganizationReferralRow } from "@/modules/organizations/referrals/
 export type OrganizationReferralWithInviterName = OrganizationReferralRow & {
 	inviter_user: {
 		name: string
+		email: string
+	} | null
+	invited_user: {
+		name: string
+		email: string
 	} | null
 }
 
@@ -16,7 +21,12 @@ export async function listReferralsWithInviterByOrganizationIdAdminRepo(params: 
 			`
 				*,
 				inviter_user:users!organization_referrals_inviter_user_id_fkey (
-					name
+					name,
+					email
+				),
+				invited_user:users!organization_referrals_invited_user_id_fkey (
+					name,
+					email
 				)
 			`
 		)

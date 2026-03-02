@@ -1,7 +1,7 @@
 // @/modules/auth/server/services/update-password.service.ts
 
 import { updatePasswordRepo } from "@/modules/auth/server/repos/update-password.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_UPDATE_PASSWORD_ERROR = "Não foi possível atualizar sua senha. Tente novamente mais tarde."
 const UPDATE_PASSWORD_SUCCESS = "Senha atualizada com sucesso."

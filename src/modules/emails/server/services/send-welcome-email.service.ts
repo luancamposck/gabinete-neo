@@ -1,10 +1,10 @@
 // @/modules/emails/server/services/send-welcome-email.service.ts
 
-import { sendWelcomeEmailSchema } from "@/lib/validations/emails/send-welcome-email.schema"
 import { sendWelcomeEmailRepo } from "@/modules/emails/server/repos/send-welcome-email.repo"
 import { WelcomeEmailTemplate } from "@/modules/emails/shared/templates/welcome-email.template"
+import { sendWelcomeEmailSchema } from "@/modules/emails/shared/validations/send-welcome-email.schema"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type SendWelcomeEmailServiceParams = {
 	to: string

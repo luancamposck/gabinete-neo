@@ -2,7 +2,7 @@
 import { existsPermissionForMembershipRepo } from "@/modules/auth/server/repos/exists-permission-for-membership.repo"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const prefixLog = "[hasMembershipPermissionService]:"
 const GENERIC_ERROR = "Não foi possível verificar permissões. Tente novamente mais tarde."

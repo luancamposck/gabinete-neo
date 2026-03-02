@@ -9,7 +9,7 @@ import { signUpOrSignInStep } from "@/modules/accounts/onboarding/server/slices/
 import type { RegisterAndJoinParams } from "@/modules/accounts/onboarding/shared/types/inputs"
 import { sendWelcomeEmailService } from "@/modules/emails/server/services/send-welcome-email.service"
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RegisterAndJoinUseCaseRes = {
 	organizationId: string

@@ -5,7 +5,7 @@
 import { z } from "zod"
 
 import { editUsernameUseCase } from "@/modules/accounts/users/server/slices/edit-username/use-cases/edit-username.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const INVALID_INPUT_MESSAGE = "Dados inválidos. Verifique os campos e tente novamente."
 const editUsernameSchema = z.object({
