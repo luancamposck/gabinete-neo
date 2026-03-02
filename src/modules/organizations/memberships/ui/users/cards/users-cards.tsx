@@ -2,14 +2,14 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
-import { cn } from "@/lib/utils"
-import { formatPhone } from "@/lib/utils/formatters"
+import { cn } from "@/lib/utils/cn"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import type { OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import type { OrganizationUserTableRow } from "@/modules/organizations/memberships/shared/types/organization-users-table.types"
 import { canShowUserRoleAction, UserRoleActionButton } from "@/modules/organizations/memberships/ui/users/actions/user-role-action-button"
 import { canShowUserStatusAction, UserStatusActionButton } from "@/modules/organizations/memberships/ui/users/actions/user-status-action-button"
+import { RELATIONSHIP_OPTIONS } from "@/shared/constants/relationship-options"
+import { formatPhone } from "@/shared/formatters/format-phone"
 
 type UsersCardsProps = {
 	users: OrganizationUserTableRow[]

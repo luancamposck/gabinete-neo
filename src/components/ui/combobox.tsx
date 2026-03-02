@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 
 type ComboboxItem = {
 	value: string
@@ -24,15 +24,7 @@ type ComboboxProps = {
 	disabled?: boolean
 }
 
-export const Combobox = ({
-	items,
-	value,
-	onValueChange,
-	placeholder = "Selecione...",
-	searchPlaceholder = "Buscar...",
-	emptyMessage = "Nenhum item encontrado.",
-	disabled = false
-}: ComboboxProps) => {
+export const Combobox = ({ items, value, onValueChange, placeholder = "Selecione...", searchPlaceholder = "Buscar...", emptyMessage = "Nenhum item encontrado.", disabled = false }: ComboboxProps) => {
 	const [open, setOpen] = useState(false)
 	const selectedItem = items.find((item) => item.value === value)
 

@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
 import type { OrganizationReferralTableRow } from "@/modules/organizations/referrals/shared/types/organization-referrals-table.types"
+import { RELATIONSHIP_OPTIONS } from "@/shared/constants/relationship-options"
 
 const relationshipLabelMap: Record<string, string> = RELATIONSHIP_OPTIONS.reduce(
 	(acc, option) => {

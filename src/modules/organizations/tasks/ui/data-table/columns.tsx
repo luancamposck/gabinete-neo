@@ -5,7 +5,7 @@ import { ArrowUpDown, ClipboardList, Clock, User as UserIcon } from "lucide-reac
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 import type { OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
 
 import { OrganizationTaskActions } from "./organization-task-actions"

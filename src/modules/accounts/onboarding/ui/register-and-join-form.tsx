@@ -14,12 +14,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { brazilianStates } from "@/lib/constants/brazilian-states"
-import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
-import { maskCep, maskPhone } from "@/lib/masks"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 import { registerAndJoinAction } from "@/modules/accounts/onboarding/server/slices/register-and-join/actions/register-and-join.action"
 import { type RegisterAndJoinSchemaClientData, registerAndJoinSchemaClient } from "@/modules/accounts/onboarding/shared/validations/register-and-join.schema"
+import { brazilianStates } from "@/shared/constants/brazilian-states"
+import { RELATIONSHIP_OPTIONS } from "@/shared/constants/relationship-options"
+import { maskCep } from "@/shared/masks/mask-cep"
+import { maskPhone } from "@/shared/masks/mask-phone"
 
 export const RegisterAndJoinForm = () => {
 	const baseId = useId()
@@ -279,21 +280,21 @@ export const RegisterAndJoinForm = () => {
 									<Controller
 										name="phone"
 										control={control}
-									render={({ field, fieldState }) => (
-										<Field data-invalid={fieldState.invalid}>
-											<FieldLabel htmlFor={phoneId}>Celular</FieldLabel>
-											<InputGroup>
-												<InputGroupAddon align="inline-start">
-													<InputGroupText>
-														<Phone className="h-4 w-4" />
-													</InputGroupText>
-												</InputGroupAddon>
-												<InputGroupInput {...field} id={phoneId} placeholder="(11) 99999-9999" aria-invalid={fieldState.invalid} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
-											</InputGroup>
-											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-										</Field>
-									)}
-								/>
+										render={({ field, fieldState }) => (
+											<Field data-invalid={fieldState.invalid}>
+												<FieldLabel htmlFor={phoneId}>Celular</FieldLabel>
+												<InputGroup>
+													<InputGroupAddon align="inline-start">
+														<InputGroupText>
+															<Phone className="h-4 w-4" />
+														</InputGroupText>
+													</InputGroupAddon>
+													<InputGroupInput {...field} id={phoneId} placeholder="(11) 99999-9999" aria-invalid={fieldState.invalid} onChange={(e) => field.onChange(maskPhone(e.target.value))} />
+												</InputGroup>
+												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+											</Field>
+										)}
+									/>
 									{showRelationshipField && (
 										<Controller
 											name="relationshipToInviter"

@@ -14,10 +14,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { brazilianStates } from "@/lib/constants/brazilian-states"
-import { maskCep } from "@/lib/masks"
 import { editUserAddressAction } from "@/modules/accounts/users/profiles/server/slices/edit-user-address/actions/edit-user-address.action"
 import { addressSchemaClient } from "@/modules/accounts/users/profiles/shared/validations/address.schema"
+import { brazilianStates } from "@/shared/constants/brazilian-states"
+import { maskCep } from "@/shared/masks/mask-cep"
 
 type AddressFormValues = z.infer<typeof addressSchemaClient>
 

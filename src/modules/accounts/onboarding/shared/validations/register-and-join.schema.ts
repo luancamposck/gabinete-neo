@@ -1,9 +1,9 @@
 // @/modules/accounts/onboarding/shared/validations/register-and-join.schema.ts
 
 import { z } from "zod"
-import { RELATIONSHIP_OPTIONS, type RelationshipValue } from "@/lib/constants/relationship-options"
 import { addressSchemaClient, addressSchemaServer } from "@/modules/accounts/users/profiles/shared/validations/address.schema"
 import { phoneSchemaClient, phoneSchemaServer } from "@/modules/accounts/users/profiles/shared/validations/phone.schema"
+import { RELATIONSHIP_OPTIONS, type RelationshipValue } from "@/shared/constants/relationship-options"
 
 const RELATIONSHIP_VALUES = RELATIONSHIP_OPTIONS.map((opt) => opt.value) as [RelationshipValue, ...RelationshipValue[]]
 

@@ -8,7 +8,7 @@ import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 
 const fadeInUp: Variants = {
 	hidden: { opacity: 0, y: 32 },

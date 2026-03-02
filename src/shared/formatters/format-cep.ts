@@ -1,4 +1,4 @@
-export default function formatCep(cep: string): string {
+export function formatCep(cep: string): string {
 	if (!cep) return ""
 
 	const cleaned = cep.replace(/\D/g, "")

@@ -1,7 +1,7 @@
 import { AlertTriangle, CalendarDays, CheckCircle, CircleAlert, DollarSign, FileText, Info, type LucideIcon, MessageSquare, Target, Users } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 
 const STATS = [
 	{

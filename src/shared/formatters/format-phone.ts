@@ -1,4 +1,4 @@
-function formatPhone(phone: string): string {
+export function formatPhone(phone: string): string {
 	if (!phone) return ""
 
 	const cleaned = phone.replace(/\D/g, "")
@@ -13,5 +13,3 @@ function formatPhone(phone: string): string {
 
 	return phone
 }
-
-export default formatPhone

@@ -11,7 +11,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "ui:add": "npx shadcn@latest add",
     "db:push": "npx supabase db push",
-    "db:gen-types": "npx supabase gen types typescript --project-id csivzqansvingomnafom --schema public > src/lib/definitions/supabase.d.ts"
+    "db:gen-types": "npx supabase gen types typescript --project-id csivzqansvingomnafom --schema public > src/shared/types/supabase.d.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

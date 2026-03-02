@@ -5,13 +5,13 @@ import { ArrowUpDown } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
-import { cn } from "@/lib/utils"
-import { formatPhone } from "@/lib/utils/formatters"
+import { cn } from "@/lib/utils/cn"
 import type { OrganizationUserTableRow } from "@/modules/organizations/memberships/shared/types/organization-users-table.types"
 import { MemberAddressPopover } from "@/modules/organizations/memberships/ui/data-table/shared/member-address-popover"
 import { UserActionsCell } from "@/modules/organizations/memberships/ui/users/table/user-actions-cell"
 import type { UsersTableMeta } from "@/modules/organizations/memberships/ui/users/table/users-table-meta.types"
+import { RELATIONSHIP_OPTIONS } from "@/shared/constants/relationship-options"
+import { formatPhone } from "@/shared/formatters/format-phone"
 
 const roleLabelMap: Record<string, string> = {
 	OWNER: "Owner",

@@ -5,10 +5,11 @@ import { useMemo } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { RELATIONSHIP_OPTIONS } from "@/lib/constants/relationship-options"
-import { cn } from "@/lib/utils"
-import { formatCep, formatPhone } from "@/lib/utils/formatters"
+import { cn } from "@/lib/utils/cn"
 import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
+import { RELATIONSHIP_OPTIONS } from "@/shared/constants/relationship-options"
+import { formatCep } from "@/shared/formatters/format-cep"
+import { formatPhone } from "@/shared/formatters/format-phone"
 
 type MemberDetailsSheetProps = {
 	member: OrganizationMemberTableRow

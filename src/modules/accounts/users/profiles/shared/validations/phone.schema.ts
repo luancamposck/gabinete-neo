@@ -1,6 +1,6 @@
 // @/modules/accounts/users/profiles/shared/validations/phone.schema.ts
 import { z } from "zod"
-import { brazilianDdds } from "@/lib/constants/brazillian-ddds"
+import { brazilianDdds } from "@/shared/constants/brazillian-ddds"
 
 const onlyDigits = (s: string) => s.replace(/\D/g, "")
 const brazilianDddSet = new Set(brazilianDdds.map((item) => item.ddd))

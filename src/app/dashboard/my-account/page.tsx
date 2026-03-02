@@ -1,11 +1,12 @@
 import { Building2, CalendarClock, Hash, Lock, Mail, MapPin, Phone, User2 } from "lucide-react"
 import { redirect } from "next/navigation"
-import cn from "@/lib/utils/cn"
-import { formatCep, formatPhone } from "@/lib/utils/formatters"
+import { cn } from "@/lib/utils/cn"
 import { getMyAccountDataAction } from "@/modules/accounts/server/slices/my-account/actions/get-my-account-data.action"
 import { EditAddressForm } from "@/modules/accounts/users/ui/edit-address-form"
 import { EditPasswordForm } from "@/modules/accounts/users/ui/edit-password-form"
 import { EditUsernameForm } from "@/modules/accounts/users/ui/edit-username-form"
+import { formatCep } from "@/shared/formatters/format-cep"
+import { formatPhone } from "@/shared/formatters/format-phone"
 
 const MyAccountPage = async () => {
 	const getAccountRes = await getMyAccountDataAction()

@@ -4,13 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-
-import { createTaskAction } from "@/modules/organizations/tasks/server/slices/create-task/actions/create-task.action"
-import {
-	type CreateOrganizationTaskSchemaClientData,
-	createOrganizationTaskSchemaClient
-} from "@/modules/organizations/tasks/shared/validations/create-organization-task.schema.client"
-
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,7 +11,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
+import { createTaskAction } from "@/modules/organizations/tasks/server/slices/create-task/actions/create-task.action"
+import { type CreateOrganizationTaskSchemaClientData, createOrganizationTaskSchemaClient } from "@/modules/organizations/tasks/shared/validations/create-organization-task.schema.client"
 
 export const CreateOrganizationTaskForm = () => {
 	const form = useForm<CreateOrganizationTaskSchemaClientData>({
@@ -97,12 +92,7 @@ export const CreateOrganizationTaskForm = () => {
 									<FormItem>
 										<FormLabel>Descrição (opcional)</FormLabel>
 										<FormControl>
-											<Textarea
-												placeholder="Adicione detalhes importantes, contexto, links, etc."
-												className="min-h-[120px]"
-												{...restField}
-												value={value ?? ""}
-											/>
+											<Textarea placeholder="Adicione detalhes importantes, contexto, links, etc." className="min-h-[120px]" {...restField} value={value ?? ""} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
