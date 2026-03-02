@@ -1,6 +1,6 @@
 import { listPermissionsAdminRepo } from "@/modules/auth/server/repos/list-permissions.admin.repo"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const prefixLog = "[listPermissionsService]:"
 const GENERIC_ERROR = "Não foi possível listar permissões. Tente novamente mais tarde."

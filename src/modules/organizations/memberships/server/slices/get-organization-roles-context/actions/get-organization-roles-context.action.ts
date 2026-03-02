@@ -2,7 +2,7 @@
 
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { getOrganizationRolesContextUseCase } from "@/modules/organizations/memberships/server/slices/get-organization-roles-context/use-cases/get-organization-roles-context.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RolePermission = {
 	id: string

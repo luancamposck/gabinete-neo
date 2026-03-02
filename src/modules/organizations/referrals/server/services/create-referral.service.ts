@@ -3,7 +3,7 @@
 import { insertOrganizationReferralAdminRepo } from "@/modules/organizations/referrals/server/repos/insert-referral.admin.repo"
 import type { OrganizationReferralInsert } from "@/modules/organizations/referrals/shared/types/db"
 import type { CreateOrganizationReferralParams } from "@/modules/organizations/referrals/shared/types/inputs"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_CREATE_REFERRAL_ERROR = "Não foi possível registrar a indicação. Tente novamente mais tarde."
 const CREATE_REFERRAL_SUCCESS = "Indicação registrada com sucesso."

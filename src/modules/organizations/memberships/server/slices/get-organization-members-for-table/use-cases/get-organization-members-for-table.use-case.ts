@@ -11,7 +11,7 @@ import type { OrganizationReferralWithInviterName } from "@/modules/organization
 import { listReferralsWithInviterByOrganizationIdService } from "@/modules/organizations/referrals/server/services/list-referrals-with-inviter-by-organization-id.service"
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetOrganizationMembersForTableUseCaseRes = {
 	permissionsKeys: PermissionKey[]

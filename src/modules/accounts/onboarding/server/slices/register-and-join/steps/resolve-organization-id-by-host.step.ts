@@ -2,7 +2,7 @@
 
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ResolveOrganizationIdByHostStepRes = {
 	host: string

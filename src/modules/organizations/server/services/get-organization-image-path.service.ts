@@ -2,7 +2,7 @@
 
 import { findOrganizationImagePathRepo } from "@/modules/organizations/server/repos/find-organization-image-path.repo"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const prefixLog = "[getOrganizationImageUrlService]:"
 const GENERIC_ERROR = "Não foi possível obter a imagem. Tente novamente mais tarde."

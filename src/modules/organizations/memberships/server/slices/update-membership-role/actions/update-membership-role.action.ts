@@ -4,7 +4,7 @@
 import { revalidatePath } from "next/cache"
 
 import { updateMembershipRoleUseCase } from "@/modules/organizations/memberships/server/slices/update-membership-role/use-cases/update-membership-role.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UpdateMembershipRoleActionParams = {
 	memberUserId: string

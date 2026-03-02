@@ -7,7 +7,7 @@ import { getOrganizationIdByAppDomainService } from "@/modules/organizations/ser
 import { getOrganizationImagePathService } from "@/modules/organizations/server/services/get-organization-image-path.service"
 import { updateOrganizationService } from "@/modules/organizations/server/services/update-organization.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type DeleteOrganizationOgImageUseCaseRes = {
 	deleted: boolean

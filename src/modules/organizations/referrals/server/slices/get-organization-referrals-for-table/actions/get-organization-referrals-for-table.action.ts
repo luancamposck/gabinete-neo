@@ -2,7 +2,7 @@
 
 import { getOrganizationReferralsForTableUseCase } from "@/modules/organizations/referrals/server/slices/get-organization-referrals-for-table/use-cases/get-organization-referrals-for-table.use-case"
 import type { OrganizationReferralTableRow } from "@/modules/organizations/referrals/shared/types/organization-referrals-table.types"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "not_member" | "infra_error"
 

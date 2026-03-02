@@ -7,7 +7,7 @@ import { createUserService } from "@/modules/accounts/users/server/services/crea
 import type { CreateUserParams } from "@/modules/accounts/users/shared/types/inputs"
 
 import { deleteAuthUserService } from "@/modules/auth/server/services/delete-auth-user.service"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type CreatePublicUserAndProfileStepParams = {
 	userId: string

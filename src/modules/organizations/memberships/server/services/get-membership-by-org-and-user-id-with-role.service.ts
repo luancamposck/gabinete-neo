@@ -1,7 +1,7 @@
 // @/modules/organizations/memberships/server/services/get-membership-by-org-and-user-id-with-role.service.ts
 
 import { getMembershipByOrgAndUserIdWithRoleAdminRepo } from "@/modules/organizations/memberships/server/repos/get-membership-by-org-and-user-id-with-role.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetMembershipByOrgAndUserIdWithRoleServiceParams = {
 	organizationId: string

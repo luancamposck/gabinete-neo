@@ -2,7 +2,7 @@
 
 import { listRolesByOrganizationIdAdminRepo } from "@/modules/organizations/memberships/server/repos/list-roles-by-organization-id.admin.repo"
 import type { RoleView } from "@/modules/organizations/memberships/shared/types/views"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível obter os cargos da organização. Tente novamente mais tarde."
 const OK_MESSAGE = "Cargos obtidos com sucesso."

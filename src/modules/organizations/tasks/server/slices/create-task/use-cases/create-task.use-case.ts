@@ -4,7 +4,7 @@ import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/serv
 import { createOrganizationTaskService } from "@/modules/organizations/tasks/server/services/create-organization-task.service"
 import { createOrganizationTaskSchemaServer } from "@/modules/organizations/tasks/shared/validations/create-organization-task.schema.server"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type CreateTaskUseCaseParams = {
 	title: string

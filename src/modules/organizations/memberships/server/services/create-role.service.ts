@@ -1,5 +1,5 @@
 import { insertRoleAdminRepo } from "@/modules/organizations/memberships/server/repos/insert-role.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type CreateRoleServiceParams = {
 	organizationId: string

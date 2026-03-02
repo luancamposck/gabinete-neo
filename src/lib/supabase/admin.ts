@@ -1,5 +1,5 @@
 import { createClient as _createClient } from "@supabase/supabase-js"
-import type { Database } from "@/lib/definitions/supabase"
+import type { Database } from "@/shared/types/supabase"
 
 // Este cliente é para uso exclusivo em Server Actions e rotas de API
 // que precisam realizar operações com privilégios de administrador,

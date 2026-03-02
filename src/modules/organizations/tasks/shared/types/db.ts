@@ -1,4 +1,4 @@
-import type { Tables, TablesInsert, TablesUpdate } from "@/lib/definitions/supabase"
+import type { Tables, TablesInsert, TablesUpdate } from "@/shared/types/supabase"
 
 // organization_tasks
 export type OrganizationTaskRow = Tables<"organization_tasks">

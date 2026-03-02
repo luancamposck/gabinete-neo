@@ -2,7 +2,7 @@
 
 import { getTasksForTableUseCase } from "@/modules/organizations/tasks/server/slices/get-tasks-for-table/use-cases/get-tasks-for-table.use-case"
 import type { OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "not_member" | "infra_error"
 

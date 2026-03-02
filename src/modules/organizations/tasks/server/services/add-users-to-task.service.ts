@@ -1,7 +1,7 @@
 import { insertManyTaskAssignmentsAdminRepo } from "@/modules/organizations/tasks/server/repos/insert-many-task-assignments.admin.repo"
 import type { OrganizationTaskAssignmentInsert } from "@/modules/organizations/tasks/shared/types/db"
 import type { AddUsersToTaskParams } from "@/modules/organizations/tasks/shared/types/inputs"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível atribuir usuários à tarefa. Tente novamente mais tarde."
 const NO_USERS_ERROR = "Nenhum usuário selecionado para atribuição."

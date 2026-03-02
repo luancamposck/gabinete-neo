@@ -7,7 +7,7 @@ import { PERMISSIONS } from "@/modules/auth/shared/permissions"
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type PermissionCatalogItem = {
 	id: string

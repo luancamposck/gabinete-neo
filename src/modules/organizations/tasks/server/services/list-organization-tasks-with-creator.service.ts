@@ -1,8 +1,5 @@
-import {
-	listOrganizationTasksWithCreatorAdminRepo,
-	type OrganizationTaskWithCreator
-} from "@/modules/organizations/tasks/server/repos/list-organization-tasks-with-creator.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import { listOrganizationTasksWithCreatorAdminRepo, type OrganizationTaskWithCreator } from "@/modules/organizations/tasks/server/repos/list-organization-tasks-with-creator.admin.repo"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível obter as tarefas da constelação. Tente novamente mais tarde."
 const OK_MESSAGE = "Tarefas carregadas com sucesso."

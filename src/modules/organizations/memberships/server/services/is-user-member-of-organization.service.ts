@@ -1,7 +1,7 @@
 // @/modules/organizations/memberships/server/services/is-user-member-of-organization.service.ts
 
 import { findMembershipByOrgAndUserAdminRepo } from "@/modules/organizations/memberships/server/repos/find-membership-by-org-id-and-user-id.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type IsUserMemberOfOrganizationParams = {
 	organizationId: string

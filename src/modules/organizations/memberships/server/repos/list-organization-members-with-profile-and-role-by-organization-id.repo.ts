@@ -1,7 +1,7 @@
 // @/modules/organizations/memberships/server/repos/list-organization-members-with-profile-and-role-by-organization-id.repo.ts
 
-import type { Database } from "@/lib/definitions/supabase"
 import { createClient } from "@/lib/supabase/server"
+import type { Database } from "@/shared/types/supabase"
 
 type MembershipRow = Database["public"]["Tables"]["organization_memberships"]["Row"]
 type UserRow = Database["public"]["Tables"]["users"]["Row"]

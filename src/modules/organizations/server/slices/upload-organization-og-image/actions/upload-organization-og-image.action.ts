@@ -4,7 +4,7 @@
 import { uploadOrganizationOgImageUseCase } from "@/modules/organizations/server/slices/upload-organization-og-image/use-cases/upload-organization-og-image.use-case"
 import { uploadOrganizationOgImageSchema } from "@/modules/organizations/shared/validations/upload-organization-og-image.schema"
 import { getPublicAssetUrl } from "@/shared/storage/get-public-asset-url"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UploadOrganizationOgImageActionRes = {
 	path: string

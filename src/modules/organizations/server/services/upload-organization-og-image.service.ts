@@ -1,7 +1,7 @@
 // @/modules/organizations/server/services/upload-organization-og-image.service.ts
 
 import { uploadOrganizationOgImageAdminRepo } from "@/modules/organizations/server/repos/upload-organization-og-image.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UploadOrganizationOgImageServiceParams = {
 	organizationId: string

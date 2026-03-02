@@ -7,7 +7,7 @@ import { listRolesByOrganizationIdService } from "@/modules/organizations/member
 import { syncRolePermissionsService } from "@/modules/organizations/memberships/server/services/sync-role-permissions.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UpdateRolePermissionsUseCaseParams = {
 	roleId: string

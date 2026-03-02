@@ -4,7 +4,7 @@
 import { revalidatePath } from "next/cache"
 
 import { updateMembershipStatusUseCase } from "@/modules/organizations/memberships/server/slices/update-membership-status/use-cases/update-membership-status.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UpdateMembershipStatusActionParams = {
 	memberUserId: string

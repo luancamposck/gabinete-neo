@@ -1,8 +1,5 @@
-import {
-	listTaskAssignmentsWithUserAdminRepo,
-	type TaskAssignmentWithUser
-} from "@/modules/organizations/tasks/server/repos/list-task-assignments-with-user.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import { listTaskAssignmentsWithUserAdminRepo, type TaskAssignmentWithUser } from "@/modules/organizations/tasks/server/repos/list-task-assignments-with-user.admin.repo"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível obter os usuários atribuídos à tarefa. Tente novamente mais tarde."
 const OK_MESSAGE = "Usuários atribuídos à tarefa obtidos com sucesso."

@@ -2,7 +2,7 @@
 
 import { updateMembershipByOrgAndUserIdAdminRepo } from "@/modules/organizations/memberships/server/repos/update-membership-by-org-and-user-id.admin.repo"
 import type { MembershipUpdate } from "@/modules/organizations/memberships/shared/types/db"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 export type MembershipPatch = {
 	roleId?: string

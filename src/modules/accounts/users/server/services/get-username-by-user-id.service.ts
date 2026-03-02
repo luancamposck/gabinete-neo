@@ -1,7 +1,7 @@
 // @/modules/accounts/users/server/services/get-username-by-user-id.service.ts
 
 import { findUsernameByUserIdAdminRepo } from "@/modules/accounts/users/server/repos/find-username-by-user-id.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível obter seu username. Tente novamente mais tarde."
 const SUCCESS_MESSAGE = "Username obtido com sucesso."

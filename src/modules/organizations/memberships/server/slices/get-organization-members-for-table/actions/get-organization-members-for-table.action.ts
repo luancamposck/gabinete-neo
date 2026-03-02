@@ -4,7 +4,7 @@
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { getOrganizationMembersForTableUseCase } from "@/modules/organizations/memberships/server/slices/get-organization-members-for-table/use-cases/get-organization-members-for-table.use-case"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "infra_error"
 

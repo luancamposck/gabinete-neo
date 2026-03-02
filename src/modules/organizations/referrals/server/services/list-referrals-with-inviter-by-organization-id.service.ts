@@ -1,5 +1,5 @@
 import { listReferralsWithInviterByOrganizationIdAdminRepo, type OrganizationReferralWithInviterName } from "@/modules/organizations/referrals/server/repos/list-referrals-with-inviter-by-organization-id.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível obter os convites por indicação da organização. Tente novamente mais tarde."
 const OK_MESSAGE = "Convites por indicação obtidos com sucesso."

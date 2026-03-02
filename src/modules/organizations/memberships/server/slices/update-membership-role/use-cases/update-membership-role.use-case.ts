@@ -8,7 +8,7 @@ import { listRolesByOrganizationIdService } from "@/modules/organizations/member
 import { updateMembershipByOrgAndUserIdService } from "@/modules/organizations/memberships/server/services/update-membership-by-org-and-user-id.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UpdateMembershipRoleUseCaseParams = {
 	memberUserId: string

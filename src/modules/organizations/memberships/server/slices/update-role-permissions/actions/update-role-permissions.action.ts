@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { updateRolePermissionsUseCase } from "@/modules/organizations/memberships/server/slices/update-role-permissions/use-cases/update-role-permissions.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UpdateRolePermissionsActionParams = {
 	roleId: string

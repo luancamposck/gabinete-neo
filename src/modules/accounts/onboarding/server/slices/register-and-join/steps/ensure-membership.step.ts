@@ -4,7 +4,7 @@ import { signOutService } from "@/modules/auth/server/services/sign-out.service"
 import { createOrganizationMembershipService } from "@/modules/organizations/memberships/server/services/create-membership.service"
 import { getRoleByNameService } from "@/modules/organizations/memberships/server/services/get-role-by-name.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type EnsureMembershipStepParams = {
 	organizationId: string

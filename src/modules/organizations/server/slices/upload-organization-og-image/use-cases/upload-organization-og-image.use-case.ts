@@ -8,7 +8,7 @@ import { updateOrganizationService } from "@/modules/organizations/server/servic
 import { uploadOrganizationOgImageService } from "@/modules/organizations/server/services/upload-organization-og-image.service"
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UploadOrganizationOgImageUseCaseRes = {
 	path: string

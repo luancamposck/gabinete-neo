@@ -3,7 +3,7 @@
 import { insertUserProfileAdminRepo } from "@/modules/accounts/users/profiles/server/repos/insert-profile.admin.repo"
 import type { UserProfileInsert } from "@/modules/accounts/users/profiles/shared/types/db"
 import type { CreateUserProfileParams } from "@/modules/accounts/users/profiles/shared/types/inputs"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_CREATE_PROFILE_ERROR = "Não foi possível criar o perfil do usuário. Tente novamente mais tarde."
 const CREATE_PROFILE_SUCCESS = "Perfil do usuário criado com sucesso."

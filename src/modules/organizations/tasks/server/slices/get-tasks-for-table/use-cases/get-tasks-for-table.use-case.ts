@@ -1,10 +1,10 @@
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
-import { listOrganizationTasksWithCreatorService } from "@/modules/organizations/tasks/server/services/list-organization-tasks-with-creator.service"
 import type { OrganizationTaskWithCreator } from "@/modules/organizations/tasks/server/repos/list-organization-tasks-with-creator.admin.repo"
+import { listOrganizationTasksWithCreatorService } from "@/modules/organizations/tasks/server/services/list-organization-tasks-with-creator.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetTasksForTableUseCaseRes = {
 	organizationId: string

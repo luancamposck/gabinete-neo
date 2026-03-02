@@ -2,7 +2,7 @@
 
 import { getAssignableUsersUseCase } from "@/modules/organizations/tasks/server/slices/get-assignable-users/use-cases/get-assignable-users.use-case"
 import type { AssignableUserForTask } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ErrorCodes = "unauthenticated" | "org_not_found" | "not_member" | "validation_error" | "infra_error"
 

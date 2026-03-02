@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { assignUsersToTaskUseCase } from "@/modules/organizations/tasks/server/slices/assign-users-to-task/use-cases/assign-users-to-task.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type AssignUsersToTaskActionParams = {
 	taskId: string

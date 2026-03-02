@@ -2,7 +2,7 @@ import { deleteRolePermissionsAdminRepo } from "@/modules/organizations/membersh
 import { insertRolePermissionsAdminRepo } from "@/modules/organizations/memberships/server/repos/insert-role-permissions.admin.repo"
 import { listRolePermissionIdsByRoleIdAdminRepo } from "@/modules/organizations/memberships/server/repos/list-role-permission-ids-by-role-id.admin.repo"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type Params = {
 	roleId: string

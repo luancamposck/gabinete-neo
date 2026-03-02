@@ -1,7 +1,7 @@
 import { insertOrganizationTaskAdminRepo } from "@/modules/organizations/tasks/server/repos/insert-organization-task.admin.repo"
 import type { OrganizationTaskInsert } from "@/modules/organizations/tasks/shared/types/db"
 import type { CreateOrganizationTaskParams } from "@/modules/organizations/tasks/shared/types/inputs"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const GENERIC_ERROR = "Não foi possível criar a tarefa. Tente novamente mais tarde."
 const OK_MESSAGE = "Tarefa criada com sucesso."

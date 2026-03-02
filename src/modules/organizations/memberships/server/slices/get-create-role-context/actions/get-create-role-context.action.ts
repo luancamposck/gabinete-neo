@@ -1,7 +1,7 @@
 "use server"
 
 import { getCreateRoleContextUseCase } from "@/modules/organizations/memberships/server/slices/get-create-role-context/use-cases/get-create-role-context.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type PermissionCatalogItem = {
 	id: string

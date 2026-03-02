@@ -3,7 +3,7 @@
 import { getMyAccountDataUseCase } from "@/modules/accounts/server/slices/my-account/use-cases/get-my-account-data.use-case"
 import type { UserWithProfileDTO } from "@/modules/accounts/users/shared/types/dto"
 import type { OrganizationWithMembershipDTO } from "@/modules/organizations/shared/types/dto"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type CodeList = "unauthenticated" | "infra_error" | "user_not_found" | "org_not_found"
 

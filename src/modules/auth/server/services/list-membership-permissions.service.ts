@@ -2,7 +2,7 @@
 import { listMembershipPermissionsRepo } from "@/modules/auth/server/repos/list-membership-permissions.repo"
 import { PERMISSIONS, type PermissionKey } from "@/modules/auth/shared/permissions"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const prefixLog = "[listMembershipPermissionsService]:"
 const GENERIC_ERROR = "Não foi possível listar permissões. Tente novamente mais tarde."

@@ -3,7 +3,7 @@ import { isUserMemberOfOrganizationService } from "@/modules/organizations/membe
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import { addUsersToTaskService } from "@/modules/organizations/tasks/server/services/add-users-to-task.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type AssignUsersToTaskUseCaseParams = {
 	taskId: string

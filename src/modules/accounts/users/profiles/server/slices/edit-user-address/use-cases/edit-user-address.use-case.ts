@@ -3,7 +3,7 @@
 import { updateUserAddressService } from "@/modules/accounts/users/profiles/server/services/update-user-address.service"
 import type { UpdateUserAddressParams } from "@/modules/accounts/users/profiles/shared/types/inputs"
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type EditUserAddressParams = Omit<UpdateUserAddressParams, "userId">
 

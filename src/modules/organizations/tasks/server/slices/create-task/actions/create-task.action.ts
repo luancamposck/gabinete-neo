@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { createTaskUseCase } from "@/modules/organizations/tasks/server/slices/create-task/use-cases/create-task.use-case"
-import type { OperationResponse } from "@/shared/types/operation-reponse.types"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type CreateTaskActionParams = {
 	title: string
