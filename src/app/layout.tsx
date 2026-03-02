@@ -3,10 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { getCurrentOrganizationAction } from "@/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action"
 import { QueryProvider } from "@/providers/query-provider"
 
 import "./globals.css"
-import { getCurrentOrganizationAction } from "@/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action"
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
