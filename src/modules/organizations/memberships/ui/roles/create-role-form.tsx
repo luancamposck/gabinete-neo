@@ -13,9 +13,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { type CreateRoleSchemaClientData, createRoleSchemaClient } from "@/lib/validations/roles/create-role-schema.client"
 import { getPermissionPresentation } from "@/modules/auth/shared/permission-presenter"
 import { createRoleAction } from "@/modules/organizations/memberships/server/slices/create-role/actions/create-role.action"
+import { type CreateRoleSchemaClientData, createRoleSchemaClient } from "@/modules/organizations/memberships/shared/validations/create-role.schema"
 
 const defaultValues: CreateRoleSchemaClientData = {
 	name: "",
