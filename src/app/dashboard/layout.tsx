@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Vortex } from "@/components/vortex"
 import { AppSidebar } from "@/modules/app-shell/ui/app-sidebar"
-import { requireDashboardAccessAction } from "@/modules/auth/server/slices/dashboard-guard/actions/require-dashboard-acess.action"
+import { requireDashboardAccessAction } from "@/modules/auth/server/slices/dashboard-guard/actions/require-dashboard-access.action"
 
 export const dynamic = "force-dynamic"
 
