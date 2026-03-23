@@ -3,7 +3,7 @@
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
 import { updateOrganizationService } from "@/modules/organizations/server/services/update-organization.service"
-import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
+import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import type { OrganizationUpdateView, OrganizationView } from "@/modules/organizations/shared/types/views"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
@@ -85,7 +85,7 @@ export async function updateCurrentOrganizationUseCase(params: Params): Operatio
 		// - org não encontrada => org_not_found
 		// - erro técnico => infra_error
 		// ============================================================
-		const orgRes = await getOrganizationIdByAppDomainAction({ appDomain: host })
+		const orgRes = await getOrganizationIdByAppDomainService({ appDomain: host })
 		if (orgRes.success === false) {
 			if (orgRes.code === "org_not_found") {
 				return {

@@ -2,7 +2,7 @@ import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-cu
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
 import type { OrganizationReferralWithInviterName } from "@/modules/organizations/referrals/server/repos/list-referrals-with-inviter-by-organization-id.admin.repo"
 import { listReferralsWithInviterByOrganizationIdService } from "@/modules/organizations/referrals/server/services/list-referrals-with-inviter-by-organization-id.service"
-import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
+import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
@@ -52,7 +52,7 @@ export async function getOrganizationReferralsForTableUseCase(): OperationRespon
 			}
 		}
 
-		const orgRes = await getOrganizationIdByAppDomainAction({ appDomain: host })
+		const orgRes = await getOrganizationIdByAppDomainService({ appDomain: host })
 		if (orgRes.success === false) {
 			if (orgRes.code === "org_not_found") {
 				return {

@@ -9,7 +9,7 @@ import { listRolesByOrganizationIdService } from "@/modules/organizations/member
 import type { RoleView } from "@/modules/organizations/memberships/shared/types/views"
 import type { OrganizationReferralWithInviterName } from "@/modules/organizations/referrals/server/repos/list-referrals-with-inviter-by-organization-id.admin.repo"
 import { listReferralsWithInviterByOrganizationIdService } from "@/modules/organizations/referrals/server/services/list-referrals-with-inviter-by-organization-id.service"
-import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
+import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
@@ -88,7 +88,7 @@ export async function getOrganizationMembersForTableUseCase(): OperationResponse
 		// - org não encontrada => org_not_found
 		// - erro técnico => infra_error
 		// ============================================================
-		const orgRes = await getOrganizationIdByAppDomainAction({ appDomain: host })
+		const orgRes = await getOrganizationIdByAppDomainService({ appDomain: host })
 		if (orgRes.success === false) {
 			if (orgRes.code === "org_not_found") {
 				return {

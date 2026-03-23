@@ -1,6 +1,6 @@
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
-import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
+import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { addUsersToTaskService } from "@/modules/organizations/tasks/server/services/add-users-to-task.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
@@ -65,7 +65,7 @@ export async function assignUsersToTaskUseCase(params: AssignUsersToTaskUseCaseP
 			}
 		}
 
-		const orgRes = await getOrganizationIdByAppDomainAction({ appDomain: host })
+		const orgRes = await getOrganizationIdByAppDomainService({ appDomain: host })
 		if (orgRes.success === false) {
 			if (orgRes.code === "org_not_found") {
 				return {

@@ -1,6 +1,6 @@
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"
-import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
+import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import type { OrganizationTaskWithCreator } from "@/modules/organizations/tasks/server/repos/list-organization-tasks-with-creator.admin.repo"
 import { listOrganizationTasksWithCreatorService } from "@/modules/organizations/tasks/server/services/list-organization-tasks-with-creator.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
@@ -54,7 +54,7 @@ export async function getTasksForTableUseCase(): OperationResponse<GetTasksForTa
 			}
 		}
 
-		const orgRes = await getOrganizationIdByAppDomainAction({ appDomain: host })
+		const orgRes = await getOrganizationIdByAppDomainService({ appDomain: host })
 		if (orgRes.success === false) {
 			if (orgRes.code === "org_not_found") {
 				return {
