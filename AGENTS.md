@@ -37,12 +37,7 @@ Use apenas quando:
 
 ## Estrutura real de pastas (feature-first)
 
-### Legado (não usar)
-- `src/services` é legado e **não deve** receber novas implementações.
-- `src/repositories` é legado e **não deve** receber novas implementações.
-- `src/actions` é legado e **não deve** receber novas implementações.
-
-### Novo padrão (usar)
+### Nosso padrão (usar)
 - Services:
   - `src/modules/<module-name>/server/services/<service-name>.service.ts`
 - Repos:
@@ -63,6 +58,12 @@ Estrutura base (server) por módulo:
 - `src/modules/<module-name>/server/services/...`
 - `src/modules/<module-name>/server/slices/<slice-name>/actions/...`
 - `src/modules/<module-name>/server/slices/<slice-name>/use-cases/...`
+
+Estrutura base (shared/ui) por módulo:
+- `src/modules/<module-name>/shared/ui/...`
+- usar essa pasta para componentes reutilizáveis que pertencem apenas a um módulo
+- manter em `src/shared/ui/` apenas primitives/base UI compartilhadas do design system
+- usar `src/shared/components/` para componentes compostos globais/cross-module
 
 ---
 
@@ -113,6 +114,28 @@ Estrutura base (server) por módulo:
 - Consome um ou mais Services.
 - Retorna `OperationResponse`.
 
+#### Padrão de mensagens e comentários em Use-case
+- Todo use-case deve centralizar mensagens em constantes `MSG_*` no topo do arquivo.
+- Não retornar strings inline dentro do fluxo; prefira `MSG_SUCCESS`, `MSG_UNAUTHENTICATED`, `MSG_NOT_ALLOWED`, `MSG_NOT_FOUND`, `MSG_INFRA_ERROR`, etc.
+- Se o use-case expõe `infra_error`, definir também:
+  - `const FALLBACK_INFRA_ERROR = { success: false, message: MSG_INFRA_ERROR, code: "infra_error" } as const`
+- Todo use-case deve ter `prefixLog` no formato `"[nomeDoUseCase]:"` para logs técnicos.
+- O corpo do use-case deve ser dividido em etapas comentadas e numeradas, neste formato:
+
+```ts
+// ============================================================
+// 0) Descrever a etapa
+//
+// Possibilidades:
+// - cenário 1
+// - cenário 2
+// ============================================================
+```
+
+- Cada bloco comentado deve explicar a intenção da etapa e os resultados esperados (`success`, códigos de erro, rollback, fallback, etc.).
+- O objetivo é que qualquer pessoa entenda rapidamente o fluxo do use-case sem precisar inferir a orquestração apenas lendo os `if`s.
+- Quando a mensagem final pertence ao contrato do use-case, preferir uma constante local `MSG_SUCCESS` em vez de reaproveitar diretamente a mensagem retornada por service.
+
 ### Service
 - Centraliza regra de negócio.
 - Consome Repo(s).
@@ -143,6 +166,13 @@ Regras:
 
 ## Next.js (App Router) — regras importantes
 
+- Manter em `src/app/` apenas arquivos de entrada do App Router:
+  - exemplos: `page.tsx`, `layout.tsx`, `route.ts`, `route.tsx`
+- Arquivos especiais do Next.js/App Router também podem existir em `src/app/`:
+  - exemplos: `loading.tsx`, `error.tsx`, `not-found.tsx`, `template.tsx`, `default.tsx`, `globals.css`, `favicon.ico`
+- Não criar componentes de domínio, services, helpers, validações ou lógica de aplicação dentro de `src/app/`.
+- Não criar pastas como `_components/` dentro de `src/app/` para armazenar componentes de domínio.
+- A lógica deve ficar nos módulos em `src/modules/` e `src/shared/`; `src/app/` deve apenas compor e conectar as rotas.
 - `page.tsx` e `layout.tsx` devem ser **Server Components** por padrão (evitar `"use client"`).
 - Se precisar de client, criar wrapper separado:
   - `page.tsx` (server) renderiza `<SomeClientComponent />` em arquivo com `"use client"`.
@@ -171,6 +201,8 @@ Contém código compartilhado entre múltiplos módulos. Helpers puros, types, c
 
 - `src/shared/types/` — types globais (`OperationResponse`, tipos Supabase gerados)
 - `src/shared/constants/` — constantes usadas por mais de um módulo
+- `src/shared/ui/` — primitives/base UI compartilhadas do design system
+- `src/shared/components/` — componentes compostos globais reutilizados entre múltiplas rotas/módulos
 - `src/shared/formatters/` — funções de formatação (CEP, telefone, etc.)
 - `src/shared/masks/` — funções de máscara de input (CEP, telefone, etc.)
 - `src/shared/http/` — utilitários de HTTP/request (ex: extrair host)
@@ -179,6 +211,21 @@ Contém código compartilhado entre múltiplos módulos. Helpers puros, types, c
 
 > **Regra:** se é usado por mais de um módulo e não é wrapper de terceiro, vai em `src/shared/`.
 > Constantes ou validações específicas de **um só módulo** ficam em `src/modules/<module>/shared/`.
+> Componentes de UI reutilizáveis de **um só módulo** ficam em `src/modules/<module>/shared/ui/`.
+
+### `src/shared/components/` — UI composta global
+Usar para componentes compostos de aplicação reutilizados entre múltiplas rotas ou módulos.
+
+- Exemplo: `header`, `footer`, `hero`, `admin-tabs`
+- Não usar essa pasta para primitives/base UI; esses arquivos ficam em `src/shared/ui/`
+- Não colocar lógica server nessa pasta; manter apenas composição visual e comportamento client/server de apresentação
+
+### `src/modules/<module>/shared/ui/` — UI compartilhada por módulo
+Usar para componentes visuais reutilizáveis que pertencem a um único módulo.
+
+- Exemplo: cards, form sections, dialogs e componentes auxiliares usados só dentro de `auth`
+- Não usar `src/shared/ui/` para UI que ainda é específica de um módulo
+- Não colocar lógica server nessa pasta; manter apenas UI e helpers de apresentação específicos do módulo
 
 ### Sem barrel files
 Não usar arquivos `index.ts` para re-exportar. Todos os imports devem apontar diretamente para o arquivo fonte.
@@ -199,7 +246,11 @@ Não usar arquivos `index.ts` para re-exportar. Todos os imports devem apontar d
 
 ## Git / Commits
 
+- **Sempre escrever mensagens de commit inteiramente em inglês** (título, body, footer — tudo).
 - Use Conventional Commits: `feat:`, `fix:`, `refactor:`, `chore:`, `test:`, `docs:`
+- O título deve ser semântico, conciso e com no máximo 72 caracteres.
+- Para mudanças maiores, incluir um **body topicalizado** com bullet points agrupados por área/tópico da mudança.
+- **Nunca** incluir `Co-Authored-By` ou qualquer variação nos commits.
 - O agente pode criar commits **pequenos e descritivos**, mas deve:
   - garantir `git diff` limpo e compreensível
   - rodar `fix:biome` antes
