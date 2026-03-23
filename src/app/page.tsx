@@ -3,7 +3,7 @@ import { Suspense } from "react"
 
 import { Vortex } from "@/components/vortex"
 import { getCurrentUserAction } from "@/modules/auth/server/slices/get-current-user/actions/get-current-user.action"
-import { AuthTabs, AuthTabsSkeleton } from "@/modules/auth/ui/auth-tabs"
+import { AuthTabs, AuthTabsSkeleton } from "@/modules/auth/shared/ui/auth-tabs"
 
 type HomePageProps = {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
