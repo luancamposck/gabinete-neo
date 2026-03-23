@@ -1,9 +1,9 @@
 // @/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action.ts
 "use server"
 
+import { getPublicAssetUrlService } from "@/modules/organizations/server/services/get-public-asset-url.service"
 import { getCurrentOrganizationUseCase } from "@/modules/organizations/server/slices/get-current-organization/use-cases/get-current-organization.use-case"
 import type { OrganizationDTO } from "@/modules/organizations/shared/types/dto"
-import { getPublicAssetUrlService } from "@/modules/organizations/server/services/get-public-asset-url.service"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetCurrentOrganizationActionRes = {

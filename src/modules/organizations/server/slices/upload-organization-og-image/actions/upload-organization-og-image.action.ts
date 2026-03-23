@@ -1,9 +1,9 @@
 // @/modules/organizations/server/slices/upload-organization-og-image/actions/upload-organization-og-image.action.ts
 "use server"
 
+import { getPublicAssetUrlService } from "@/modules/organizations/server/services/get-public-asset-url.service"
 import { uploadOrganizationOgImageUseCase } from "@/modules/organizations/server/slices/upload-organization-og-image/use-cases/upload-organization-og-image.use-case"
 import { uploadOrganizationOgImageSchema } from "@/modules/organizations/shared/validations/upload-organization-og-image.schema"
-import { getPublicAssetUrlService } from "@/modules/organizations/server/services/get-public-asset-url.service"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UploadOrganizationOgImageActionRes = {

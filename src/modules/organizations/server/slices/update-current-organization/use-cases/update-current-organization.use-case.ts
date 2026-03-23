@@ -2,8 +2,8 @@
 
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
-import { updateOrganizationService } from "@/modules/organizations/server/services/update-organization.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
+import { updateOrganizationService } from "@/modules/organizations/server/services/update-organization.service"
 import type { OrganizationUpdateView, OrganizationView } from "@/modules/organizations/shared/types/views"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
