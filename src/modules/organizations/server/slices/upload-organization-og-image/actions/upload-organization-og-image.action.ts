@@ -3,7 +3,7 @@
 
 import { uploadOrganizationOgImageUseCase } from "@/modules/organizations/server/slices/upload-organization-og-image/use-cases/upload-organization-og-image.use-case"
 import { uploadOrganizationOgImageSchema } from "@/modules/organizations/shared/validations/upload-organization-og-image.schema"
-import { getPublicAssetUrl } from "@/shared/storage/get-public-asset-url"
+import { getPublicAssetUrlService } from "@/modules/organizations/server/services/get-public-asset-url.service"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type UploadOrganizationOgImageActionRes = {
@@ -38,7 +38,7 @@ export async function uploadOrganizationOgImageAction(formData: FormData): Opera
 	let imageUrl: string | null = null
 
 	try {
-		imageUrl = await getPublicAssetUrl({ path: uploadRes.data.path })
+		imageUrl = await getPublicAssetUrlService({ path: uploadRes.data.path })
 	} catch (error) {
 		console.error("[uploadOrganizationOgImageAction]: failed to resolve public URL", error)
 	}

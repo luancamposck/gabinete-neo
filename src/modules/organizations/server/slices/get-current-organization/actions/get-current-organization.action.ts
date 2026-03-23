@@ -3,7 +3,7 @@
 
 import { getCurrentOrganizationUseCase } from "@/modules/organizations/server/slices/get-current-organization/use-cases/get-current-organization.use-case"
 import type { OrganizationDTO } from "@/modules/organizations/shared/types/dto"
-import { getPublicAssetUrl } from "@/shared/storage/get-public-asset-url"
+import { getPublicAssetUrlService } from "@/modules/organizations/server/services/get-public-asset-url.service"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetCurrentOrganizationActionRes = {
@@ -22,7 +22,7 @@ export async function getCurrentOrganizationAction(): OperationResponse<GetCurre
 
 	try {
 		if (organization.image_path) {
-			imageUrl = await getPublicAssetUrl({ path: organization.image_path })
+			imageUrl = await getPublicAssetUrlService({ path: organization.image_path })
 		}
 	} catch (error) {
 		console.log(`[getOrganizationAdminSettingsAction]: ${error}`)

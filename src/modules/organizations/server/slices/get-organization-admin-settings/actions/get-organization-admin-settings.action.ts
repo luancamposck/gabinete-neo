@@ -3,7 +3,7 @@
 
 import { getOrganizationAdminSettingsUseCase } from "@/modules/organizations/server/slices/get-organization-admin-settings/use-cases/get-organization-admin-settings.use-case"
 import type { OrganizationDTO } from "@/modules/organizations/shared/types/dto"
-import { getPublicAssetUrl } from "@/shared/storage/get-public-asset-url"
+import { getPublicAssetUrlService } from "@/modules/organizations/server/services/get-public-asset-url.service"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type GetOrganizationAdminSettingsActionRes = {
@@ -22,7 +22,7 @@ export async function getOrganizationAdminSettingsAction(): OperationResponse<Ge
 
 	try {
 		if (organization.image_path) {
-			imageUrl = await getPublicAssetUrl({ path: organization.image_path })
+			imageUrl = await getPublicAssetUrlService({ path: organization.image_path })
 		}
 	} catch (error) {
 		console.log(`[getOrganizationAdminSettingsAction]: ${error}`)
