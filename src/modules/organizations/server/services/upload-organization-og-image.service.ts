@@ -25,6 +25,19 @@ function isAllowedOgImageMimeType(mimeType: string) {
 	return mimeType === "image/jpeg" || mimeType === "image/png" || mimeType === "image/webp"
 }
 
+function getExtFromMime(mime: string): "jpg" | "png" | "webp" {
+	switch (mime) {
+		case "image/jpeg":
+			return "jpg"
+		case "image/png":
+			return "png"
+		case "image/webp":
+			return "webp"
+		default:
+			return "webp"
+	}
+}
+
 export async function uploadOrganizationOgImageService(params: UploadOrganizationOgImageServiceParams): OperationResponse<UploadOrganizationOgImageServiceRes, UploadOrganizationOgImageServiceCodes> {
 	try {
 		if (!params.file || params.file.size > MAX_OG_IMAGE_SIZE_BYTES || !isAllowedOgImageMimeType(params.file.type)) {
@@ -35,7 +48,8 @@ export async function uploadOrganizationOgImageService(params: UploadOrganizatio
 			}
 		}
 
-		const { data, error } = await uploadOrganizationOgImageAdminRepo(params)
+		const ext = getExtFromMime(params.file.type)
+		const { data, error } = await uploadOrganizationOgImageAdminRepo({ ...params, ext })
 
 		if (error) {
 			console.error(`${prefixLog} ${error.message}`)
