@@ -1,0 +1,241 @@
+{
+  "project": "gabinete-neo",
+  "branchName": "ralph/dynamic-network-map",
+  "description": "Mapa Dinâmico de Membros - Replace hardcoded map pins with real organization members, add city select to address forms, show mapped/unmapped member counts",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Dataset de coordenadas de municípios brasileiros",
+      "description": "As a developer, I need a static coordinate lookup to resolve (city, state) → (lat, lng) for the map without external API calls.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/shared/data/brazilian-city-coordinates.ts` created",
+        "Contains a `Map<string, { lat: number; lng: number }>` with ~5570 municipalities (data from Municipios-Brasileiros GitHub repo, MIT license)",
+        "Download source JSON from `https://raw.githubusercontent.com/kelvins/Municipios-Brasileiros/refs/heads/main/json/municipios.json` and convert programmatically",
+        "Map key is normalized `cidade-uf` format (no accents, lowercase, hyphens). Ex: `sao-paulo-sp`, `belo-horizonte-mg`",
+        "Export helper `normalizeCityStateKey(city: string, state: string): string` — normalizes via NFD, removes diacritics, lowercase, spaces to hyphens, removes special chars",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Dataset de cidades por estado para formulários",
+      "description": "As a developer, I need a cities-by-state lookup for the address form city select, sourced from the same Municipios-Brasileiros dataset.",
+      "acceptanceCriteria": [
+        "File `src/shared/data/brazilian-cities-by-state.ts` created",
+        "Contains `Record<string, string[]>` where key is UF (e.g. `SP`) and value is array of city names in alphabetical order with original accents (e.g. `[\"Adamantina\", \"Adolfo\", ..., \"Votuporanga\"]`)",
+        "Download source JSON from `https://raw.githubusercontent.com/kelvins/Municipios-Brasileiros/refs/heads/main/json/municipios.json` and convert programmatically",
+        "All 27 states (UFs) are present as keys",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Repo to fetch members with city/state for map",
+      "description": "As a developer, I need a lightweight repo that returns only the fields needed for the map (id, name, city, state) for performance.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/server/repos/list-members-with-city-by-organization-id.repo.ts` created",
+        "Query joins: `organization_memberships` → `users` (via auth.users) → `user_profiles`",
+        "Selects only: `users.id`, `users.raw_user_meta_data->name` (as `name`), `user_profiles.city`, `user_profiles.state`",
+        "Accepts `{ organizationId: string }` parameter",
+        "Filters by `organization_id` and where `city` is not null/empty",
+        "Returns typed result with selected fields",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Repo to count total organization members",
+      "description": "As a developer, I need a repo that counts all members (with and without address) to show the mapped/total ratio on the map.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/server/repos/count-organization-members.repo.ts` created",
+        "Counts rows in `organization_memberships` filtered by `organization_id`",
+        "Accepts `{ organizationId: string }` parameter",
+        "Returns typed count result",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Repo to list unmapped members (no address)",
+      "description": "As a developer, I need a repo that returns members without city data so they can be listed in the unmapped members modal.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/server/repos/list-unmapped-members-by-organization-id.repo.ts` created",
+        "Query joins: `organization_memberships` → `users` → LEFT JOIN `user_profiles`",
+        "Selects: `users.id`, `users.raw_user_meta_data->name` (as `name`)",
+        "Filters by `organization_id` and where `user_profiles.city` IS NULL or empty",
+        "Accepts `{ organizationId: string }` parameter",
+        "Returns `{ id: string; name: string }[]`",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Service to group members by city and resolve coordinates",
+      "description": "As a developer, I need a service that transforms the member list into CityPin[] with coordinates, counts, and unmapped members list.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/server/services/list-city-pins-for-map.service.ts` created",
+        "Calls the repos from US-003, US-004, and US-005",
+        "Groups members by (city, state) using `normalizeCityStateKey` from US-001",
+        "Resolves coordinates for each group via the static lookup from US-001",
+        "Cities not found in lookup are silently ignored (log warning with `console.warn`)",
+        "Builds `CityPin[]` with: `id` = `br-{state lowercase}-{normalized-city}`, `city`, `state`, `country: \"Brasil\"`, `lat`, `lng`, `users: { id, name }[]`",
+        "Brasília (DF) is always the first item (fixed hub), even if it has no members — in that case `users: []`",
+        "Returns `OperationResponse<{ pins: CityPin[]; totalMembers: number; mappedMembers: number; unmappedMembers: { id: string; name: string }[] }>`",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Use-case to orchestrate auth + org + map pins",
+      "description": "As a developer, I need a use-case that orchestrates authentication, org resolution, and pin loading following the existing pattern.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/server/slices/get-map-pins/use-cases/get-map-pins.use-case.ts` created",
+        "Follows the pattern of `src/modules/organizations/memberships/server/slices/get-organization-members-for-table/use-cases/get-organization-members-for-table.use-case.ts` (MSG constants, prefixLog, numbered/commented steps)",
+        "Step 0: `getCurrentAuthUserService()` — verify authentication",
+        "Step 1: `getRequestHost()` — resolve tenant host",
+        "Step 2: `getOrganizationIdByAppDomainService()` — resolve organizationId",
+        "Step 3: `listCityPinsForMapService()` — fetch pins",
+        "Returns `OperationResponse<{ pins: CityPin[]; totalMembers: number; mappedMembers: number; unmappedMembers: { id: string; name: string }[] }, ErrorCodes>`",
+        "ErrorCodes: `unauthenticated | org_not_found | infra_error`",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Server Action for map pins",
+      "description": "As a developer, I need a thin server action that exposes the use-case to the Server Component.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/server/slices/get-map-pins/actions/get-map-pins.action.ts` created",
+        "Marked with `\"use server\"`",
+        "Calls `getMapPinsUseCase()` and returns the result",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Page fetches data server-side and passes to MapClient",
+      "description": "As a user, I want to see real organization members on the map when visiting /dashboard/network/map.",
+      "acceptanceCriteria": [
+        "`src/app/dashboard/network/map/page.tsx` modified to call `getMapPinsAction()` server-side",
+        "Handles errors: redirect on `unauthenticated`/`org_not_found`, throw on `infra_error`",
+        "Passes `pins`, `totalMembers`, `mappedMembers`, and `unmappedMembers` as props to `<MapClient />`",
+        "Page remains a Server Component (no `\"use client\"`)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "MapClient accepts pins as props instead of mock data",
+      "description": "As a developer, I need MapClient to accept dynamic pins instead of importing hardcoded mock data.",
+      "acceptanceCriteria": [
+        "`src/modules/organizations/insights/people-map/ui/map-client.tsx` modified",
+        "Receives `pins: CityPin[]`, `totalMembers: number`, `mappedMembers: number`, `unmappedMembers: { id: string; name: string }[]` as props",
+        "Removes import of `pins.mock.ts`",
+        "Passes `pins` to `<WorldPeopleMapMapLibre />`",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Mapped members counter badge and unmapped members modal",
+      "description": "As a user, I want to see how many members are mapped and view which members are missing address data.",
+      "acceptanceCriteria": [
+        "Badge visible near the map header showing `X de Y membros mapeados` (e.g. `32 de 45 membros mapeados`)",
+        "When `mappedMembers < totalMembers`, show a button/link 'Ver não-mapeados'",
+        "Clicking opens a Dialog listing unmapped members by name (no edit link/button)",
+        "When `mappedMembers === 0`, show empty state overlay: 'Nenhum membro com endereço cadastrado'",
+        "Uses shadcn/ui Dialog and Badge components",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 11,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "City searchable select in edit-address-form",
+      "description": "As a user editing my address, I want to pick my city from an official list filtered by my state, ensuring consistent data for the map.",
+      "acceptanceCriteria": [
+        "In `src/modules/accounts/users/ui/edit-address-form.tsx`: city text input replaced with a searchable select (combobox/autocomplete)",
+        "Select populated with cities from `brazilian-cities-by-state.ts` (from US-002) filtered by currently selected state",
+        "Cities listed in alphabetical order with original accents",
+        "City select is disabled when no state is selected",
+        "When state changes (manually or via CEP auto-fill), city list updates and city value is cleared",
+        "ViaCEP auto-fill does NOT fill the city field — fills only street, neighborhood, and state. User must select city manually",
+        "Street and Neighborhood fields become `readOnly` after ViaCEP auto-fill with visual indication (e.g. `bg-muted cursor-not-allowed`)",
+        "If user clears CEP or enters invalid CEP, street and neighborhood become editable again",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 12,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "City searchable select in register-and-join-form",
+      "description": "As a new user registering, I want to pick my city from an official list filtered by my state, ensuring consistent data for the map.",
+      "acceptanceCriteria": [
+        "In `src/modules/accounts/onboarding/ui/register-and-join-form.tsx`: city text input replaced with a searchable select (combobox/autocomplete)",
+        "Select populated with cities from `brazilian-cities-by-state.ts` (from US-002) filtered by currently selected state",
+        "Cities listed in alphabetical order with original accents",
+        "City select is disabled when no state is selected",
+        "When state changes (manually or via CEP auto-fill), city list updates and city value is cleared",
+        "ViaCEP auto-fill does NOT fill the city field — fills only street, neighborhood, and state. User must select city manually",
+        "Street and Neighborhood fields become `readOnly` after ViaCEP auto-fill with visual indication (e.g. `bg-muted cursor-not-allowed`)",
+        "If user clears CEP or enters invalid CEP, street and neighborhood become editable again",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 13,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Remove mock pins file",
+      "description": "As a developer, I want to remove the hardcoded mock data file after migrating to real data.",
+      "acceptanceCriteria": [
+        "File `src/modules/organizations/insights/people-map/shared/mocks/pins.mock.ts` deleted",
+        "No other file imports the mock",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": true,
+      "notes": ""
+    }
+  ]
+}

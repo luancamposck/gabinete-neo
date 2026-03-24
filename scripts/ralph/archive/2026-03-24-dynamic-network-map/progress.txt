@@ -1,0 +1,61 @@
+# Ralph Progress Log
+Started: Mon Mar 23 22:53:55 PDT 2026
+---
+
+## Codebase Patterns
+- UF code to state abbreviation mapping: {11:'RO',12:'AC',13:'AM',14:'RR',15:'PA',16:'AP',17:'TO',21:'MA',22:'PI',23:'CE',24:'RN',25:'PB',26:'PE',27:'AL',28:'SE',29:'BA',31:'MG',32:'ES',33:'RJ',35:'SP',41:'PR',42:'SC',43:'RS',50:'MS',51:'MT',52:'GO',53:'DF'}
+- City coordinate lookup key format: `cidade-uf` normalized (no accents, lowercase, hyphens) via `normalizeCityStateKey`
+- Data directory for people-map module: `src/modules/organizations/insights/people-map/shared/data/`
+- Shared data directory: `src/shared/data/`
+- Repo pattern: thin async functions that return raw Supabase query result, use `!inner` for inner joins
+- Service pattern: MSG constants at top, prefixLog, try/catch, return OperationResponse
+- Use-case pattern: MSG constants, FALLBACK_INFRA_ERROR const, numbered/commented steps, follows auth→host→org→data flow
+- Action pattern: "use server" directive, thin wrapper calling use-case
+- Page error handling: switch on error code, redirect("/") for unauthenticated, redirect("/tenant-not-found") for org_not_found, throw for infra
+- UI components at `src/components/ui/` (shadcn/ui), not `src/shared/ui/`
+- Combobox component available at `@/components/ui/combobox.tsx` for searchable selects
+
+## 2026-03-23 - US-001 & US-002
+- Generated `brazilian-city-coordinates.ts` with 5571 municipalities Map + `normalizeCityStateKey` helper
+- Generated `brazilian-cities-by-state.ts` with Record<UF, cities[]> for all 27 states
+- Both files generated from https://raw.githubusercontent.com/kelvins/Municipios-Brasileiros/refs/heads/main/json/municipios.json
+- Files changed: `src/modules/organizations/insights/people-map/shared/data/brazilian-city-coordinates.ts`, `src/shared/data/brazilian-cities-by-state.ts`
+- **Learnings for future iterations:**
+  - WebFetch tool truncates large JSON files — use curl directly for large datasets
+  - The generated coordinates file is ~300KB; it's a static data file, not dynamically loaded
+  - biome fix:biome has pre-existing errors (17 errors, 6 warnings) unrelated to this work
+  - Both US-001 and US-002 share the same data source so were generated together
+---
+
+## 2026-03-23 - US-002 through US-014
+- Marked US-002 as passing (was already implemented but not marked)
+- US-003: Created `list-members-with-city-by-organization-id.repo.ts` — joins organization_memberships → users → user_profiles (inner) to get members with city/state
+- US-004: Created `count-organization-members.repo.ts` — uses `select("*", { count: "exact", head: true })` for efficient counting
+- US-005: Created `list-unmapped-members-by-organization-id.repo.ts` — LEFT joins user_profiles to get all members including those without profiles
+- US-006: Created `list-city-pins-for-map.service.ts` — groups members by city, resolves coords from static lookup, ensures Brasília is always first pin
+- US-007: Created `get-map-pins.use-case.ts` — orchestrates auth → host → org → pins following existing use-case pattern
+- US-008: Created `get-map-pins.action.ts` — thin "use server" wrapper around use-case
+- US-009: Updated `page.tsx` to call action server-side, handle errors with redirect/throw pattern
+- US-010: Updated `map-client.tsx` to accept pins/totalMembers/mappedMembers/unmappedMembers as props
+- US-011: Added Badge counter ("X de Y membros mapeados"), "Ver não-mapeados" button, Dialog with unmapped member list, empty state overlay
+- US-012: Replaced city Input with Combobox in edit-address-form, ViaCEP no longer fills city, street/neighborhood become readOnly after CEP fill
+- US-013: Same Combobox + CEP changes applied to register-and-join-form
+- US-014: Deleted `pins.mock.ts`
+- Files changed:
+  - `src/modules/organizations/insights/people-map/server/repos/` (3 new repos)
+  - `src/modules/organizations/insights/people-map/server/services/list-city-pins-for-map.service.ts`
+  - `src/modules/organizations/insights/people-map/server/slices/get-map-pins/` (use-case + action)
+  - `src/app/dashboard/network/map/page.tsx`
+  - `src/modules/organizations/insights/people-map/ui/map-client.tsx`
+  - `src/modules/accounts/users/ui/edit-address-form.tsx`
+  - `src/modules/accounts/onboarding/ui/register-and-join-form.tsx`
+  - `src/modules/organizations/insights/people-map/shared/mocks/pins.mock.ts` (deleted)
+- **Learnings for future iterations:**
+  - Repos return raw Supabase query results — use `!inner` for INNER JOIN, omit for LEFT JOIN
+  - `select("*", { count: "exact", head: true })` is the pattern for counting without fetching data
+  - Existing Combobox at `@/components/ui/combobox.tsx` works well for searchable selects
+  - Biome warns about unused destructured params — use `props.x` pattern instead when params will be used later
+  - Page error handling pattern: switch on code, redirect for auth/org errors, throw for infra errors
+  - UI components live at `src/components/ui/` (not `src/shared/ui/`)
+  - Forms use react-hook-form Controller + field.onChange pattern — wrap onChange for custom behavior
+---
