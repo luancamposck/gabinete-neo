@@ -2,9 +2,16 @@
 
 "use client"
 
-import { pins } from "@/modules/organizations/insights/people-map/shared/mocks/pins.mock"
+import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 import WorldPeopleMapMapLibre from "@/modules/organizations/insights/people-map/ui/world-people-map-maplibre"
 
-export default function MapClient() {
-	return <WorldPeopleMapMapLibre pins={pins} minZoomToShowCards={5.8} size="normal" scale={1} />
+type MapClientProps = {
+	pins: CityPin[]
+	totalMembers: number
+	mappedMembers: number
+	unmappedMembers: { id: string; name: string }[]
+}
+
+export default function MapClient(props: MapClientProps) {
+	return <WorldPeopleMapMapLibre pins={props.pins} minZoomToShowCards={5.8} size="normal" scale={1} />
 }
