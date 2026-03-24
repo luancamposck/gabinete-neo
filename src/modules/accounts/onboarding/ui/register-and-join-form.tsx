@@ -474,7 +474,7 @@ export const RegisterAndJoinForm = () => {
 										)}
 									/>
 								</div>
-								<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+								<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 									<Controller
 										name="address.number"
 										control={control}
@@ -493,26 +493,6 @@ export const RegisterAndJoinForm = () => {
 											</Field>
 										)}
 									/>
-									<Controller
-										name="address.complement"
-										control={control}
-										render={({ field, fieldState }) => (
-											<Field data-invalid={fieldState.invalid} className="md:col-span-2">
-												<FieldLabel htmlFor={complementId}>Complemento (Opcional)</FieldLabel>
-												<InputGroup>
-													<InputGroupAddon align="inline-start">
-														<InputGroupText>
-															<House className="h-4 w-4" />
-														</InputGroupText>
-													</InputGroupAddon>
-													<InputGroupInput {...field} id={complementId} placeholder="Apto 101, Bloco B" aria-invalid={fieldState.invalid} />
-												</InputGroup>
-												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-											</Field>
-										)}
-									/>
-								</div>
-								<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
 									<Controller
 										name="address.neighborhood"
 										control={control}
@@ -539,25 +519,8 @@ export const RegisterAndJoinForm = () => {
 											</Field>
 										)}
 									/>
-									<Controller
-										name="address.city"
-										control={control}
-										render={({ field, fieldState }) => (
-											<Field data-invalid={fieldState.invalid}>
-												<FieldLabel>Cidade</FieldLabel>
-												<Combobox
-													items={cityItems}
-													value={field.value}
-													onValueChange={field.onChange}
-													placeholder="Selecione a cidade"
-													searchPlaceholder="Buscar cidade..."
-													emptyMessage="Nenhuma cidade encontrada."
-													disabled={!selectedState || isFetchingUserCep}
-												/>
-												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-											</Field>
-										)}
-									/>
+								</div>
+								<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 									<Controller
 										name="address.state"
 										control={control}
@@ -581,7 +544,44 @@ export const RegisterAndJoinForm = () => {
 											</Field>
 										)}
 									/>
+									<Controller
+										name="address.city"
+										control={control}
+										render={({ field, fieldState }) => (
+											<Field data-invalid={fieldState.invalid}>
+												<FieldLabel>Cidade</FieldLabel>
+												<Combobox
+													items={cityItems}
+													value={field.value}
+													onValueChange={field.onChange}
+													placeholder="Selecione a cidade"
+													searchPlaceholder="Buscar cidade..."
+													emptyMessage="Nenhuma cidade encontrada."
+													disabled={!selectedState || isFetchingUserCep}
+												/>
+												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+											</Field>
+										)}
+									/>
 								</div>
+								<Controller
+									name="address.complement"
+									control={control}
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid} className="md:col-span-2">
+											<FieldLabel htmlFor={complementId}>Complemento (Opcional)</FieldLabel>
+											<InputGroup>
+												<InputGroupAddon align="inline-start">
+													<InputGroupText>
+														<House className="h-4 w-4" />
+													</InputGroupText>
+												</InputGroupAddon>
+												<InputGroupInput {...field} id={complementId} placeholder="Apto 101, Bloco B" aria-invalid={fieldState.invalid} />
+											</InputGroup>
+											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										</Field>
+									)}
+								/>
 							</FieldGroup>
 						)}
 					</FieldSet>
