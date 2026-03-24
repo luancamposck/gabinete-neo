@@ -3,14 +3,15 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, ArrowRight, AtSign, Building2, Flag, Hash, House, Lock, Mail, MapPin, Phone, User, UserPlus } from "lucide-react"
+import { ArrowLeft, ArrowRight, AtSign, Flag, Hash, House, Lock, Mail, MapPin, Phone, User, UserPlus } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useId, useState } from "react"
+import { useId, useMemo, useState } from "react"
 import { Controller, type FieldPath, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Combobox } from "@/components/ui/combobox"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -19,6 +20,7 @@ import { registerAndJoinAction } from "@/modules/accounts/onboarding/server/slic
 import { type RegisterAndJoinSchemaClientData, registerAndJoinSchemaClient } from "@/modules/accounts/onboarding/shared/validations/register-and-join.schema"
 import { brazilianStates } from "@/shared/constants/brazilian-states"
 import { RELATIONSHIP_OPTIONS } from "@/shared/constants/relationship-options"
+import { BRAZILIAN_CITIES_BY_STATE } from "@/shared/data/brazilian-cities-by-state"
 import { maskCep } from "@/shared/masks/mask-cep"
 import { maskPhone } from "@/shared/masks/mask-phone"
 
@@ -38,13 +40,13 @@ export const RegisterAndJoinForm = () => {
 	const numberId = `${baseId}-number`
 	const complementId = `${baseId}-complement`
 	const neighborhoodId = `${baseId}-neighborhood`
-	const cityId = `${baseId}-city`
 	const stateId = `${baseId}-state`
 
 	const router = useRouter()
 	const [step, setStep] = useState<number>(1)
 	const [isFetchingUserCep, setIsFetchingUserCep] = useState<boolean>(false)
 	const [isUsernameTouched, setIsUsernameTouched] = useState<boolean>(false)
+	const [cepFilled, setCepFilled] = useState<boolean>(false)
 	const searchParams = useSearchParams()
 
 	// Exemplo no client: const ref = useSearchParams().get("ref") ?? undefined
@@ -75,7 +77,15 @@ export const RegisterAndJoinForm = () => {
 		}
 	})
 
-	const { control, handleSubmit, formState, setValue, setFocus, trigger, resetField, reset } = registerAndJoinForm
+	const { control, handleSubmit, formState, setValue, setFocus, trigger, resetField, reset, watch } = registerAndJoinForm
+
+	const selectedState = watch("address.state")
+
+	const cityItems = useMemo(() => {
+		if (!selectedState) return []
+		const cities = BRAZILIAN_CITIES_BY_STATE[selectedState] ?? []
+		return cities.map((city) => ({ value: city, label: city }))
+	}, [selectedState])
 
 	const normalizeUsername = (value: string) =>
 		value
@@ -99,6 +109,7 @@ export const RegisterAndJoinForm = () => {
 		const cep = e.target.value.replace(/\D/g, "")
 
 		if (cep.length !== 8) {
+			setCepFilled(false)
 			return
 		}
 
@@ -112,22 +123,38 @@ export const RegisterAndJoinForm = () => {
 				})
 				resetField("address.street")
 				resetField("address.neighborhood")
-				resetField("address.city")
 				resetField("address.state")
+				setCepFilled(false)
 				return
 			}
 			setValue("address.street", data.logradouro, { shouldValidate: true })
 			setValue("address.neighborhood", data.bairro, { shouldValidate: true })
-			setValue("address.city", data.localidade, { shouldValidate: true })
 			setValue("address.state", data.uf, { shouldValidate: true })
+			setValue("address.city", "", { shouldValidate: false })
+			setCepFilled(true)
 			setFocus("address.number")
 		} catch (error) {
 			console.error("Falha ao buscar CEP:", error)
 			toast.error("Erro ao buscar CEP", {
 				description: "Nao foi possivel buscar os dados do endereco. Tente novamente."
 			})
+			setCepFilled(false)
 		} finally {
 			setIsFetchingUserCep(false)
+		}
+	}
+
+	function handleStateChange(newState: string, fieldOnChange: (value: string) => void) {
+		fieldOnChange(newState)
+		setValue("address.city", "", { shouldValidate: false })
+	}
+
+	function handleCepChange(rawValue: string, fieldOnChange: (value: string) => void) {
+		const masked = maskCep(rawValue)
+		fieldOnChange(masked)
+		const digits = rawValue.replace(/\D/g, "")
+		if (digits.length < 8) {
+			setCepFilled(false)
 		}
 	}
 
@@ -414,7 +441,7 @@ export const RegisterAndJoinForm = () => {
 															<Hash className="h-4 w-4" />
 														</InputGroupText>
 													</InputGroupAddon>
-													<InputGroupInput {...field} id={cepId} placeholder="00000-000" aria-invalid={fieldState.invalid} onChange={(e) => field.onChange(maskCep(e.target.value))} onBlur={handleUserCepBlur} />
+													<InputGroupInput {...field} id={cepId} placeholder="00000-000" aria-invalid={fieldState.invalid} onChange={(e) => handleCepChange(e.target.value, field.onChange)} onBlur={handleUserCepBlur} />
 												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
@@ -432,7 +459,15 @@ export const RegisterAndJoinForm = () => {
 															<MapPin className="h-4 w-4" />
 														</InputGroupText>
 													</InputGroupAddon>
-													<InputGroupInput {...field} id={streetId} placeholder="Avenida Paulista" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+													<InputGroupInput
+														{...field}
+														id={streetId}
+														placeholder="Avenida Paulista"
+														aria-invalid={fieldState.invalid}
+														disabled={isFetchingUserCep}
+														readOnly={cepFilled}
+														className={cepFilled ? "bg-muted cursor-not-allowed" : ""}
+													/>
 												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
@@ -490,7 +525,15 @@ export const RegisterAndJoinForm = () => {
 															<House className="h-4 w-4" />
 														</InputGroupText>
 													</InputGroupAddon>
-													<InputGroupInput {...field} id={neighborhoodId} placeholder="Bela Vista" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
+													<InputGroupInput
+														{...field}
+														id={neighborhoodId}
+														placeholder="Bela Vista"
+														aria-invalid={fieldState.invalid}
+														disabled={isFetchingUserCep}
+														readOnly={cepFilled}
+														className={cepFilled ? "bg-muted cursor-not-allowed" : ""}
+													/>
 												</InputGroup>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
@@ -501,15 +544,16 @@ export const RegisterAndJoinForm = () => {
 										control={control}
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid}>
-												<FieldLabel htmlFor={cityId}>Cidade</FieldLabel>
-												<InputGroup>
-													<InputGroupAddon align="inline-start">
-														<InputGroupText>
-															<Building2 className="h-4 w-4" />
-														</InputGroupText>
-													</InputGroupAddon>
-													<InputGroupInput {...field} id={cityId} placeholder="Sao Paulo" aria-invalid={fieldState.invalid} disabled={isFetchingUserCep} />
-												</InputGroup>
+												<FieldLabel>Cidade</FieldLabel>
+												<Combobox
+													items={cityItems}
+													value={field.value}
+													onValueChange={field.onChange}
+													placeholder="Selecione a cidade"
+													searchPlaceholder="Buscar cidade..."
+													emptyMessage="Nenhuma cidade encontrada."
+													disabled={!selectedState || isFetchingUserCep}
+												/>
 												{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 											</Field>
 										)}
@@ -520,7 +564,7 @@ export const RegisterAndJoinForm = () => {
 										render={({ field, fieldState }) => (
 											<Field data-invalid={fieldState.invalid}>
 												<FieldLabel htmlFor={stateId}>Estado</FieldLabel>
-												<Select onValueChange={field.onChange} value={field.value} disabled={isFetchingUserCep}>
+												<Select onValueChange={(val) => handleStateChange(val, field.onChange)} value={field.value} disabled={isFetchingUserCep}>
 													<SelectTrigger id={stateId} aria-invalid={fieldState.invalid} className="gap-2">
 														<Flag className="h-4 w-4 text-muted-foreground" />
 														<SelectValue placeholder="Selecione o estado" />
