@@ -4,6 +4,9 @@
 
 set -e
 
+# Ensure npm global binaries are in PATH (needed in devcontainers)
+export PATH="${PATH}:/usr/local/share/npm-global/bin"
+
 # Parse arguments
 TOOL="amp"  # Default to amp for backwards compatibility
 MAX_ITERATIONS=10

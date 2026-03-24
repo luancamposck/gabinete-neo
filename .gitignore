@@ -37,9 +37,13 @@ yarn-error.log*
 .vercel
 
 # codex (local config with absolute paths)
-.codex/
+.codex
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-.codex
+
+# Ralph state files
+scripts/ralph/.last-branch
+scripts/ralph/progress.txt
+.claude/settings.local.json
