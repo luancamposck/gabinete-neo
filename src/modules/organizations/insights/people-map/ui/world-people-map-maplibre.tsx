@@ -220,7 +220,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 			<Dialog open={!!selected} onOpenChange={(v) => !v && setOpenPinId(null)}>
 				<DialogContent className="max-w-lg">
 					<DialogHeader>
-						<DialogTitle>{selected ? `${selected.city}${selected.state ? `/${selected.state}` : ""} â€¢ ${selected.country}` : ""}</DialogTitle>
+						<DialogTitle>{selected ? `${selected.city}${selected.state ? `/${selected.state}` : ""} - ${selected.country}` : ""}</DialogTitle>
 					</DialogHeader>
 
 					{selected && (
