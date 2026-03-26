@@ -44,3 +44,16 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - No path comments on line 1 in these files
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-010
+- Moved 4 files from `src/modules/organizations/ui/` to `src/modules/organizations/shared/ui/`: link-share-preview.tsx, organization-config.context.tsx, edit-organization-image-form.tsx, edit-organization-field-form.tsx
+- Updated 4 imports in `src/app/dashboard/config/organization/page.tsx`
+- Updated 3 internal cross-references (edit-organization-field-form, edit-organization-image-form, and link-share-preview all import organization-config.context)
+- Updated path comments on line 1 in all 4 moved files
+- Removed empty `src/modules/organizations/ui/` directory
+- Files changed: 5 files (4 renames + 1 page import update)
+- **Learnings for future iterations:**
+  - Organizations UI files have internal cross-references via the context provider — all 3 consumer files import organization-config.context
+  - biome fix reorders imports automatically after path changes
+  - Typecheck passes cleanly
+---
