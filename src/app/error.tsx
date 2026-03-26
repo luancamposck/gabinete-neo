@@ -2,11 +2,10 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Waves } from "@/components/waves"
+import { Button } from "@/shared/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/components/ui/collapsible"
 
 const DashboardLayoutError = ({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) => {
 	const [isOffline, setIsOffline] = useState<boolean>(false)

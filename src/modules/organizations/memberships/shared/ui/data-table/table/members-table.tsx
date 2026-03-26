@@ -5,13 +5,13 @@ import { type FilterFn, getCoreRowModel, getFacetedRowModel, getFacetedUniqueVal
 import { useEffect, useMemo, useState } from "react"
 
 import { DataTable } from "@/components/ui/data-table"
-import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import { membersColumns } from "@/modules/organizations/memberships/shared/ui/data-table/columns/members-columns"
 import { MembersTableToolbar } from "@/modules/organizations/memberships/shared/ui/data-table/table/members-table-toolbar"
 import { usePersistedTableState } from "@/modules/organizations/memberships/shared/ui/data-table/table/use-persisted-table-state"
 import type { MembersTableMeta } from "@/modules/organizations/memberships/shared/ui/data-table/table-meta.types"
+import { DataTableViewOptions } from "@/shared/components/ui/data-table-view-options"
 
 const TABLE_STORAGE_KEY = "organization-members-table-state"
 

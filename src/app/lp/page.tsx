@@ -5,10 +5,10 @@ import { motion, type Variants } from "motion/react"
 import Image from "next/image"
 
 import { ModeToggleButton } from "@/components/mode-toggle-button"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils/cn"
+import { Badge } from "@/shared/components/ui/badge"
+import { Button } from "@/shared/components/ui/button"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 
 const fadeInUp: Variants = {
 	hidden: { opacity: 0, y: 32 },

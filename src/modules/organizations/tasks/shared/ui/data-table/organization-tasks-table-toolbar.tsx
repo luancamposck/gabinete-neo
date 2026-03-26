@@ -3,11 +3,10 @@
 import type { Table } from "@tanstack/react-table"
 import { X } from "lucide-react"
 import { useMemo } from "react"
-
-import { Button } from "@/components/ui/button"
-import { DataTableFacetedFilter } from "@/components/ui/data-table-faceted-filter"
 import { Input } from "@/components/ui/input"
 import type { OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
+import { Button } from "@/shared/components/ui/button"
+import { DataTableFacetedFilter } from "@/shared/components/ui/data-table-faceted-filter"
 
 import { getTaskCreatorLabel } from "./columns"
 

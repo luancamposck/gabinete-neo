@@ -3,13 +3,12 @@
 import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Combobox } from "@/components/ui/combobox"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { updateMembershipRoleAction } from "@/modules/organizations/memberships/server/slices/update-membership-role/actions/update-membership-role.action"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
+import { Badge } from "@/shared/components/ui/badge"
+import { Button } from "@/shared/components/ui/button"
+import { Combobox } from "@/shared/components/ui/combobox"
 
 type MemberRoleChangeSheetProps = {
 	open: boolean

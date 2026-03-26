@@ -2,11 +2,10 @@
 
 import { Check, ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
-
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils/cn"
+import { Button } from "@/shared/components/ui/button"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/shared/components/ui/command"
 
 type ComboboxItem = {
 	value: string

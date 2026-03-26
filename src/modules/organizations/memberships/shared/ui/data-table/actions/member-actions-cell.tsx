@@ -4,14 +4,13 @@ import { Eye, ShieldUser, ToggleLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils/cn"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { updateMembershipStatusAction } from "@/modules/organizations/memberships/server/slices/update-membership-status/actions/update-membership-status.action"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import { DetailsSheet } from "@/modules/organizations/memberships/shared/ui/data-table/sheets/details-sheet"
 import { RoleChangeSheet } from "@/modules/organizations/memberships/shared/ui/data-table/sheets/role-change-sheet"
+import { Button } from "@/shared/components/ui/button"
 
 type MemberActionsCellProps = {
 	member: OrganizationMemberTableRow

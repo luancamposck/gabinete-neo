@@ -5,9 +5,9 @@ import { type ColumnDef, type FilterFn, getCoreRowModel, getFacetedRowModel, get
 import { useState } from "react"
 
 import { DataTable } from "@/components/ui/data-table"
-import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
 import { usePersistedTableState } from "@/hooks/use-persisted-table-state"
 import type { OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
+import { DataTableViewOptions } from "@/shared/components/ui/data-table-view-options"
 
 import { organizationTasksColumns } from "./columns"
 import { OrganizationTasksTableToolbar } from "./organization-tasks-table-toolbar"

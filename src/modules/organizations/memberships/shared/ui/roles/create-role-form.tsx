@@ -6,16 +6,15 @@ import { useRouter } from "next/navigation"
 import { useId, useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { getPermissionPresentation } from "@/modules/auth/shared/permission-presenter"
 import { createRoleAction } from "@/modules/organizations/memberships/server/slices/create-role/actions/create-role.action"
 import { type CreateRoleSchemaClientData, createRoleSchemaClient } from "@/modules/organizations/memberships/shared/validations/create-role.schema"
+import { Badge } from "@/shared/components/ui/badge"
+import { Button } from "@/shared/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Checkbox } from "@/shared/components/ui/checkbox"
 
 const defaultValues: CreateRoleSchemaClientData = {
 	name: "",

@@ -1,9 +1,8 @@
 "use client"
 
 import { flexRender, type Table } from "@tanstack/react-table"
-
-import { DataTablePagination } from "@/components/ui/data-table-pagination"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as UITable } from "@/components/ui/table"
+import { DataTablePagination } from "@/shared/components/ui/data-table-pagination"
 
 interface DataTableProps<TData> {
 	table: Table<TData>

@@ -1,10 +1,9 @@
 "use client"
 
 import { MapPin } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import type { OrganizationMemberTableAddress } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
+import { Button } from "@/shared/components/ui/button"
 
 type MemberAddressPopoverProps = {
 	address: OrganizationMemberTableAddress | null | undefined

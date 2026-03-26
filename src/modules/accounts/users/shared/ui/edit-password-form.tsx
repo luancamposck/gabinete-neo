@@ -7,12 +7,11 @@ import { useId, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { updatePasswordAction } from "@/modules/auth/server/slices/update-password/actions/update-password.action"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion"
+import { Button } from "@/shared/components/ui/button"
 
 const passwordSchema = z.string().min(8, "A senha deve ter no minimo 8 caracteres.")
 

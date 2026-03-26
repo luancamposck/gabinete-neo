@@ -1,9 +1,9 @@
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import { getOrganizationRolesContextAction } from "@/modules/organizations/memberships/server/slices/get-organization-roles-context/actions/get-organization-roles-context.action"
 import { RolesCards } from "@/modules/organizations/memberships/shared/ui/roles/roles-cards"
+import { Button } from "@/shared/components/ui/button"
 
 const RolesConfigPage = async () => {
 	const rolesContextRes = await getOrganizationRolesContextAction()

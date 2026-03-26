@@ -2,14 +2,13 @@
 
 import type { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils/cn"
 import type { OrganizationUserTableRow } from "@/modules/organizations/memberships/shared/types/organization-users-table.types"
 import { MemberAddressPopover } from "@/modules/organizations/memberships/shared/ui/data-table/shared/member-address-popover"
 import { UserActionsCell } from "@/modules/organizations/memberships/shared/ui/users/table/user-actions-cell"
 import type { UsersTableMeta } from "@/modules/organizations/memberships/shared/ui/users/table/users-table-meta.types"
+import { Badge } from "@/shared/components/ui/badge"
+import { Button } from "@/shared/components/ui/button"
 import { RELATIONSHIP_OPTIONS } from "@/shared/constants/relationship-options"
 import { formatPhone } from "@/shared/formatters/format-phone"
 

@@ -5,9 +5,8 @@
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { toast } from "sonner"
-
-import { Button } from "@/components/ui/button"
 import { joinCurrentOrganizationAction } from "@/modules/organizations/memberships/server/slices/join-current-organization/actions/join-current-organization.action"
+import { Button } from "@/shared/components/ui/button"
 
 export const JoinOrganizationButton = () => {
 	const router = useRouter()

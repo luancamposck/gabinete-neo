@@ -1,10 +1,9 @@
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
-
-import { Button } from "@/components/ui/button"
 import { getCreateRoleContextAction } from "@/modules/organizations/memberships/server/slices/get-create-role-context/actions/get-create-role-context.action"
 import { CreateRoleForm } from "@/modules/organizations/memberships/shared/ui/roles/create-role-form"
+import { Button } from "@/shared/components/ui/button"
 
 const NewRoleConfigPage = async () => {
 	const roleContextRes = await getCreateRoleContextAction()

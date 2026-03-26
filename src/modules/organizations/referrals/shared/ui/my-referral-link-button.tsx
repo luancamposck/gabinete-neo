@@ -4,11 +4,10 @@
 import { Check, Clipboard, Loader2 } from "lucide-react"
 import { useEffect, useRef, useState, useTransition } from "react"
 import { toast } from "sonner"
-
-import { Button } from "@/components/ui/button"
 import { DEFAULT_REFERRAL_LINK_STORAGE_KEY, useReferralLinkStorage } from "@/hooks/use-referral-link-storage"
 import { cn } from "@/lib/utils/cn"
 import { getMyReferralLinkAction } from "@/modules/organizations/referrals/server/slices/get-my-referral-link/actions/get-my-referral-link.action"
+import { Button } from "@/shared/components/ui/button"
 
 type Props = {
 	className?: string

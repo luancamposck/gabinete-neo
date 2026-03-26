@@ -4,9 +4,6 @@ import { rankItem } from "@tanstack/match-sorter-utils"
 import { type FilterFn, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { LayoutGrid, Table as TableIcon } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
-
-import { DataTablePagination } from "@/components/ui/data-table-pagination"
-import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import type { OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
@@ -17,6 +14,8 @@ import { usersColumns } from "@/modules/organizations/memberships/shared/ui/user
 import { UsersTable } from "@/modules/organizations/memberships/shared/ui/users/table/users-table"
 import type { UsersTableMeta } from "@/modules/organizations/memberships/shared/ui/users/table/users-table-meta.types"
 import { UsersTableToolbar } from "@/modules/organizations/memberships/shared/ui/users/table/users-table-toolbar"
+import { DataTablePagination } from "@/shared/components/ui/data-table-pagination"
+import { DataTableViewOptions } from "@/shared/components/ui/data-table-view-options"
 
 type UsersExplorerProps = {
 	users: OrganizationUserTableRow[]

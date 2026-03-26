@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation"
 import { useId } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { type ResetPasswordSchemaData, resetPasswordSchema } from "@/modules/accounts/onboarding/shared/validations/reset-password.schema"
 import { updatePasswordAction } from "@/modules/auth/server/slices/update-password/actions/update-password.action"
+import { Button } from "@/shared/components/ui/button"
+import { Card, CardContent } from "@/shared/components/ui/card"
 
 export const ResetPasswordForm = () => {
 	const router = useRouter()

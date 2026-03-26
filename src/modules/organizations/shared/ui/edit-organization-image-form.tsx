@@ -9,14 +9,13 @@ import { useEffect, useId, useRef, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
-
-import { Button } from "@/components/ui/button"
 import { Field, FieldError } from "@/components/ui/field"
 import { cn } from "@/lib/utils/cn"
 import { deleteOrganizationOgImageAction } from "@/modules/organizations/server/slices/delete-organization-og-image/actions/delete-organization-og-image.action"
 import { uploadOrganizationOgImageAction } from "@/modules/organizations/server/slices/upload-organization-og-image/actions/upload-organization-og-image.action"
 import { useOrganizationConfig } from "@/modules/organizations/shared/ui/organization-config.context"
 import { MAX_ORGANIZATION_OG_IMAGE_SIZE_BYTES, ORGANIZATION_OG_IMAGE_MIME_TYPES, uploadOrganizationOgImageSchema } from "@/modules/organizations/shared/validations/upload-organization-og-image.schema"
+import { Button } from "@/shared/components/ui/button"
 
 type UploadOrganizationOgImageFormValues = z.infer<typeof uploadOrganizationOgImageSchema>
 

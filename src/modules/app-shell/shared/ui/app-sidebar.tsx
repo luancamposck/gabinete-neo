@@ -2,7 +2,6 @@ import { ChevronRight, Settings } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Separator } from "@/components/ui/separator"
 import {
 	Sidebar,
@@ -21,6 +20,7 @@ import {
 import { getSidebarContextAction } from "@/modules/app-shell/server/slices/get-sidebar-context/actions/get-sidebar-context.action"
 import { navMain } from "@/modules/app-shell/shared/navigation/nav-main"
 import { NavFooter } from "@/modules/app-shell/shared/ui/nav-footer"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/components/ui/collapsible"
 
 const AppSidebar = async () => {
 	const sidebarContextRes = await getSidebarContextAction()

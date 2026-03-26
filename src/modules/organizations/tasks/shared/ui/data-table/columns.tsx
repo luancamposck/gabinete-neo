@@ -2,11 +2,10 @@
 
 import type { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, ClipboardList, Clock, User as UserIcon } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils/cn"
 import type { OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
+import { Badge } from "@/shared/components/ui/badge"
+import { Button } from "@/shared/components/ui/button"
 
 import { OrganizationTaskActions } from "./organization-task-actions"
 

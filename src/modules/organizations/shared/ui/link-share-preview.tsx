@@ -2,9 +2,8 @@
 "use client"
 
 import Image from "next/image"
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useOrganizationConfig } from "@/modules/organizations/shared/ui/organization-config.context"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 
 type LinkSharePreviewProps = {
 	exampleLink: string
