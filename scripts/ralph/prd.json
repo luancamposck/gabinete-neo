@@ -161,7 +161,7 @@
         "Typecheck passes"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Splitting shadcn migration into 3 batches to stay within context limits. Move all A-D files. Note: some internal cross-references may point to files not yet moved — that's OK, they'll be fixed in subsequent batches."
     },
     {

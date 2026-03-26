@@ -123,3 +123,16 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - Both files import from `@/components/ui/` which will be updated in US-015a-c
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-015a
+- Moved 13 files from `src/components/ui/` to `src/shared/components/ui/`: accordion.tsx, badge.tsx, button.tsx, calendar.tsx, card.tsx, checkbox.tsx, collapsible.tsx, combobox.tsx, command.tsx, data-table-faceted-filter.tsx, data-table-pagination.tsx, data-table-skeleton.tsx, data-table-view-options.tsx
+- Updated ~90 imports across 47 consumer files from `@/components/ui/<file>` to `@/shared/components/ui/<file>`
+- Updated internal cross-references in moved files (calendar->button, combobox->button+command, data-table-faceted-filter->badge+button+command, data-table-pagination->button, data-table-view-options->button)
+- Files changed: 60 files (13 renames + 47 import updates)
+- **Learnings for future iterations:**
+  - Bulk sed replacement works well for these uniform import paths
+  - Internal cross-references within shadcn files are common (combobox->command, faceted-filter->command+badge)
+  - Files still in `src/components/ui/` (data-table, dialog, etc.) still reference `@/components/ui/` for files not yet moved — these will be fixed in US-015b
+  - Pre-existing lint errors in sidebar.tsx and world-people-map-maplibre.tsx are unrelated to this migration
+  - Typecheck passes cleanly
+---
