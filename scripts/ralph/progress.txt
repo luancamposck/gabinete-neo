@@ -96,3 +96,15 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - organization-referrals-table.tsx had no path comment
   - Both files import from `@/components/ui/` and `@/hooks/` which will be updated in US-015a and US-019
 ---
+
+## 2026-03-26 - US-013
+- Moved 6 files from `src/modules/organizations/tasks/ui/` to `src/modules/organizations/tasks/shared/ui/`: create-task-form.tsx, assign-users-to-task-dialog.tsx, data-table/organization-tasks-table.tsx, data-table/organization-tasks-table-toolbar.tsx, data-table/columns.tsx, data-table/organization-task-actions.tsx
+- Updated 2 page imports: task/new/page.tsx, task/all/page.tsx
+- Updated 1 internal cross-reference: organization-task-actions.tsx imports assign-users-to-task-dialog
+- Removed empty `src/modules/organizations/tasks/ui/` directory
+- Files changed: 8 files (6 renames + 2 page imports + 1 internal ref)
+- **Learnings for future iterations:**
+  - organization-task-actions.tsx has one internal cross-reference to assign-users-to-task-dialog.tsx
+  - No path comments on line 1 in these files
+  - Typecheck passes cleanly
+---
