@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
-
-import { Vortex } from "@/components/vortex"
 import { getCurrentUserAction } from "@/modules/auth/server/slices/get-current-user/actions/get-current-user.action"
 import { AuthTabs, AuthTabsSkeleton } from "@/modules/auth/shared/ui/auth-tabs"
+import { Vortex } from "@/shared/components/vortex"
 
 type HomePageProps = {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>

@@ -1,11 +1,11 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Waves } from "@/components/waves"
 import { signOutAction } from "@/modules/auth/server/slices/sign-out/actions/sign-out.action"
 import { getOrganizationIdByAppDomainAction } from "@/modules/organizations/server/slices/get-organization-id-by-app-domain/actions/get-organization-id-by-app-domain.action"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Waves } from "@/shared/components/waves"
 import { getRequestHost } from "@/shared/http/get-request-host"
 
 export const dynamic = "force-dynamic"

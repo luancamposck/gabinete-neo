@@ -1,5 +1,5 @@
-import { Vortex } from "@/components/vortex"
 import { ResetPasswordForm } from "@/modules/accounts/onboarding/shared/ui/reset-password-form"
+import { Vortex } from "@/shared/components/vortex"
 
 const ResetPasswordPage = () => {
 	return (

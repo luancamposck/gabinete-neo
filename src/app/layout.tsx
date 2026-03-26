@@ -1,9 +1,8 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-
-import { ThemeProvider } from "@/components/theme-provider"
 import { getCurrentOrganizationAction } from "@/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action"
 import { QueryProvider } from "@/providers/query-provider"
+import { ThemeProvider } from "@/shared/components/theme-provider"
 import { Toaster } from "@/shared/components/ui/sonner"
 
 import "./globals.css"

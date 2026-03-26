@@ -3,9 +3,8 @@
 import { ArrowRight, BadgeCheck, BarChart3, Layers, Play, ShieldCheck, Smartphone, Sparkles, Target, Users } from "lucide-react"
 import { motion, type Variants } from "motion/react"
 import Image from "next/image"
-
-import { ModeToggleButton } from "@/components/mode-toggle-button"
 import { cn } from "@/lib/utils/cn"
+import { ModeToggleButton } from "@/shared/components/mode-toggle-button"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"

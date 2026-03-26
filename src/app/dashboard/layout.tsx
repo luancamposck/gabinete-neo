@@ -1,12 +1,11 @@
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
-
-import { ModeToggleButton } from "@/components/mode-toggle-button"
-import { Vortex } from "@/components/vortex"
 import { AppSidebar } from "@/modules/app-shell/shared/ui/app-sidebar"
 import { requireDashboardAccessAction } from "@/modules/auth/server/slices/dashboard-guard/actions/require-dashboard-access.action"
+import { ModeToggleButton } from "@/shared/components/mode-toggle-button"
 import { Separator } from "@/shared/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/shared/components/ui/sidebar"
+import { Vortex } from "@/shared/components/vortex"
 
 export const dynamic = "force-dynamic"
 
