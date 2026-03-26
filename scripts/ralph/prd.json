@@ -192,7 +192,7 @@
         "Typecheck passes"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Batch 3 (final) of shadcn migration. Depends on US-015a and US-015b."
     },
     {

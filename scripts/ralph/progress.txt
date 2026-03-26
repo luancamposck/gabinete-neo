@@ -148,3 +148,17 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - Pre-existing biome lint errors remain unrelated to migration
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-015c
+- Moved 7 files from `src/components/ui/` to `src/shared/components/ui/`: sidebar.tsx, skeleton.tsx, sonner.tsx, table.tsx, tabs.tsx, textarea.tsx, tooltip.tsx
+- Updated imports across 13 consumer files from `@/components/ui/<file>` to `@/shared/components/ui/<file>`
+- Updated internal cross-references in moved files (sidebar->skeleton+tooltip, data-table-skeleton->skeleton+table, data-table->table, input-group->textarea)
+- Removed empty `src/components/ui/` directory
+- Files changed: 20 files (7 renames + 13 import updates)
+- **Learnings for future iterations:**
+  - sidebar.tsx had 2 internal cross-references (skeleton, tooltip) that needed updating
+  - data-table-skeleton.tsx and data-table.tsx both reference table.tsx — easy to miss
+  - All shadcn UI primitives are now consolidated in `src/shared/components/ui/`
+  - `src/components/` still has 4 composed components (mode-toggle-button, theme-provider, vortex, waves) for US-016
+  - Typecheck passes cleanly
+---
