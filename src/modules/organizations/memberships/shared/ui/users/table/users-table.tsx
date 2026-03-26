@@ -1,9 +1,8 @@
 "use client"
 
 import { flexRender, type Table } from "@tanstack/react-table"
-
-import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as UITable } from "@/components/ui/table"
 import type { OrganizationUserTableRow } from "@/modules/organizations/memberships/shared/types/organization-users-table.types"
+import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as UITable } from "@/shared/components/ui/table"
 
 type UsersTableProps = {
 	table: Table<OrganizationUserTableRow>

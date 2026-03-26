@@ -7,10 +7,10 @@ import "maplibre-gl/dist/maplibre-gl.css"
 import { ArrowRight } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import MapGL, { Layer, Marker, NavigationControl, Source } from "react-map-gl/maplibre"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 import { Button } from "@/shared/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip"
 
 type SizePreset = "compact" | "normal" | "large"
 

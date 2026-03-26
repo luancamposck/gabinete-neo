@@ -1,12 +1,12 @@
 // @/modules/auth/ui/auth-tabs.tsx
 
 import Image from "next/image"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RegisterAndJoinForm } from "@/modules/accounts/onboarding/shared/ui/register-and-join-form"
 import { SignInForm } from "@/modules/auth/shared/ui/sign-in-form"
 import { getCurrentOrganizationAction } from "@/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action"
 import { Card } from "@/shared/components/ui/card"
+import { Skeleton } from "@/shared/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs"
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 

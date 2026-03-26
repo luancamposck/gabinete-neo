@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils/cn"
 import { createTaskAction } from "@/modules/organizations/tasks/server/slices/create-task/actions/create-task.action"
 import { type CreateOrganizationTaskSchemaClientData, createOrganizationTaskSchemaClient } from "@/modules/organizations/tasks/shared/validations/create-organization-task.schema.client"
@@ -14,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form"
 import { Input } from "@/shared/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/components/ui/popover"
+import { Textarea } from "@/shared/components/ui/textarea"
 
 export const CreateOrganizationTaskForm = () => {
 	const form = useForm<CreateOrganizationTaskSchemaClientData>({
