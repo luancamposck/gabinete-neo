@@ -136,3 +136,15 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - Pre-existing lint errors in sidebar.tsx and world-people-map-maplibre.tsx are unrelated to this migration
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-015b
+- Moved 13 files from `src/components/ui/` to `src/shared/components/ui/`: data-table.tsx, dialog.tsx, dropdown-menu.tsx, field.tsx, form.tsx, input-group.tsx, input.tsx, label.tsx, popover.tsx, scroll-area.tsx, select.tsx, separator.tsx, sheet.tsx
+- Updated imports across 46 consumer files from `@/components/ui/<file>` to `@/shared/components/ui/<file>`
+- Left 2 cross-references to not-yet-moved files (table.tsx, textarea.tsx) for US-015c
+- Files changed: 46 files (13 renames + 33 import updates)
+- **Learnings for future iterations:**
+  - data-table.tsx imports from table.tsx and input-group.tsx imports from textarea.tsx — both still in src/components/ui/ until US-015c
+  - Bulk sed replacement continues to work well for uniform import paths
+  - Pre-existing biome lint errors remain unrelated to migration
+  - Typecheck passes cleanly
+---
