@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { getTasksForTableAction } from "@/modules/organizations/tasks/server/slices/get-tasks-for-table/actions/get-tasks-for-table.action"
-import { OrganizationTasksTable } from "@/modules/organizations/tasks/ui/data-table/organization-tasks-table"
+import { OrganizationTasksTable } from "@/modules/organizations/tasks/shared/ui/data-table/organization-tasks-table"
 
 const AllTasksPage = async () => {
 	const tasksRes = await getTasksForTableAction()

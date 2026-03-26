@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils/cn"
 import { getAssignableUsersAction } from "@/modules/organizations/tasks/server/slices/get-assignable-users/actions/get-assignable-users.action"
 import type { AssignableUserForTask, OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
 
-import { AssignUsersToTaskDialog } from "@/modules/organizations/tasks/ui/assign-users-to-task-dialog"
+import { AssignUsersToTaskDialog } from "@/modules/organizations/tasks/shared/ui/assign-users-to-task-dialog"
 
 const statusLabelMap: Record<string, string> = {
 	NOT_STARTED: "Não iniciado",
