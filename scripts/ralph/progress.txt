@@ -210,3 +210,15 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - All consumer file paths matched the PRD acceptance criteria (updated paths from Phase 2/3)
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-020
+- Moved `src/shared/data/brazilian-cities-by-state.ts` to `src/shared/constants/brazilian-cities-by-state.ts`
+- Updated 2 imports in consumer files: edit-address-form.tsx, register-and-join-form.tsx
+- Removed empty `src/shared/data/` directory
+- Files changed: 3 files (1 rename + 2 import updates)
+- **Learnings for future iterations:**
+  - Simple 1-file migration with 2 consumers
+  - Biome auto-reordered imports in both consumer files after path change
+  - `src/shared/data/` is now eliminated — static data lives under `src/shared/constants/`
+  - Typecheck passes cleanly
+---
