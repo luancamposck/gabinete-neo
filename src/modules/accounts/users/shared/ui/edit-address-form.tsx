@@ -16,8 +16,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/shared/components/ui/field"
 import { Input } from "@/shared/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select"
+import { BRAZILIAN_CITIES_BY_STATE } from "@/shared/constants/brazilian-cities-by-state"
 import { brazilianStates } from "@/shared/constants/brazilian-states"
-import { BRAZILIAN_CITIES_BY_STATE } from "@/shared/data/brazilian-cities-by-state"
 import { maskCep } from "@/shared/masks/mask-cep"
 
 type AddressFormValues = z.infer<typeof addressSchemaClient>
