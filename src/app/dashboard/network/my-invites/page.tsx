@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { getOrganizationReferralsForTableAction } from "@/modules/organizations/referrals/server/slices/get-organization-referrals-for-table/actions/get-organization-referrals-for-table.action"
-import { MyReferralLinkButton } from "@/modules/organizations/referrals/ui/my-referral-link-button"
-import { OrganizationReferralsTable } from "@/modules/organizations/referrals/ui/organization-referrals-table"
+import { MyReferralLinkButton } from "@/modules/organizations/referrals/shared/ui/my-referral-link-button"
+import { OrganizationReferralsTable } from "@/modules/organizations/referrals/shared/ui/organization-referrals-table"
 
 const MyInvitesPage = async () => {
 	const referralsRes = await getOrganizationReferralsForTableAction()

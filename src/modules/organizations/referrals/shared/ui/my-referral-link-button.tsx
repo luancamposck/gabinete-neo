@@ -1,4 +1,4 @@
-// @/modules/organizations/referrals/ui/my-referral-link-button.tsx
+// @/modules/organizations/referrals/shared/ui/my-referral-link-button.tsx
 "use client"
 
 import { Check, Clipboard, Loader2 } from "lucide-react"
