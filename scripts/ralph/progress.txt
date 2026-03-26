@@ -222,3 +222,12 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - `src/shared/data/` is now eliminated — static data lives under `src/shared/constants/`
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-021
+- Standardized step comments in 4 task use-cases from `// Step N:` format to the AGENTS.md block format with `// ============` separators, numbered steps like `0) Description`, and `Possibilidades:` sections
+- Files changed: 4 use-case files (create-task, assign-users-to-task, get-assignable-users, get-tasks-for-table)
+- **Learnings for future iterations:**
+  - The standard block format is in `require-dashboard-access.use-case.ts` — good reference file
+  - Only comment changes, no code logic changes — typecheck and lint unaffected
+  - Pre-existing biome lint errors (23 errors, 31 warnings) are unrelated to any migration work
+---

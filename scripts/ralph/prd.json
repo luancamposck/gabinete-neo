@@ -292,7 +292,7 @@
         "Typecheck passes"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "notes": "The standard format is: // ============================================================ // 0) Description // // Possibilidades: // - scenario 1 // - scenario 2 // ============================================================"
     },
     {
