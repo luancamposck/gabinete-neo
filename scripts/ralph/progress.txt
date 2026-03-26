@@ -83,3 +83,16 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - No path comments on line 1 in these files, unlike some earlier batches
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-012
+- Moved 2 files from `src/modules/organizations/referrals/ui/` to `src/modules/organizations/referrals/shared/ui/`: organization-referrals-table.tsx, my-referral-link-button.tsx
+- Updated 2 imports in `src/app/dashboard/network/my-invites/page.tsx`
+- Updated path comment on line 1 of my-referral-link-button.tsx
+- Removed empty `src/modules/organizations/referrals/ui/` directory
+- Files changed: 3 files (2 renames + 1 page import update)
+- **Learnings for future iterations:**
+  - Simple 2-file migration with no internal cross-references between the moved files
+  - my-referral-link-button.tsx has path comment on line 1 that needed updating
+  - organization-referrals-table.tsx had no path comment
+  - Both files import from `@/components/ui/` and `@/hooks/` which will be updated in US-015a and US-019
+---
