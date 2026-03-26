@@ -1,4 +1,4 @@
-// @/modules/organizations/ui/edit-organization-image-form.tsx
+// @/modules/organizations/shared/ui/edit-organization-image-form.tsx
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,8 +15,8 @@ import { Field, FieldError } from "@/components/ui/field"
 import { cn } from "@/lib/utils/cn"
 import { deleteOrganizationOgImageAction } from "@/modules/organizations/server/slices/delete-organization-og-image/actions/delete-organization-og-image.action"
 import { uploadOrganizationOgImageAction } from "@/modules/organizations/server/slices/upload-organization-og-image/actions/upload-organization-og-image.action"
+import { useOrganizationConfig } from "@/modules/organizations/shared/ui/organization-config.context"
 import { MAX_ORGANIZATION_OG_IMAGE_SIZE_BYTES, ORGANIZATION_OG_IMAGE_MIME_TYPES, uploadOrganizationOgImageSchema } from "@/modules/organizations/shared/validations/upload-organization-og-image.schema"
-import { useOrganizationConfig } from "@/modules/organizations/ui/organization-config.context"
 
 type UploadOrganizationOgImageFormValues = z.infer<typeof uploadOrganizationOgImageSchema>
 

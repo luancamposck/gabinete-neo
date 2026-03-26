@@ -1,10 +1,10 @@
-// @/modules/organizations/ui/links-share-preview.tsx
+// @/modules/organizations/shared/ui/link-share-preview.tsx
 "use client"
 
 import Image from "next/image"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useOrganizationConfig } from "@/modules/organizations/ui/organization-config.context"
+import { useOrganizationConfig } from "@/modules/organizations/shared/ui/organization-config.context"
 
 type LinkSharePreviewProps = {
 	exampleLink: string

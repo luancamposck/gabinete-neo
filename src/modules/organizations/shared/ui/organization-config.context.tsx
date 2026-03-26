@@ -1,4 +1,4 @@
-// @/modules/organizations/ui/organization-config.context.tsx
+// @/modules/organizations/shared/ui/organization-config.context.tsx
 "use client"
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react"

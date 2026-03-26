@@ -1,4 +1,4 @@
-// @/modules/organizations/ui/edit-organization-field-form.tsx
+// @/modules/organizations/shared/ui/edit-organization-field-form.tsx
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,8 +15,8 @@ import { InputGroup, InputGroupInput, InputGroupTextarea } from "@/components/ui
 import { cn } from "@/lib/utils/cn"
 import { updateCurrentOrganizationAction } from "@/modules/organizations/server/slices/update-current-organization/actions/update-current-organization.action"
 import type { OrganizationDTO } from "@/modules/organizations/shared/types/dto"
+import { useOrganizationConfig } from "@/modules/organizations/shared/ui/organization-config.context"
 import { editOrganizationFieldsSchema } from "@/modules/organizations/shared/validations/edit-organization.schema"
-import { useOrganizationConfig } from "@/modules/organizations/ui/organization-config.context"
 
 type EditOrganizationFieldFormProps = {
 	organization: OrganizationDTO

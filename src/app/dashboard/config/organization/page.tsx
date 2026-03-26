@@ -1,10 +1,10 @@
 import { notFound, redirect } from "next/navigation"
 
 import { getOrganizationAdminSettingsAction } from "@/modules/organizations/server/slices/get-organization-admin-settings/actions/get-organization-admin-settings.action"
-import { EditOrganizationFieldForm } from "@/modules/organizations/ui/edit-organization-field-form"
-import { EditOrganizationImageForm } from "@/modules/organizations/ui/edit-organization-image-form"
-import { LinkSharePreview } from "@/modules/organizations/ui/link-share-preview"
-import { OrganizationConfigProvider } from "@/modules/organizations/ui/organization-config.context"
+import { EditOrganizationFieldForm } from "@/modules/organizations/shared/ui/edit-organization-field-form"
+import { EditOrganizationImageForm } from "@/modules/organizations/shared/ui/edit-organization-image-form"
+import { LinkSharePreview } from "@/modules/organizations/shared/ui/link-share-preview"
+import { OrganizationConfigProvider } from "@/modules/organizations/shared/ui/organization-config.context"
 import { getRequestHost } from "@/shared/http/get-request-host"
 
 const OrganizationConfigPage = async () => {
