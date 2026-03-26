@@ -162,3 +162,15 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - `src/components/` still has 4 composed components (mode-toggle-button, theme-provider, vortex, waves) for US-016
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-016
+- Moved 4 files from `src/components/` to `src/shared/components/`: mode-toggle-button.tsx, theme-provider.tsx, vortex.tsx, waves.tsx
+- Updated imports in 9 consumer files: dashboard/layout.tsx, lp/page.tsx, layout.tsx, page.tsx, reset-password/page.tsx, forgot-password/page.tsx, tenant-not-found/page.tsx, error.tsx, join/page.tsx
+- Removed empty `src/components/` directory — no more files at the old location
+- Files changed: 13 files (4 renames + 9 import updates)
+- **Learnings for future iterations:**
+  - `src/components/` is now fully eliminated — all components live under `src/shared/components/`
+  - No internal cross-references between these 4 composed components
+  - No path comments on line 1 in these files
+  - Typecheck passes cleanly
+---
