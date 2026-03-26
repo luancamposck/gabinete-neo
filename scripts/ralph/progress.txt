@@ -70,3 +70,16 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - Biome errors are pre-existing in other files and don't affect migration work
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-011b
+- Moved 13 files from `src/modules/organizations/memberships/ui/` to `src/modules/organizations/memberships/shared/ui/`: join-organization-button.tsx, roles/ (2 files), users/ (10 files across actions/, cards/, table/ subfolders + users-explorer.tsx)
+- Updated 4 page imports: join/page.tsx, config/roles/page.tsx, config/roles/new/page.tsx, config/users/page.tsx
+- Updated 10 internal cross-references within moved files (users-explorer.tsx had 6, users-columns.tsx had 2, user-actions-cell.tsx had 2, users-cards.tsx had 2)
+- Removed empty `src/modules/organizations/memberships/ui/` directory
+- Files changed: 17 files (13 renames + 4 page import updates)
+- **Learnings for future iterations:**
+  - The users/ subfolder has deep internal cross-references (explorer -> table/cards -> actions) — all must be updated together
+  - users-cards.tsx and user-actions-cell.tsx both import from users/actions/ — easy to miss the cards file
+  - No path comments on line 1 in these files, unlike some earlier batches
+  - Typecheck passes cleanly
+---

@@ -98,7 +98,7 @@
         "Typecheck passes"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Part 2 of memberships UI migration. Depends on US-011a being done first."
     },
     {
