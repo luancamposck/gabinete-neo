@@ -2,13 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { CalendarDays, Clock, Eye, FileText, Mail, User as UserIcon, UserPlus2 } from "lucide-react"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils/cn"
 import { getAssignableUsersAction } from "@/modules/organizations/tasks/server/slices/get-assignable-users/actions/get-assignable-users.action"
 import type { AssignableUserForTask, OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
 import { AssignUsersToTaskDialog } from "@/modules/organizations/tasks/shared/ui/assign-users-to-task-dialog"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/shared/components/ui/sheet"
 
 const statusLabelMap: Record<string, string> = {
 	NOT_STARTED: "Não iniciado",

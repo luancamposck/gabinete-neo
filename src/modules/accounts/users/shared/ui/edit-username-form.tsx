@@ -8,12 +8,12 @@ import { useId, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { useReferralLinkStorage } from "@/hooks/use-referral-link-storage"
 import { cn } from "@/lib/utils/cn"
 import { usernameSchema } from "@/modules/accounts/onboarding/shared/validations/register-and-join.schema"
 import { editUsernameAction } from "@/modules/accounts/users/server/slices/edit-username/actions/edit-username.action"
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field"
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/shared/components/ui/input-group"
 
 const editUsernameSchema = z.object({
 	username: usernameSchema

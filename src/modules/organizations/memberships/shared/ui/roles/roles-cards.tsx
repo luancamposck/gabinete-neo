@@ -3,9 +3,6 @@
 import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { getPermissionPresentation } from "@/modules/auth/shared/permission-presenter"
 import { PERMISSIONS } from "@/modules/auth/shared/permissions"
 import { updateRolePermissionsAction } from "@/modules/organizations/memberships/server/slices/update-role-permissions/actions/update-role-permissions.action"
@@ -13,6 +10,9 @@ import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Checkbox } from "@/shared/components/ui/checkbox"
+import { Label } from "@/shared/components/ui/label"
+import { ScrollArea } from "@/shared/components/ui/scroll-area"
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/shared/components/ui/sheet"
 
 type RolePermission = {
 	id: string

@@ -5,12 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useId } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import { type ForgotPasswordSchemaData, forgotPasswordSchema } from "@/modules/accounts/onboarding/shared/validations/forgot-password.schema"
 import { requestPasswordResetAction } from "@/modules/auth/server/slices/request-password-reset/actions/request-password-reset.action"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent } from "@/shared/components/ui/card"
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/shared/components/ui/field"
+import { Input } from "@/shared/components/ui/input"
 
 export const ForgotPasswordForm = () => {
 	const baseId = useId()

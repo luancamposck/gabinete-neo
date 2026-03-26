@@ -3,12 +3,12 @@
 "use client"
 
 import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 import WorldPeopleMapMapLibre from "@/modules/organizations/insights/people-map/shared/ui/world-people-map-maplibre"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog"
+import { ScrollArea } from "@/shared/components/ui/scroll-area"
 
 type MapClientProps = {
 	pins: CityPin[]

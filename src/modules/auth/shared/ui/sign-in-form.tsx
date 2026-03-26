@@ -7,12 +7,12 @@ import { useRouter } from "next/navigation"
 import { useId } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import { signInAction } from "@/modules/auth/server/slices/sign-in/actions/sign-in.action"
 import { type SignInSchemaData, signInSchema } from "@/modules/auth/shared/validations/sign-in.schema"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent } from "@/shared/components/ui/card"
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/shared/components/ui/field"
+import { Input } from "@/shared/components/ui/input"
 
 export const SignInForm = ({ organizationName }: { organizationName: string }) => {
 	const baseId = useId()

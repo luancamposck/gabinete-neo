@@ -3,10 +3,9 @@
 import { rankItem } from "@tanstack/match-sorter-utils"
 import { type ColumnDef, type FilterFn, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { useState } from "react"
-
-import { DataTable } from "@/components/ui/data-table"
 import { usePersistedTableState } from "@/hooks/use-persisted-table-state"
 import type { OrganizationTaskTableRow } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
+import { DataTable } from "@/shared/components/ui/data-table"
 import { DataTableViewOptions } from "@/shared/components/ui/data-table-view-options"
 
 import { organizationTasksColumns } from "./columns"

@@ -8,14 +8,14 @@ import { useEffect, useId, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
-import { Field, FieldError } from "@/components/ui/field"
-import { InputGroup, InputGroupInput, InputGroupTextarea } from "@/components/ui/input-group"
 import { cn } from "@/lib/utils/cn"
 import { updateCurrentOrganizationAction } from "@/modules/organizations/server/slices/update-current-organization/actions/update-current-organization.action"
 import type { OrganizationDTO } from "@/modules/organizations/shared/types/dto"
 import { useOrganizationConfig } from "@/modules/organizations/shared/ui/organization-config.context"
 import { editOrganizationFieldsSchema } from "@/modules/organizations/shared/validations/edit-organization.schema"
 import { Button } from "@/shared/components/ui/button"
+import { Field, FieldError } from "@/shared/components/ui/field"
+import { InputGroup, InputGroupInput, InputGroupTextarea } from "@/shared/components/ui/input-group"
 
 type EditOrganizationFieldFormProps = {
 	organization: OrganizationDTO

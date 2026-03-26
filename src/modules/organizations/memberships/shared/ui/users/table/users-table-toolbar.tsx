@@ -3,9 +3,9 @@
 import type { Table } from "@tanstack/react-table"
 import { X } from "lucide-react"
 import { useMemo } from "react"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/shared/components/ui/button"
 import { DataTableFacetedFilter } from "@/shared/components/ui/data-table-faceted-filter"
+import { Input } from "@/shared/components/ui/input"
 
 type UsersTableToolbarProps<TData> = {
 	table: Table<TData>

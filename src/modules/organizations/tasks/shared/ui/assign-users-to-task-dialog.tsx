@@ -4,15 +4,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { UserPlus2, Users } from "lucide-react"
 import { type ReactNode, useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { assignUsersToTaskAction } from "@/modules/organizations/tasks/server/slices/assign-users-to-task/actions/assign-users-to-task.action"
 import { getAssignableUsersAction } from "@/modules/organizations/tasks/server/slices/get-assignable-users/actions/get-assignable-users.action"
 import type { AssignableUserForTask } from "@/modules/organizations/tasks/shared/types/organization-tasks-table.types"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Checkbox } from "@/shared/components/ui/checkbox"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog"
+import { Input } from "@/shared/components/ui/input"
+import { ScrollArea } from "@/shared/components/ui/scroll-area"
 
 interface AssignUsersToTaskDialogProps {
 	taskId: string
