@@ -1,0 +1,23 @@
+# Ralph Progress Log
+Started: Thu Mar 26 12:16:00 PDT 2026
+---
+
+## Codebase Patterns
+- Module UI files live under `src/modules/<module>/shared/ui/`, not `src/modules/<module>/ui/`
+- Some moved files have path comments on line 1 (e.g., `// @/modules/...`) that need updating when moved
+- No internal cross-references between onboarding UI files — they're independent
+- Pre-existing biome lint errors exist in sidebar.tsx and world-people-map-maplibre.tsx — not from migrations
+---
+
+## 2026-03-26 - US-007
+- Moved 3 files from `src/modules/accounts/onboarding/ui/` to `src/modules/accounts/onboarding/shared/ui/`
+- Updated imports in: `src/app/reset-password/page.tsx`, `src/app/forgot-password/page.tsx`, `src/modules/auth/shared/ui/auth-tabs.tsx`
+- Updated file header comments in all 3 moved files
+- Removed empty `src/modules/accounts/onboarding/ui/` directory
+- Files changed: 6 source files
+- **Learnings for future iterations:**
+  - Files have path comments on line 1 that should be updated after moving
+  - No internal cross-references in this batch — each form component is independent
+  - `npm run fix:biome` shows pre-existing errors in other files but doesn't affect these changes
+  - Typecheck passes cleanly after import updates
+---
