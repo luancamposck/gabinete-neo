@@ -80,7 +80,7 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "The memberships UI has ~23 files total. This story handles the data-table subfolder. US-011b handles the rest."
     },
     {

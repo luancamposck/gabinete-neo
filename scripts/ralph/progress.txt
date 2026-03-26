@@ -7,6 +7,7 @@ Started: Thu Mar 26 12:16:00 PDT 2026
 - Some moved files have path comments on line 1 (e.g., `// @/modules/...`) that need updating when moved
 - No internal cross-references between onboarding UI files — they're independent
 - Pre-existing biome lint errors exist in sidebar.tsx and world-people-map-maplibre.tsx — not from migrations
+- When moving `data-table/`, also update references from sibling folders (`users/`) that import data-table files
 ---
 
 ## 2026-03-26 - US-007
@@ -55,5 +56,17 @@ Started: Thu Mar 26 12:16:00 PDT 2026
 - **Learnings for future iterations:**
   - Organizations UI files have internal cross-references via the context provider — all 3 consumer files import organization-config.context
   - biome fix reorders imports automatically after path changes
+  - Typecheck passes cleanly
+---
+
+## 2026-03-26 - US-011a
+- Moved entire `src/modules/organizations/memberships/ui/data-table/` tree (10 files) to `src/modules/organizations/memberships/shared/ui/data-table/`
+- Updated import in `src/app/dashboard/network/my-network/page.tsx`
+- Updated all internal cross-references within data-table files (3 files: member-actions-cell.tsx, members-columns.tsx, members-table.tsx)
+- Also updated 2 references in `users/` subfolder that pointed to data-table files (user-role-action-button.tsx, users-columns.tsx) to prevent typecheck breakage
+- Files changed: 13 files (10 renames + 3 import updates)
+- **Learnings for future iterations:**
+  - The `users/` subfolder has cross-references into `data-table/` (role-change-sheet, member-address-popover) — these must be updated when moving data-table even though users/ is in a separate story
+  - Biome errors are pre-existing in other files and don't affect migration work
   - Typecheck passes cleanly
 ---
