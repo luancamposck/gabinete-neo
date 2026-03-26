@@ -21,3 +21,14 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - `npm run fix:biome` shows pre-existing errors in other files but doesn't affect these changes
   - Typecheck passes cleanly after import updates
 ---
+
+## 2026-03-26 - US-008
+- Moved 3 files from `src/modules/accounts/users/ui/` to `src/modules/accounts/users/shared/ui/`: edit-password-form.tsx, edit-username-form.tsx, edit-address-form.tsx
+- Updated 3 imports in `src/app/dashboard/my-account/page.tsx`
+- Removed empty `src/modules/accounts/users/ui/` directory
+- Files changed: 4 files (3 renames + 1 import update)
+- **Learnings for future iterations:**
+  - Path comments on line 1 of these files were already correct (updated by previous iteration)
+  - No internal cross-references between users UI files — they're independent
+  - Only one consumer file (`page.tsx`) needed updating
+---
