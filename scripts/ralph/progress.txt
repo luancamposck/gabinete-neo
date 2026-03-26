@@ -174,3 +174,16 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - No path comments on line 1 in these files
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-017
+- Updated `components.json` aliases to reflect new directory structure after all migrations
+- Changed `aliases.components` from `@/components` to `@/shared/components`
+- Changed `aliases.ui` from `@/components/ui` to `@/shared/components/ui`
+- Changed `aliases.hooks` from `@/hooks` to `@/shared/hooks`
+- `aliases.utils` was already correct (`@/lib/utils`)
+- Files changed: 1 file (components.json)
+- **Learnings for future iterations:**
+  - components.json also has a `hooks` alias that should match `src/shared/hooks/` after US-019
+  - Only the aliases section needed updating; tailwind config and other settings remain the same
+  - Typecheck passes cleanly
+---
