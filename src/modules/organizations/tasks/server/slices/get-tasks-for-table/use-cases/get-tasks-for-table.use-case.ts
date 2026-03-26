@@ -28,7 +28,13 @@ const FALLBACK_INFRA_ERROR = {
 
 export async function getTasksForTableUseCase(): OperationResponse<GetTasksForTableUseCaseRes, ErrorCodes> {
 	try {
-		// Step 0: autenticação
+		// ============================================================
+		// 0) Autenticação
+		//
+		// Possibilidades:
+		// - sem user => unauthenticated
+		// - erro técnico => infra_error
+		// ============================================================
 		const authRes = await getCurrentAuthUserService()
 		if (authRes.success === false) {
 			if (authRes.code === "unauthenticated") {
@@ -44,7 +50,14 @@ export async function getTasksForTableUseCase(): OperationResponse<GetTasksForTa
 
 		const currentUserId = authRes.data.user.id
 
-		// Step 1: resolução do tenant
+		// ============================================================
+		// 1) Resolução do tenant
+		//
+		// Possibilidades:
+		// - host ausente => org_not_found
+		// - org não encontrada => org_not_found
+		// - erro técnico => infra_error
+		// ============================================================
 		const host = await getRequestHost()
 		if (!host) {
 			return {
@@ -69,7 +82,14 @@ export async function getTasksForTableUseCase(): OperationResponse<GetTasksForTa
 
 		const organizationId = orgRes.data.organizationId
 
-		// Step 2: verificação de membership
+		// ============================================================
+		// 2) Verificação de membership
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - não é membro => not_member
+		// - é membro => ok
+		// ============================================================
 		const membershipRes = await isUserMemberOfOrganizationService({
 			organizationId,
 			userId: currentUserId
@@ -88,7 +108,13 @@ export async function getTasksForTableUseCase(): OperationResponse<GetTasksForTa
 			}
 		}
 
-		// Step 3: listar tarefas
+		// ============================================================
+		// 3) Listar tarefas
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => lista de tarefas com criador
+		// ============================================================
 		const tasksRes = await listOrganizationTasksWithCreatorService({ organizationId })
 
 		if (tasksRes.success === false) {

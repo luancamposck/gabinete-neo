@@ -33,7 +33,13 @@ export async function getAssignableUsersUseCase(params: { taskId: string }): Ope
 	try {
 		const { taskId } = params
 
-		// Step 0: validação básica
+		// ============================================================
+		// 0) Validação básica
+		//
+		// Possibilidades:
+		// - taskId ausente => validation_error
+		// - taskId válido => prossegue
+		// ============================================================
 		if (!taskId) {
 			return {
 				success: false,
@@ -42,7 +48,13 @@ export async function getAssignableUsersUseCase(params: { taskId: string }): Ope
 			}
 		}
 
-		// Step 1: autenticação
+		// ============================================================
+		// 1) Autenticação
+		//
+		// Possibilidades:
+		// - sem user => unauthenticated
+		// - erro técnico => infra_error
+		// ============================================================
 		const authRes = await getCurrentAuthUserService()
 		if (authRes.success === false) {
 			if (authRes.code === "unauthenticated") {
@@ -58,7 +70,14 @@ export async function getAssignableUsersUseCase(params: { taskId: string }): Ope
 
 		const currentUserId = authRes.data.user.id
 
-		// Step 2: resolução do tenant
+		// ============================================================
+		// 2) Resolução do tenant
+		//
+		// Possibilidades:
+		// - host ausente => org_not_found
+		// - org não encontrada => org_not_found
+		// - erro técnico => infra_error
+		// ============================================================
 		const host = await getRequestHost()
 		if (!host) {
 			return {
@@ -83,7 +102,14 @@ export async function getAssignableUsersUseCase(params: { taskId: string }): Ope
 
 		const organizationId = orgRes.data.organizationId
 
-		// Step 3: verificação de membership
+		// ============================================================
+		// 3) Verificação de membership
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - não é membro => not_member
+		// - é membro => ok
+		// ============================================================
 		const membershipRes = await isUserMemberOfOrganizationService({
 			organizationId,
 			userId: currentUserId
@@ -102,7 +128,13 @@ export async function getAssignableUsersUseCase(params: { taskId: string }): Ope
 			}
 		}
 
-		// Step 4: listar membros da organização
+		// ============================================================
+		// 4) Listar membros da organização
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => lista de membros
+		// ============================================================
 		const membersRes = await listOrganizationMembersWithProfileAndRoleByOrganizationIdService({
 			organizationId
 		})
@@ -112,7 +144,13 @@ export async function getAssignableUsersUseCase(params: { taskId: string }): Ope
 			return FALLBACK_INFRA_ERROR
 		}
 
-		// Step 5: listar assignments existentes da task
+		// ============================================================
+		// 5) Listar assignments existentes da task
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => lista de assignments
+		// ============================================================
 		const assignmentsRes = await listTaskAssignmentsWithUserService({ taskId })
 
 		if (assignmentsRes.success === false) {

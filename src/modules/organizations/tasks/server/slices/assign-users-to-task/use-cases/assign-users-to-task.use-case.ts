@@ -30,7 +30,13 @@ export async function assignUsersToTaskUseCase(params: AssignUsersToTaskUseCaseP
 	try {
 		const { taskId, userIds } = params
 
-		// Step 0: validação básica
+		// ============================================================
+		// 0) Validação básica
+		//
+		// Possibilidades:
+		// - taskId ausente ou userIds vazio => validation_error
+		// - dados válidos => prossegue
+		// ============================================================
 		if (!taskId || !Array.isArray(userIds) || userIds.length === 0) {
 			return {
 				success: false,
@@ -39,7 +45,13 @@ export async function assignUsersToTaskUseCase(params: AssignUsersToTaskUseCaseP
 			}
 		}
 
-		// Step 1: autenticação
+		// ============================================================
+		// 1) Autenticação
+		//
+		// Possibilidades:
+		// - sem user => unauthenticated
+		// - erro técnico => infra_error
+		// ============================================================
 		const authRes = await getCurrentAuthUserService()
 		if (authRes.success === false) {
 			if (authRes.code === "unauthenticated") {
@@ -55,7 +67,14 @@ export async function assignUsersToTaskUseCase(params: AssignUsersToTaskUseCaseP
 
 		const currentUserId = authRes.data.user.id
 
-		// Step 2: resolução do tenant
+		// ============================================================
+		// 2) Resolução do tenant
+		//
+		// Possibilidades:
+		// - host ausente => org_not_found
+		// - org não encontrada => org_not_found
+		// - erro técnico => infra_error
+		// ============================================================
 		const host = await getRequestHost()
 		if (!host) {
 			return {
@@ -80,7 +99,14 @@ export async function assignUsersToTaskUseCase(params: AssignUsersToTaskUseCaseP
 
 		const organizationId = orgRes.data.organizationId
 
-		// Step 3: verificação de membership
+		// ============================================================
+		// 3) Verificação de membership
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - não é membro => not_member
+		// - é membro => ok
+		// ============================================================
 		const membershipRes = await isUserMemberOfOrganizationService({
 			organizationId,
 			userId: currentUserId
@@ -99,7 +125,13 @@ export async function assignUsersToTaskUseCase(params: AssignUsersToTaskUseCaseP
 			}
 		}
 
-		// Step 4: atribuir usuários à tarefa
+		// ============================================================
+		// 4) Atribuir usuários à tarefa
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => retorna insertedCount
+		// ============================================================
 		const assignRes = await addUsersToTaskService({
 			organizationId,
 			taskId,

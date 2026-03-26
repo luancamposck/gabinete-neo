@@ -30,7 +30,13 @@ const FALLBACK_INFRA_ERROR = {
 
 export async function createTaskUseCase(params: CreateTaskUseCaseParams): OperationResponse<{ taskId: string }, ErrorCodes> {
 	try {
-		// Step 0: autenticação
+		// ============================================================
+		// 0) Autenticação
+		//
+		// Possibilidades:
+		// - sem user => unauthenticated
+		// - erro técnico => infra_error
+		// ============================================================
 		const authRes = await getCurrentAuthUserService()
 		if (authRes.success === false) {
 			if (authRes.code === "unauthenticated") {
@@ -46,7 +52,14 @@ export async function createTaskUseCase(params: CreateTaskUseCaseParams): Operat
 
 		const currentUserId = authRes.data.user.id
 
-		// Step 1: resolução do tenant
+		// ============================================================
+		// 1) Resolução do tenant
+		//
+		// Possibilidades:
+		// - host ausente => org_not_found
+		// - org não encontrada => org_not_found
+		// - erro técnico => infra_error
+		// ============================================================
 		const host = await getRequestHost()
 		if (!host) {
 			return {
@@ -71,7 +84,14 @@ export async function createTaskUseCase(params: CreateTaskUseCaseParams): Operat
 
 		const organizationId = orgRes.data.organizationId
 
-		// Step 2: verificação de membership
+		// ============================================================
+		// 2) Verificação de membership
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - não é membro => not_member
+		// - é membro => ok
+		// ============================================================
 		const membershipRes = await isUserMemberOfOrganizationService({
 			organizationId,
 			userId: currentUserId
@@ -90,7 +110,13 @@ export async function createTaskUseCase(params: CreateTaskUseCaseParams): Operat
 			}
 		}
 
-		// Step 3: validação dos dados
+		// ============================================================
+		// 3) Validação dos dados
+		//
+		// Possibilidades:
+		// - dados inválidos => validation_error
+		// - dados válidos => prossegue
+		// ============================================================
 		const parsed = createOrganizationTaskSchemaServer.safeParse(params)
 		if (!parsed.success) {
 			console.error(`${prefixLog} validation error:`, parsed.error)
@@ -103,7 +129,13 @@ export async function createTaskUseCase(params: CreateTaskUseCaseParams): Operat
 
 		const { title, description, dueDate } = parsed.data
 
-		// Step 4: criação da tarefa
+		// ============================================================
+		// 4) Criação da tarefa
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => retorna taskId
+		// ============================================================
 		const createRes = await createOrganizationTaskService({
 			organizationId,
 			title,
