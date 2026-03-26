@@ -62,7 +62,7 @@ Estrutura base (server) por módulo:
 Estrutura base (shared/ui) por módulo:
 - `src/modules/<module-name>/shared/ui/...`
 - usar essa pasta para componentes reutilizáveis que pertencem apenas a um módulo
-- manter em `src/shared/ui/` apenas primitives/base UI compartilhadas do design system
+- manter em `src/shared/components/ui/` apenas primitives/base UI compartilhadas do design system (shadcn/ui)
 - usar `src/shared/components/` para componentes compostos globais/cross-module
 
 ---
@@ -193,6 +193,7 @@ Contém **apenas** inicialização/configuração de bibliotecas externas. Sem l
 - `src/lib/supabase/` — clientes Supabase (admin, server, middleware)
 - `src/lib/resend/` — cliente Resend (email)
 - `src/lib/utils/cn.ts` — utilitário shadcn/ui (clsx + tailwind-merge)
+- `src/lib/providers/` — wrappers de providers terceiros (ex: React Query)
 
 > **Regra:** se não é um wrapper fino de SDK/biblioteca terceira, **não** vai em `src/lib/`.
 
@@ -201,13 +202,12 @@ Contém código compartilhado entre múltiplos módulos. Helpers puros, types, c
 
 - `src/shared/types/` — types globais (`OperationResponse`, tipos Supabase gerados)
 - `src/shared/constants/` — constantes usadas por mais de um módulo
-- `src/shared/ui/` — primitives/base UI compartilhadas do design system
-- `src/shared/components/` — componentes compostos globais reutilizados entre múltiplas rotas/módulos
+- `src/shared/components/` — componentes compostos globais e primitives UI (ver seções abaixo)
+- `src/shared/hooks/` — hooks cross-module (ex: `use-mobile`, `use-persisted-table-state`)
 - `src/shared/formatters/` — funções de formatação (CEP, telefone, etc.)
 - `src/shared/masks/` — funções de máscara de input (CEP, telefone, etc.)
 - `src/shared/http/` — utilitários de HTTP/request (ex: extrair host)
 - `src/shared/infra/` — helpers de infra do app (ex: rethrow de erros Next.js)
-- `src/shared/storage/` — helpers de storage (ex: URL de assets públicos)
 
 > **Regra:** se é usado por mais de um módulo e não é wrapper de terceiro, vai em `src/shared/`.
 > Constantes ou validações específicas de **um só módulo** ficam em `src/modules/<module>/shared/`.
@@ -216,15 +216,22 @@ Contém código compartilhado entre múltiplos módulos. Helpers puros, types, c
 ### `src/shared/components/` — UI composta global
 Usar para componentes compostos de aplicação reutilizados entre múltiplas rotas ou módulos.
 
-- Exemplo: `header`, `footer`, `hero`, `admin-tabs`
-- Não usar essa pasta para primitives/base UI; esses arquivos ficam em `src/shared/ui/`
+- Exemplo: `mode-toggle-button`, `theme-provider`, `vortex`, `waves`
 - Não colocar lógica server nessa pasta; manter apenas composição visual e comportamento client/server de apresentação
+
+### `src/shared/components/ui/` — primitives UI (shadcn/ui)
+Contém todos os primitives/base UI do design system gerados pelo shadcn/ui CLI.
+
+- Exemplo: `button.tsx`, `dialog.tsx`, `input.tsx`, `card.tsx`, `table.tsx`
+- Novos componentes shadcn são gerados aqui automaticamente (`npx shadcn add <component>`)
+- Componentes shadcn usam `function` declarations (exceção aceita à regra de arrow functions para React components)
+- Não colocar componentes de domínio ou compostos nessa pasta; apenas primitives UI
 
 ### `src/modules/<module>/shared/ui/` — UI compartilhada por módulo
 Usar para componentes visuais reutilizáveis que pertencem a um único módulo.
 
 - Exemplo: cards, form sections, dialogs e componentes auxiliares usados só dentro de `auth`
-- Não usar `src/shared/ui/` para UI que ainda é específica de um módulo
+- Não usar `src/shared/components/ui/` para UI que ainda é específica de um módulo
 - Não colocar lógica server nessa pasta; manter apenas UI e helpers de apresentação específicos do módulo
 
 ### Sem barrel files
@@ -240,6 +247,7 @@ Não usar arquivos `index.ts` para re-exportar. Todos os imports devem apontar d
 - Evite `any`, `@ts-ignore` e “silenciar lint” sem necessidade real.
 - Não criar novos arquivos em pastas legadas.
 - Components React: `const Component = () => {}`
+  - Exceção: componentes shadcn/ui em `src/shared/components/ui/` usam `function` declarations (padrão do gerador shadcn)
 - Funções utilitárias normais: `function myFunction() {}`
 
 ---
