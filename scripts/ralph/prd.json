@@ -1,6 +1,318 @@
 {
-  "project": "",
-  "branchName": "",
-  "description": "",
-  "userStories": []
+  "project": "gabinete-neo",
+  "branchName": "ralph/architecture-compliance",
+  "description": "Architecture Compliance — Full AGENTS.md alignment. Migrate module UI folders to shared/ui/, consolidate src/components/ into src/shared/components/, relocate misplaced directories, standardize use-case comments, and update AGENTS.md documentation.",
+  "userStories": [
+    {
+      "id": "US-007",
+      "title": "Move accounts/onboarding UI to shared/ui/",
+      "description": "As a developer, I want the onboarding UI components in shared/ui/ per module convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 3 files from src/modules/accounts/onboarding/ui/ to src/modules/accounts/onboarding/shared/ui/: forgot-password-form.tsx, reset-password-form.tsx, register-and-join-form.tsx",
+        "Update import in src/app/reset-password/page.tsx from @/modules/accounts/onboarding/ui/ to @/modules/accounts/onboarding/shared/ui/",
+        "Update import in src/app/forgot-password/page.tsx from @/modules/accounts/onboarding/ui/ to @/modules/accounts/onboarding/shared/ui/",
+        "Update import in src/modules/auth/shared/ui/auth-tabs.tsx from @/modules/accounts/onboarding/ui/ to @/modules/accounts/onboarding/shared/ui/",
+        "Update any internal cross-references between the moved files",
+        "Remove empty src/modules/accounts/onboarding/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Move accounts/users UI to shared/ui/",
+      "description": "As a developer, I want the users UI components in shared/ui/ per module convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 3 files from src/modules/accounts/users/ui/ to src/modules/accounts/users/shared/ui/: edit-password-form.tsx, edit-username-form.tsx, edit-address-form.tsx",
+        "Update 3 imports in src/app/dashboard/my-account/page.tsx from @/modules/accounts/users/ui/ to @/modules/accounts/users/shared/ui/",
+        "Remove empty src/modules/accounts/users/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Move app-shell UI to shared/ui/",
+      "description": "As a developer, I want the app-shell UI components in shared/ui/ per module convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 2 files from src/modules/app-shell/ui/ to src/modules/app-shell/shared/ui/: nav-footer.tsx, app-sidebar.tsx",
+        "Update import in src/app/dashboard/layout.tsx from @/modules/app-shell/ui/ to @/modules/app-shell/shared/ui/",
+        "Update internal import in app-sidebar.tsx that references nav-footer.tsx to use the new path",
+        "Remove empty src/modules/app-shell/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Move organizations base UI to shared/ui/",
+      "description": "As a developer, I want the organizations base UI components in shared/ui/ per module convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 4 files from src/modules/organizations/ui/ to src/modules/organizations/shared/ui/: link-share-preview.tsx, organization-config.context.tsx, edit-organization-image-form.tsx, edit-organization-field-form.tsx",
+        "Update 4 imports in src/app/dashboard/config/organization/page.tsx from @/modules/organizations/ui/ to @/modules/organizations/shared/ui/",
+        "Update 3 internal cross-references between the moved files (e.g., edit-organization-image-form imports organization-config.context)",
+        "Remove empty src/modules/organizations/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011a",
+      "title": "Move organizations/memberships UI data-table to shared/ui/",
+      "description": "As a developer, I want the memberships data-table UI in shared/ui/ per module convention. This is part 1 of the memberships UI migration (data-table subfolder).",
+      "acceptanceCriteria": [
+        "Use git mv to move the entire src/modules/organizations/memberships/ui/data-table/ tree to src/modules/organizations/memberships/shared/ui/data-table/ (includes README.md, table-meta.types.ts, shared/, sheets/, table/, columns/, actions/)",
+        "Update import in src/app/dashboard/network/my-network/page.tsx from @/modules/organizations/memberships/ui/ to @/modules/organizations/memberships/shared/ui/",
+        "Update all internal cross-references within the data-table subfolder to use new paths",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "The memberships UI has ~23 files total. This story handles the data-table subfolder. US-011b handles the rest."
+    },
+    {
+      "id": "US-011b",
+      "title": "Move organizations/memberships UI roles, users, and root files to shared/ui/",
+      "description": "As a developer, I want the remaining memberships UI (roles, users, join button) in shared/ui/ per module convention. This is part 2 of the memberships UI migration.",
+      "acceptanceCriteria": [
+        "Use git mv to move src/modules/organizations/memberships/ui/join-organization-button.tsx to shared/ui/",
+        "Use git mv to move src/modules/organizations/memberships/ui/roles/ tree to shared/ui/roles/ (roles-cards.tsx, create-role-form.tsx)",
+        "Use git mv to move src/modules/organizations/memberships/ui/users/ tree to shared/ui/users/ (actions/, table/, cards/, users-explorer.tsx)",
+        "Update imports in src/app/join/page.tsx, src/app/dashboard/config/roles/page.tsx, src/app/dashboard/config/users/page.tsx, src/app/dashboard/config/roles/new/page.tsx",
+        "Update all internal cross-references between moved files and files already moved in US-011a",
+        "Remove empty src/modules/organizations/memberships/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Part 2 of memberships UI migration. Depends on US-011a being done first."
+    },
+    {
+      "id": "US-012",
+      "title": "Move organizations/referrals UI to shared/ui/",
+      "description": "As a developer, I want the referrals UI components in shared/ui/ per module convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 2 files from src/modules/organizations/referrals/ui/ to src/modules/organizations/referrals/shared/ui/: organization-referrals-table.tsx, my-referral-link-button.tsx",
+        "Update 2 imports in src/app/dashboard/network/my-invites/page.tsx from @/modules/organizations/referrals/ui/ to @/modules/organizations/referrals/shared/ui/",
+        "Remove empty src/modules/organizations/referrals/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Move organizations/tasks UI to shared/ui/",
+      "description": "As a developer, I want the tasks UI components in shared/ui/ per module convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 6 files from src/modules/organizations/tasks/ui/ to src/modules/organizations/tasks/shared/ui/: create-task-form.tsx, assign-users-to-task-dialog.tsx, data-table/organization-tasks-table.tsx, data-table/organization-tasks-table-toolbar.tsx, data-table/columns.tsx, data-table/organization-task-actions.tsx",
+        "Update import in src/app/dashboard/task/new/page.tsx from @/modules/organizations/tasks/ui/ to @/modules/organizations/tasks/shared/ui/",
+        "Update import in src/app/dashboard/task/all/page.tsx from @/modules/organizations/tasks/ui/ to @/modules/organizations/tasks/shared/ui/",
+        "Update internal cross-reference in organization-task-actions.tsx that imports assign-users-to-task-dialog",
+        "Remove empty src/modules/organizations/tasks/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Move people-map UI to shared/ui/",
+      "description": "As a developer, I want the people-map UI components in shared/ui/ per module convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 2 files from src/modules/organizations/insights/people-map/ui/ to src/modules/organizations/insights/people-map/shared/ui/: map-client.tsx, world-people-map-maplibre.tsx",
+        "Update import in src/app/dashboard/network/map/page.tsx from @/modules/organizations/insights/people-map/ui/ to @/modules/organizations/insights/people-map/shared/ui/",
+        "Update internal cross-reference (map-client.tsx imports world-people-map-maplibre.tsx) to new path",
+        "Remove empty src/modules/organizations/insights/people-map/ui/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015a",
+      "title": "Move shadcn UI primitives (A-D) to src/shared/components/ui/",
+      "description": "As a developer, I want shadcn UI primitives consolidated under src/shared/components/ui/. This is batch 1: accordion through dialog (13 files).",
+      "acceptanceCriteria": [
+        "Use git mv to move these 13 files from src/components/ui/ to src/shared/components/ui/: accordion.tsx, badge.tsx, button.tsx, calendar.tsx, card.tsx, checkbox.tsx, collapsible.tsx, combobox.tsx, command.tsx, data-table-faceted-filter.tsx, data-table-pagination.tsx, data-table-skeleton.tsx, data-table-view-options.tsx",
+        "Find and update ALL imports across the codebase that reference @/components/ui/<file> to @/shared/components/ui/<file> for each moved file",
+        "Update internal cross-references between moved files (e.g., combobox imports command, command imports dialog — dialog will be moved in the next batch so leave that import for now if dialog hasn't moved yet, OR move dialog in this batch too)",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "Splitting shadcn migration into 3 batches to stay within context limits. Move all A-D files. Note: some internal cross-references may point to files not yet moved — that's OK, they'll be fixed in subsequent batches."
+    },
+    {
+      "id": "US-015b",
+      "title": "Move shadcn UI primitives (D-S) to src/shared/components/ui/",
+      "description": "As a developer, I want shadcn UI primitives consolidated under src/shared/components/ui/. This is batch 2: data-table through skeleton (13 files).",
+      "acceptanceCriteria": [
+        "Use git mv to move these 13 files from src/components/ui/ to src/shared/components/ui/: data-table.tsx, dialog.tsx, dropdown-menu.tsx, field.tsx, form.tsx, input-group.tsx, input.tsx, label.tsx, popover.tsx, scroll-area.tsx, select.tsx, separator.tsx, sheet.tsx",
+        "Find and update ALL imports across the codebase that reference @/components/ui/<file> to @/shared/components/ui/<file> for each moved file",
+        "Update internal cross-references between moved files and files moved in US-015a",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "Batch 2 of shadcn migration. Depends on US-015a."
+    },
+    {
+      "id": "US-015c",
+      "title": "Move shadcn UI primitives (S-T) to src/shared/components/ui/",
+      "description": "As a developer, I want shadcn UI primitives consolidated under src/shared/components/ui/. This is batch 3: sidebar through tooltip (7 files).",
+      "acceptanceCriteria": [
+        "Use git mv to move these 7 files from src/components/ui/ to src/shared/components/ui/: sidebar.tsx, skeleton.tsx, sonner.tsx, table.tsx, tabs.tsx, textarea.tsx, tooltip.tsx",
+        "Find and update ALL imports across the codebase that reference @/components/ui/<file> to @/shared/components/ui/<file> for each moved file",
+        "Update internal cross-references between all shadcn files now in src/shared/components/ui/",
+        "Verify src/components/ui/ directory is now empty and remove it",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "Batch 3 (final) of shadcn migration. Depends on US-015a and US-015b."
+    },
+    {
+      "id": "US-016",
+      "title": "Move composed global components to src/shared/components/",
+      "description": "As a developer, I want composed global components (mode toggle, theme provider, vortex, waves) under src/shared/components/ per convention.",
+      "acceptanceCriteria": [
+        "Use git mv to move 4 files from src/components/ to src/shared/components/: mode-toggle-button.tsx, theme-provider.tsx, vortex.tsx, waves.tsx",
+        "Update imports for mode-toggle-button.tsx in: src/app/dashboard/layout.tsx, src/app/lp/page.tsx",
+        "Update import for theme-provider.tsx in: src/app/layout.tsx",
+        "Update imports for vortex.tsx in: src/app/page.tsx, src/app/dashboard/layout.tsx, src/app/reset-password/page.tsx, src/app/forgot-password/page.tsx",
+        "Update imports for waves.tsx in: src/app/tenant-not-found/page.tsx, src/app/error.tsx, src/app/join/page.tsx",
+        "Remove empty src/components/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Update shadcn CLI configuration",
+      "description": "As a developer, I want the shadcn CLI to generate new components in the correct location so future npx shadcn add commands respect the new structure.",
+      "acceptanceCriteria": [
+        "Update components.json to set aliases.components to @/shared/components",
+        "Update components.json to set aliases.ui to @/shared/components/ui",
+        "Update aliases.utils to @/lib/utils if not already correct",
+        "Verify the configuration by checking that components.json paths are consistent with the new directory structure",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Move src/providers/ to src/lib/providers/",
+      "description": "As a developer, I want provider wrappers (third-party client initialization) in src/lib/ per the convention that src/lib/ holds only third-party wrappers.",
+      "acceptanceCriteria": [
+        "Use git mv to move src/providers/query-provider.tsx to src/lib/providers/query-provider.tsx",
+        "Update 1 import in src/app/layout.tsx from @/providers/query-provider to @/lib/providers/query-provider",
+        "Remove empty src/providers/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Move src/hooks/ to src/shared/hooks/",
+      "description": "As a developer, I want hooks in src/shared/hooks/ for cross-module hooks, following the established conventions.",
+      "acceptanceCriteria": [
+        "Use git mv to move src/hooks/use-mobile.ts to src/shared/hooks/use-mobile.ts",
+        "Use git mv to move src/hooks/use-persisted-table-state.ts to src/shared/hooks/use-persisted-table-state.ts",
+        "Use git mv to move src/hooks/use-referral-link-storage.ts to src/shared/hooks/use-referral-link-storage.ts",
+        "Update import in src/shared/components/ui/sidebar.tsx (path changed in Phase 3) from @/hooks/use-mobile to @/shared/hooks/use-mobile",
+        "Update import in src/modules/organizations/tasks/shared/ui/data-table/organization-tasks-table.tsx (path changed in Phase 2) from @/hooks/use-persisted-table-state to @/shared/hooks/use-persisted-table-state",
+        "Update import in src/modules/organizations/referrals/shared/ui/my-referral-link-button.tsx (path changed in Phase 2) from @/hooks/use-referral-link-storage to @/shared/hooks/use-referral-link-storage",
+        "Update import in src/modules/accounts/users/shared/ui/edit-username-form.tsx (path changed in Phase 2) from @/hooks/use-referral-link-storage to @/shared/hooks/use-referral-link-storage",
+        "Remove empty src/hooks/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": "Import paths for consumer files have changed in Phases 2 and 3. Use the updated paths listed in the acceptance criteria."
+    },
+    {
+      "id": "US-020",
+      "title": "Move src/shared/data/ to src/shared/constants/",
+      "description": "As a developer, I want static data constants in src/shared/constants/ per convention. The src/shared/data/ directory is not defined in AGENTS.md.",
+      "acceptanceCriteria": [
+        "Use git mv to move src/shared/data/brazilian-cities-by-state.ts to src/shared/constants/brazilian-cities-by-state.ts",
+        "Update import in src/modules/accounts/users/shared/ui/edit-address-form.tsx (path changed in Phase 2) from @/shared/data/brazilian-cities-by-state to @/shared/constants/brazilian-cities-by-state",
+        "Update import in src/modules/accounts/onboarding/shared/ui/register-and-join-form.tsx (path changed in Phase 2) from @/shared/data/brazilian-cities-by-state to @/shared/constants/brazilian-cities-by-state",
+        "Remove empty src/shared/data/ directory",
+        "Run npm run fix:biome to fix import ordering",
+        "Typecheck passes"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": "Import paths for consumer files have changed in Phase 2. Use the updated paths listed in the acceptance criteria."
+    },
+    {
+      "id": "US-021",
+      "title": "Standardize step comments in tasks use-cases",
+      "description": "As a developer, I want all use-cases to follow the same numbered step comment format defined in AGENTS.md so the codebase is consistent and readable.",
+      "acceptanceCriteria": [
+        "Update step comments in src/modules/organizations/tasks/server/slices/create-task/use-cases/create-task.use-case.ts from '// Step N:' format to the standard block format with // ============ separators, numbered steps like '0) Description', and 'Possibilidades:' sections",
+        "Update step comments in src/modules/organizations/tasks/server/slices/assign-users-to-task/use-cases/assign-users-to-task.use-case.ts to the same standard block format",
+        "Update step comments in src/modules/organizations/tasks/server/slices/get-assignable-users/use-cases/get-assignable-users.use-case.ts to the same standard block format",
+        "Update step comments in src/modules/organizations/tasks/server/slices/get-tasks-for-table/use-cases/get-tasks-for-table.use-case.ts to the same standard block format",
+        "Each step block must include description and expected outcomes (Possibilidades section)",
+        "Typecheck passes"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": "The standard format is: // ============================================================ // 0) Description // // Possibilidades: // - scenario 1 // - scenario 2 // ============================================================"
+    },
+    {
+      "id": "US-022",
+      "title": "Update AGENTS.md to reflect final directory structure",
+      "description": "As a developer, I want AGENTS.md to accurately describe all valid directories and conventions so new contributors and agents follow the correct patterns.",
+      "acceptanceCriteria": [
+        "Remove src/shared/storage/ from the documented structure (was deleted previously)",
+        "Add src/shared/hooks/ to the documented structure under src/shared/ section",
+        "Add src/lib/providers/ to the documented structure under src/lib/ section",
+        "Replace all references to src/components/ with src/shared/components/ throughout AGENTS.md",
+        "Document src/shared/components/ui/ as the shadcn/ui primitives location",
+        "Document src/shared/components/ as the composed global components location",
+        "Add note that shadcn components use function declarations (accepted exception to the arrow function rule)",
+        "Verify all documented paths match actual directory structure after all migrations",
+        "Typecheck passes"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": "This must be the LAST story executed, after all directory moves are complete."
+    }
+  ]
 }

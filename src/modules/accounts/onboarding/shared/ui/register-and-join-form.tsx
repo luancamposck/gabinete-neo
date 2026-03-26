@@ -1,4 +1,4 @@
-// @/modules/accounts/onboarding/ui/register-and-join-form.tsx
+// @/modules/accounts/onboarding/shared/ui/register-and-join-form.tsx
 
 "use client"
 

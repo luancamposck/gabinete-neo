@@ -1,5 +1,5 @@
 import { Vortex } from "@/components/vortex"
-import { ForgotPasswordForm } from "@/modules/accounts/onboarding/ui/forgot-password-form"
+import { ForgotPasswordForm } from "@/modules/accounts/onboarding/shared/ui/forgot-password-form"
 
 const ForgotPasswordPage = () => {
 	return (

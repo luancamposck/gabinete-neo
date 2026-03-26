@@ -5,7 +5,7 @@ import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { RegisterAndJoinForm } from "@/modules/accounts/onboarding/ui/register-and-join-form"
+import { RegisterAndJoinForm } from "@/modules/accounts/onboarding/shared/ui/register-and-join-form"
 import { SignInForm } from "@/modules/auth/shared/ui/sign-in-form"
 import { getCurrentOrganizationAction } from "@/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action"
 

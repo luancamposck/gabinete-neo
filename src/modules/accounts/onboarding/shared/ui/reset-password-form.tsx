@@ -1,4 +1,4 @@
-// @/modules/accounts/onboarding/ui/reset-password-form.tsx
+// @/modules/accounts/onboarding/shared/ui/reset-password-form.tsx
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
