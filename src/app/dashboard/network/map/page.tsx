@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation"
 
 import { getMapPinsAction } from "@/modules/organizations/insights/people-map/server/slices/get-map-pins/actions/get-map-pins.action"
-import MapClient from "@/modules/organizations/insights/people-map/ui/map-client"
+import MapClient from "@/modules/organizations/insights/people-map/shared/ui/map-client"
 
 export default async function NetworkMapPage() {
 	const pinsRes = await getMapPinsAction()

@@ -1,4 +1,4 @@
-// @/modules/organizations/insights/people-map/ui/map-client.tsx
+// @/modules/organizations/insights/people-map/shared/ui/map-client.tsx
 
 "use client"
 
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
-import WorldPeopleMapMapLibre from "@/modules/organizations/insights/people-map/ui/world-people-map-maplibre"
+import WorldPeopleMapMapLibre from "@/modules/organizations/insights/people-map/shared/ui/world-people-map-maplibre"
 
 type MapClientProps = {
 	pins: CityPin[]
