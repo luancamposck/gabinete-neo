@@ -231,3 +231,20 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - Only comment changes, no code logic changes — typecheck and lint unaffected
   - Pre-existing biome lint errors (23 errors, 31 warnings) are unrelated to any migration work
 ---
+
+## 2026-03-26 - US-022
+- Updated AGENTS.md to reflect final directory structure after all migrations
+- Removed `src/shared/storage/` from documented structure (directory was deleted previously)
+- Removed `src/shared/ui/` from documented structure (primitives now in `src/shared/components/ui/`)
+- Added `src/shared/hooks/` to documented structure
+- Added `src/lib/providers/` to documented structure
+- Documented `src/shared/components/ui/` as shadcn/ui primitives location
+- Updated `src/shared/components/` section with actual examples (mode-toggle-button, etc.)
+- Added note that shadcn components use function declarations (accepted exception to arrow function rule)
+- Verified all documented paths match actual directory structure
+- Files changed: 1 file (AGENTS.md)
+- **Learnings for future iterations:**
+  - `src/shared/ui/` never existed as a standalone directory — shadcn primitives ended up in `src/shared/components/ui/`
+  - All documented paths should be verified against actual filesystem before finalizing
+  - Typecheck passes cleanly — AGENTS.md is documentation-only, no code impact
+---
