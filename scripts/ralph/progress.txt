@@ -108,3 +108,18 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - No path comments on line 1 in these files
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-014
+- Moved 2 files from `src/modules/organizations/insights/people-map/ui/` to `src/modules/organizations/insights/people-map/shared/ui/`: map-client.tsx, world-people-map-maplibre.tsx
+- Updated import in `src/app/dashboard/network/map/page.tsx`
+- Updated internal cross-reference in map-client.tsx (imports world-people-map-maplibre.tsx)
+- Updated path comment on line 1 of map-client.tsx
+- Removed empty `src/modules/organizations/insights/people-map/ui/` directory
+- Files changed: 3 files (2 renames + 1 page import update)
+- **Learnings for future iterations:**
+  - Simple 2-file migration with one internal cross-reference (map-client -> world-people-map-maplibre)
+  - map-client.tsx had path comment on line 1 that needed updating
+  - world-people-map-maplibre.tsx had no path comment
+  - Both files import from `@/components/ui/` which will be updated in US-015a-c
+  - Typecheck passes cleanly
+---
