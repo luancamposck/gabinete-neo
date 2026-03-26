@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { getCreateRoleContextAction } from "@/modules/organizations/memberships/server/slices/get-create-role-context/actions/get-create-role-context.action"
-import { CreateRoleForm } from "@/modules/organizations/memberships/ui/roles/create-role-form"
+import { CreateRoleForm } from "@/modules/organizations/memberships/shared/ui/roles/create-role-form"
 
 const NewRoleConfigPage = async () => {
 	const roleContextRes = await getCreateRoleContextAction()

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Waves } from "@/components/waves"
 import { getCurrentUserAction } from "@/modules/auth/server/slices/get-current-user/actions/get-current-user.action"
 import { signOutAction } from "@/modules/auth/server/slices/sign-out/actions/sign-out.action"
-import { JoinOrganizationButton } from "@/modules/organizations/memberships/ui/join-organization-button"
+import { JoinOrganizationButton } from "@/modules/organizations/memberships/shared/ui/join-organization-button"
 import { getRequestHost } from "@/shared/http/get-request-host"
 
 const SUPPORT_URL = process.env.NEXT_PUBLIC_SUPPORT_URL ?? "https://wa.me/5599999999999"

@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation"
 
 import { getOrganizationUsersContextAction } from "@/modules/organizations/memberships/server/slices/get-organization-users-context/actions/get-organization-users-context.action"
-import { UsersExplorer } from "@/modules/organizations/memberships/ui/users/users-explorer"
+import { UsersExplorer } from "@/modules/organizations/memberships/shared/ui/users/users-explorer"
 
 const UsersConfigPage = async () => {
 	const usersContextRes = await getOrganizationUsersContextAction()

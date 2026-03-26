@@ -11,12 +11,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import type { OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import type { OrganizationUserTableRow } from "@/modules/organizations/memberships/shared/types/organization-users-table.types"
-import { UsersCards } from "@/modules/organizations/memberships/ui/users/cards/users-cards"
-import { usePersistedUsersTableState } from "@/modules/organizations/memberships/ui/users/table/use-persisted-users-table-state"
-import { usersColumns } from "@/modules/organizations/memberships/ui/users/table/users-columns"
-import { UsersTable } from "@/modules/organizations/memberships/ui/users/table/users-table"
-import type { UsersTableMeta } from "@/modules/organizations/memberships/ui/users/table/users-table-meta.types"
-import { UsersTableToolbar } from "@/modules/organizations/memberships/ui/users/table/users-table-toolbar"
+import { UsersCards } from "@/modules/organizations/memberships/shared/ui/users/cards/users-cards"
+import { usePersistedUsersTableState } from "@/modules/organizations/memberships/shared/ui/users/table/use-persisted-users-table-state"
+import { usersColumns } from "@/modules/organizations/memberships/shared/ui/users/table/users-columns"
+import { UsersTable } from "@/modules/organizations/memberships/shared/ui/users/table/users-table"
+import type { UsersTableMeta } from "@/modules/organizations/memberships/shared/ui/users/table/users-table-meta.types"
+import { UsersTableToolbar } from "@/modules/organizations/memberships/shared/ui/users/table/users-table-toolbar"
 
 type UsersExplorerProps = {
 	users: OrganizationUserTableRow[]
