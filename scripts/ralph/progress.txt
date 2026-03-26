@@ -32,3 +32,15 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - No internal cross-references between users UI files — they're independent
   - Only one consumer file (`page.tsx`) needed updating
 ---
+
+## 2026-03-26 - US-009
+- Moved 2 files from `src/modules/app-shell/ui/` to `src/modules/app-shell/shared/ui/`: app-sidebar.tsx, nav-footer.tsx
+- Updated internal cross-reference in app-sidebar.tsx (NavFooter import)
+- Updated import in `src/app/dashboard/layout.tsx`
+- Removed empty `src/modules/app-shell/ui/` directory
+- Files changed: 3 files (2 renames + 1 import update in layout.tsx)
+- **Learnings for future iterations:**
+  - app-sidebar.tsx has an internal cross-reference to nav-footer.tsx that needs updating
+  - No path comments on line 1 in these files
+  - Typecheck passes cleanly
+---
