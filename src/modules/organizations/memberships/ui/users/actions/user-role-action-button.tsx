@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { PERMISSIONS, type PermissionKey } from "@/modules/auth/shared/permissions"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
 import type { OrganizationUserTableRow } from "@/modules/organizations/memberships/shared/types/organization-users-table.types"
-import { RoleChangeSheet } from "@/modules/organizations/memberships/ui/data-table/sheets/role-change-sheet"
+import { RoleChangeSheet } from "@/modules/organizations/memberships/shared/ui/data-table/sheets/role-change-sheet"
 
 type UserRoleActionButtonProps = {
 	user: OrganizationUserTableRow

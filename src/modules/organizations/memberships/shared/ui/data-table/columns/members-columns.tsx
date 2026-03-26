@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils/cn"
 import type { OrganizationMemberTableRow } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
-import { MemberActionsCell } from "@/modules/organizations/memberships/ui/data-table/actions/member-actions-cell"
-import { MemberAddressPopover } from "@/modules/organizations/memberships/ui/data-table/shared/member-address-popover"
-import type { MembersTableMeta } from "@/modules/organizations/memberships/ui/data-table/table-meta.types"
+import { MemberActionsCell } from "@/modules/organizations/memberships/shared/ui/data-table/actions/member-actions-cell"
+import { MemberAddressPopover } from "@/modules/organizations/memberships/shared/ui/data-table/shared/member-address-popover"
+import type { MembersTableMeta } from "@/modules/organizations/memberships/shared/ui/data-table/table-meta.types"
 import { formatPhone } from "@/shared/formatters/format-phone"
 
 function formatDate(value: string | null | undefined) {

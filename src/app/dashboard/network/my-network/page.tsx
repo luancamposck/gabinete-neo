@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { getOrganizationMembersForTableAction } from "@/modules/organizations/memberships/server/slices/get-organization-members-for-table/actions/get-organization-members-for-table.action"
-import { MembersTable } from "@/modules/organizations/memberships/ui/data-table/table/members-table"
+import { MembersTable } from "@/modules/organizations/memberships/shared/ui/data-table/table/members-table"
 
 const MyNetworkPage = async () => {
 	const membersRes = await getOrganizationMembersForTableAction()

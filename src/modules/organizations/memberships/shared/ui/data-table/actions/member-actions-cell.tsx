@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils/cn"
 import type { PermissionKey } from "@/modules/auth/shared/permissions"
 import { updateMembershipStatusAction } from "@/modules/organizations/memberships/server/slices/update-membership-status/actions/update-membership-status.action"
 import type { OrganizationMemberTableRow, OrganizationRoleOption } from "@/modules/organizations/memberships/shared/types/organization-members-table.types"
-import { DetailsSheet } from "@/modules/organizations/memberships/ui/data-table/sheets/details-sheet"
-import { RoleChangeSheet } from "@/modules/organizations/memberships/ui/data-table/sheets/role-change-sheet"
+import { DetailsSheet } from "@/modules/organizations/memberships/shared/ui/data-table/sheets/details-sheet"
+import { RoleChangeSheet } from "@/modules/organizations/memberships/shared/ui/data-table/sheets/role-change-sheet"
 
 type MemberActionsCellProps = {
 	member: OrganizationMemberTableRow
