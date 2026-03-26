@@ -198,3 +198,15 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - Biome auto-reordered imports in layout.tsx after path change
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-019
+- Moved 3 files from `src/hooks/` to `src/shared/hooks/`: use-mobile.ts, use-persisted-table-state.ts, use-referral-link-storage.ts
+- Updated 4 imports in consumer files: sidebar.tsx, organization-tasks-table.tsx, my-referral-link-button.tsx, edit-username-form.tsx
+- Removed empty `src/hooks/` directory
+- Files changed: 7 files (3 renames + 4 import updates)
+- **Learnings for future iterations:**
+  - Simple 3-file migration with no internal cross-references between hooks
+  - Biome auto-reordered imports in all 4 consumer files after path changes
+  - All consumer file paths matched the PRD acceptance criteria (updated paths from Phase 2/3)
+  - Typecheck passes cleanly
+---
