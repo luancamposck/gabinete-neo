@@ -187,3 +187,14 @@ Started: Thu Mar 26 12:16:00 PDT 2026
   - Only the aliases section needed updating; tailwind config and other settings remain the same
   - Typecheck passes cleanly
 ---
+
+## 2026-03-26 - US-018
+- Moved `src/providers/query-provider.tsx` to `src/lib/providers/query-provider.tsx`
+- Updated 1 import in `src/app/layout.tsx`
+- Removed empty `src/providers/` directory
+- Files changed: 2 files (1 rename + 1 import update)
+- **Learnings for future iterations:**
+  - Simple 1-file migration with only 1 consumer
+  - Biome auto-reordered imports in layout.tsx after path change
+  - Typecheck passes cleanly
+---
