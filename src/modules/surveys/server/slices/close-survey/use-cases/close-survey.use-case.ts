@@ -1,0 +1,150 @@
+import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
+import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
+import { PERMISSIONS } from "@/modules/auth/shared/permissions"
+import { getMembershipByOrgAndUserIdWithRoleService } from "@/modules/organizations/memberships/server/services/get-membership-by-org-and-user-id-with-role.service"
+import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
+import { closeSurveyService } from "@/modules/surveys/server/services/close-survey.service"
+import { findSurveyByIdService } from "@/modules/surveys/server/services/find-survey-by-id.service"
+import type { SurveyRow } from "@/modules/surveys/shared/types/db"
+import type { OperationResponse } from "@/shared/types/operation-response.types"
+
+type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "infra_error"
+
+const prefixLog = "[closeSurveyUseCase]:"
+const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.ORG_ADMIN_UPDATE
+
+const MSG_SUCCESS = "Pesquisa encerrada com sucesso."
+const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para encerrar pesquisas."
+const MSG_NOT_ALLOWED = "Você não tem permissão para encerrar pesquisas nesta organização."
+const MSG_ORGANIZATION_NOT_FOUND = "Organização não encontrada."
+const MSG_SURVEY_NOT_FOUND = "Pesquisa não encontrada."
+const MSG_INFRA_ERROR = "Não foi possível encerrar a pesquisa no momento."
+
+const FALLBACK_INFRA_ERROR = { success: false, message: MSG_INFRA_ERROR, code: "infra_error" } as const
+const isOwnerRole = (roleName: string) => roleName.trim().toUpperCase() === "OWNER"
+
+export async function closeSurveyUseCase(params: { organizationId: string; surveyId: string }): OperationResponse<{ survey: SurveyRow }, ErrorCodes> {
+	try {
+		// ============================================================
+		// 0) Obter usuário autenticado
+		//
+		// Possibilidades:
+		// - sem sessão => unauthenticated
+		// - erro técnico => infra_error
+		// - autenticado => seguir fluxo
+		// ============================================================
+		const authRes = await getCurrentAuthUserService()
+		if (authRes.success === false) {
+			if (authRes.code === "unauthenticated") {
+				return { success: false, message: MSG_UNAUTHENTICATED, code: "unauthenticated" }
+			}
+
+			return FALLBACK_INFRA_ERROR
+		}
+
+		// ============================================================
+		// 1) Garantir existência da organização
+		//
+		// Possibilidades:
+		// - organização inexistente => organization_not_found
+		// - erro técnico => infra_error
+		// - organização encontrada => seguir fluxo
+		// ============================================================
+		const organizationRes = await getOrganizationByIdService({ organizationId: params.organizationId })
+		if (organizationRes.success === false) {
+			if (organizationRes.code === "org_not_found") {
+				return { success: false, message: MSG_ORGANIZATION_NOT_FOUND, code: "organization_not_found" }
+			}
+
+			return FALLBACK_INFRA_ERROR
+		}
+
+		// ============================================================
+		// 2) Validar membership e status ativo
+		//
+		// Possibilidades:
+		// - sem membership => not_allowed
+		// - membership inativo => not_allowed
+		// - erro técnico => infra_error
+		// - membership ativo => seguir fluxo
+		// ============================================================
+		const membershipRes = await getMembershipByOrgAndUserIdWithRoleService({
+			organizationId: params.organizationId,
+			userId: authRes.data.user.id
+		})
+		if (membershipRes.success === false) {
+			if (membershipRes.code === "membership_not_found") {
+				return { success: false, message: MSG_NOT_ALLOWED, code: "not_allowed" }
+			}
+
+			return FALLBACK_INFRA_ERROR
+		}
+
+		if (!membershipRes.data.isActive) {
+			return { success: false, message: MSG_NOT_ALLOWED, code: "not_allowed" }
+		}
+
+		// ============================================================
+		// 3) Validar permissão de gerenciamento quando não for OWNER
+		//
+		// Possibilidades:
+		// - sem permissão => not_allowed
+		// - erro técnico => infra_error
+		// - com permissão => seguir fluxo
+		// ============================================================
+		if (!isOwnerRole(membershipRes.data.roleName)) {
+			const permissionRes = await hasMembershipPermissionService({
+				organizationId: params.organizationId,
+				userId: authRes.data.user.id,
+				permissionKey: MANAGE_SURVEYS_PERMISSION_KEY
+			})
+			if (permissionRes.success === false) {
+				return FALLBACK_INFRA_ERROR
+			}
+
+			if (!permissionRes.data.allowed) {
+				return { success: false, message: MSG_NOT_ALLOWED, code: "not_allowed" }
+			}
+		}
+
+		// ============================================================
+		// 4) Garantir existência da survey alvo
+		//
+		// Possibilidades:
+		// - survey inexistente => survey_not_found
+		// - erro técnico => infra_error
+		// - survey encontrada => seguir fluxo
+		// ============================================================
+		const surveyRes = await findSurveyByIdService({ organizationId: params.organizationId, surveyId: params.surveyId })
+		if (surveyRes.success === false) {
+			if (surveyRes.code === "survey_not_found") {
+				return { success: false, message: MSG_SURVEY_NOT_FOUND, code: "survey_not_found" }
+			}
+
+			return FALLBACK_INFRA_ERROR
+		}
+
+		// ============================================================
+		// 5) Encerrar survey (status = closed)
+		//
+		// Possibilidades:
+		// - erro técnico => infra_error
+		// - sucesso => retornar survey encerrada
+		// ============================================================
+		const closeRes = await closeSurveyService(params)
+		if (closeRes.success === false) {
+			return FALLBACK_INFRA_ERROR
+		}
+
+		return {
+			success: true,
+			message: MSG_SUCCESS,
+			data: {
+				survey: closeRes.data.survey
+			}
+		}
+	} catch (error) {
+		console.error(`${prefixLog} unexpected error:`, error)
+		return FALLBACK_INFRA_ERROR
+	}
+}
