@@ -138,7 +138,8 @@ Estrutura base (shared/ui) por módulo:
 
 ### Service
 - Centraliza regra de negócio.
-- Consome Repo(s).
+- Consome **apenas 1 Repo por service**.
+- Se o fluxo precisar consultar/escrever em 2+ repos, mover a orquestração para um **Use-case** e manter cada service com um único repo.
 - Trata erros de forma consistente (mapear para `OperationResponse` com codes/mensagens padronizados).
 - Retorna `OperationResponse`.
 
