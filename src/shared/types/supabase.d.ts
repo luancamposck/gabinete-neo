@@ -472,6 +472,233 @@ export type Database = {
 					}
 				]
 			}
+			survey_question_options: {
+				Row: {
+					id: string
+					label: string
+					position: number
+					question_id: string
+					value: string
+				}
+				Insert: {
+					id?: string
+					label: string
+					position: number
+					question_id: string
+					value: string
+				}
+				Update: {
+					id?: string
+					label?: string
+					position?: number
+					question_id?: string
+					value?: string
+				}
+				Relationships: [
+					{
+						foreignKeyName: "survey_question_options_question_id_fkey"
+						columns: ["question_id"]
+						isOneToOne: false
+						referencedRelation: "survey_questions"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			survey_questions: {
+				Row: {
+					config_json: Json
+					description: string | null
+					id: string
+					position: number
+					required: boolean
+					survey_id: string
+					title: string
+					type: Database["public"]["Enums"]["survey_question_type"]
+				}
+				Insert: {
+					config_json?: Json
+					description?: string | null
+					id?: string
+					position: number
+					required?: boolean
+					survey_id: string
+					title: string
+					type: Database["public"]["Enums"]["survey_question_type"]
+				}
+				Update: {
+					config_json?: Json
+					description?: string | null
+					id?: string
+					position?: number
+					required?: boolean
+					survey_id?: string
+					title?: string
+					type?: Database["public"]["Enums"]["survey_question_type"]
+				}
+				Relationships: [
+					{
+						foreignKeyName: "survey_questions_survey_id_fkey"
+						columns: ["survey_id"]
+						isOneToOne: false
+						referencedRelation: "surveys"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			survey_response_items: {
+				Row: {
+					answer_option_ids_json: Json | null
+					answer_ranking_json: Json | null
+					answer_text: string | null
+					id: string
+					question_id: string
+					response_id: string
+				}
+				Insert: {
+					answer_option_ids_json?: Json | null
+					answer_ranking_json?: Json | null
+					answer_text?: string | null
+					id?: string
+					question_id: string
+					response_id: string
+				}
+				Update: {
+					answer_option_ids_json?: Json | null
+					answer_ranking_json?: Json | null
+					answer_text?: string | null
+					id?: string
+					question_id?: string
+					response_id?: string
+				}
+				Relationships: [
+					{
+						foreignKeyName: "survey_response_items_question_id_fkey"
+						columns: ["question_id"]
+						isOneToOne: false
+						referencedRelation: "survey_questions"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "survey_response_items_response_id_fkey"
+						columns: ["response_id"]
+						isOneToOne: false
+						referencedRelation: "survey_responses"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			survey_responses: {
+				Row: {
+					id: string
+					is_anonymous: boolean
+					organization_id: string | null
+					respondent_user_id: string | null
+					responder_fingerprint_hash: string | null
+					submitted_at: string
+					survey_id: string
+				}
+				Insert: {
+					id?: string
+					is_anonymous?: boolean
+					organization_id?: string | null
+					respondent_user_id?: string | null
+					responder_fingerprint_hash?: string | null
+					submitted_at?: string
+					survey_id: string
+				}
+				Update: {
+					id?: string
+					is_anonymous?: boolean
+					organization_id?: string | null
+					respondent_user_id?: string | null
+					responder_fingerprint_hash?: string | null
+					submitted_at?: string
+					survey_id?: string
+				}
+				Relationships: [
+					{
+						foreignKeyName: "survey_responses_organization_id_fkey"
+						columns: ["organization_id"]
+						isOneToOne: false
+						referencedRelation: "organizations"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "survey_responses_respondent_user_id_fkey"
+						columns: ["respondent_user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "survey_responses_survey_id_fkey"
+						columns: ["survey_id"]
+						isOneToOne: false
+						referencedRelation: "surveys"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			surveys: {
+				Row: {
+					accept_anonymous_answers: boolean
+					created_at: string
+					created_by_user_id: string
+					description: string | null
+					ends_at: string | null
+					id: string
+					organization_id: string
+					starts_at: string | null
+					status: Database["public"]["Enums"]["survey_status"]
+					title: string
+					updated_at: string
+					visibility: Database["public"]["Enums"]["survey_visibility"]
+				}
+				Insert: {
+					accept_anonymous_answers?: boolean
+					created_at?: string
+					created_by_user_id: string
+					description?: string | null
+					ends_at?: string | null
+					id?: string
+					organization_id: string
+					starts_at?: string | null
+					status?: Database["public"]["Enums"]["survey_status"]
+					title: string
+					updated_at?: string
+					visibility?: Database["public"]["Enums"]["survey_visibility"]
+				}
+				Update: {
+					accept_anonymous_answers?: boolean
+					created_at?: string
+					created_by_user_id?: string
+					description?: string | null
+					ends_at?: string | null
+					id?: string
+					organization_id?: string
+					starts_at?: string | null
+					status?: Database["public"]["Enums"]["survey_status"]
+					title?: string
+					updated_at?: string
+					visibility?: Database["public"]["Enums"]["survey_visibility"]
+				}
+				Relationships: [
+					{
+						foreignKeyName: "surveys_created_by_user_id_fkey"
+						columns: ["created_by_user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "surveys_organization_id_fkey"
+						columns: ["organization_id"]
+						isOneToOne: false
+						referencedRelation: "organizations"
+						referencedColumns: ["id"]
+					}
+				]
+			}
 			user_profiles: {
 				Row: {
 					cep: string
@@ -570,6 +797,9 @@ export type Database = {
 		}
 		Enums: {
 			organization_task_status: "NOT_STARTED" | "IN_PROGRESS" | "CANCELLED" | "COMPLETED"
+			survey_question_type: "single_choice" | "textarea" | "checkbox" | "ranking"
+			survey_status: "draft" | "published" | "closed"
+			survey_visibility: "public" | "private"
 		}
 		CompositeTypes: {
 			[_ in never]: never
@@ -683,7 +913,10 @@ export type CompositeTypes<
 export const Constants = {
 	public: {
 		Enums: {
-			organization_task_status: ["NOT_STARTED", "IN_PROGRESS", "CANCELLED", "COMPLETED"]
+			organization_task_status: ["NOT_STARTED", "IN_PROGRESS", "CANCELLED", "COMPLETED"],
+			survey_question_type: ["single_choice", "textarea", "checkbox", "ranking"],
+			survey_status: ["draft", "published", "closed"],
+			survey_visibility: ["public", "private"]
 		}
 	}
 } as const
