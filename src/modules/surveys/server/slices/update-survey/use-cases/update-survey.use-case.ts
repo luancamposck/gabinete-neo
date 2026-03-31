@@ -3,10 +3,15 @@ import { hasMembershipPermissionService } from "@/modules/auth/server/services/h
 import { PERMISSIONS } from "@/modules/auth/shared/permissions"
 import { getMembershipByOrgAndUserIdWithRoleService } from "@/modules/organizations/memberships/server/services/get-membership-by-org-and-user-id-with-role.service"
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
+import { deleteSurveyQuestionsBySurveyIdService } from "@/modules/surveys/server/services/delete-survey-questions-by-survey-id.service"
 import { findSurveyByIdService } from "@/modules/surveys/server/services/find-survey-by-id.service"
+import { insertSurveyQuestionOptionsService } from "@/modules/surveys/server/services/insert-survey-question-options.service"
+import { insertSurveyQuestionsService } from "@/modules/surveys/server/services/insert-survey-questions.service"
 import { updateSurveyService } from "@/modules/surveys/server/services/update-survey.service"
 import type { SurveyRow } from "@/modules/surveys/shared/types/db"
+import type { SurveyQuestionSchemaData } from "@/modules/surveys/shared/validations/survey-question.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
+import type { Json, TablesInsert } from "@/shared/types/supabase"
 
 type UpdateSurveyUseCaseParams = {
 	organizationId: string
@@ -18,6 +23,7 @@ type UpdateSurveyUseCaseParams = {
 		acceptAnonymousAnswers?: boolean
 		startsAt?: string | null
 		endsAt?: string | null
+		questions?: SurveyQuestionSchemaData[]
 	}
 }
 
@@ -56,31 +62,22 @@ export async function updateSurveyUseCase(params: UpdateSurveyUseCaseParams): Op
 		}
 
 		// ============================================================
-		// 1) Garantir que a organização existe
+		// 1) Garantir que organização e permissões são válidas
 		//
 		// Possibilidades:
 		// - organização inexistente => organization_not_found
-		// - erro técnico => infra_error
-		// - organização encontrada => seguir fluxo
+		// - sem membership / membership inativo / sem permissão => not_allowed
+		// - erro técnico em serviços auxiliares => infra_error
+		// - contexto autorizado => seguir fluxo
 		// ============================================================
 		const organizationRes = await getOrganizationByIdService({ organizationId: params.organizationId })
 		if (organizationRes.success === false) {
 			if (organizationRes.code === "org_not_found") {
 				return { success: false, message: MSG_ORGANIZATION_NOT_FOUND, code: "organization_not_found" }
 			}
-
 			return FALLBACK_INFRA_ERROR
 		}
 
-		// ============================================================
-		// 2) Validar membership e status ativo
-		//
-		// Possibilidades:
-		// - sem membership => not_allowed
-		// - membership inativo => not_allowed
-		// - erro técnico => infra_error
-		// - membership ativo => seguir fluxo
-		// ============================================================
 		const membershipRes = await getMembershipByOrgAndUserIdWithRoleService({
 			organizationId: params.organizationId,
 			userId: authRes.data.user.id
@@ -89,7 +86,6 @@ export async function updateSurveyUseCase(params: UpdateSurveyUseCaseParams): Op
 			if (membershipRes.code === "membership_not_found") {
 				return { success: false, message: MSG_NOT_ALLOWED, code: "not_allowed" }
 			}
-
 			return FALLBACK_INFRA_ERROR
 		}
 
@@ -97,14 +93,6 @@ export async function updateSurveyUseCase(params: UpdateSurveyUseCaseParams): Op
 			return { success: false, message: MSG_NOT_ALLOWED, code: "not_allowed" }
 		}
 
-		// ============================================================
-		// 3) Validar permissão de gerenciamento quando não for OWNER
-		//
-		// Possibilidades:
-		// - sem permissão => not_allowed
-		// - erro técnico => infra_error
-		// - com permissão => seguir fluxo
-		// ============================================================
 		if (!isOwnerRole(membershipRes.data.roleName)) {
 			const permissionRes = await hasMembershipPermissionService({
 				organizationId: params.organizationId,
@@ -114,39 +102,82 @@ export async function updateSurveyUseCase(params: UpdateSurveyUseCaseParams): Op
 			if (permissionRes.success === false) {
 				return FALLBACK_INFRA_ERROR
 			}
-
 			if (!permissionRes.data.allowed) {
 				return { success: false, message: MSG_NOT_ALLOWED, code: "not_allowed" }
 			}
 		}
 
 		// ============================================================
-		// 4) Garantir existência da survey alvo
+		// 2) Garantir existência da survey e atualizar metadados
 		//
 		// Possibilidades:
 		// - survey inexistente => survey_not_found
-		// - erro técnico => infra_error
-		// - survey encontrada => seguir fluxo
+		// - erro técnico ao consultar/atualizar => infra_error
+		// - survey encontrada + update ok => seguir fluxo
 		// ============================================================
 		const surveyRes = await findSurveyByIdService({ organizationId: params.organizationId, surveyId: params.surveyId })
 		if (surveyRes.success === false) {
 			if (surveyRes.code === "survey_not_found") {
 				return { success: false, message: MSG_SURVEY_NOT_FOUND, code: "survey_not_found" }
 			}
+			return FALLBACK_INFRA_ERROR
+		}
 
+		const updateRes = await updateSurveyService(params)
+		if (updateRes.success === false) {
 			return FALLBACK_INFRA_ERROR
 		}
 
 		// ============================================================
-		// 5) Atualizar dados da survey
+		// 3) Sincronizar questões/opções quando informado no payload
 		//
 		// Possibilidades:
-		// - erro técnico => infra_error
-		// - sucesso => retornar survey atualizada
+		// - questions ausente => manter estrutura atual
+		// - questions informada => limpar + inserir novas questões/opções
+		// - erro técnico em qualquer etapa => infra_error
 		// ============================================================
-		const updateRes = await updateSurveyService(params)
-		if (updateRes.success === false) {
-			return FALLBACK_INFRA_ERROR
+		if (params.updates.questions) {
+			const clearRes = await deleteSurveyQuestionsBySurveyIdService({ surveyId: params.surveyId })
+			if (clearRes.success === false) {
+				return FALLBACK_INFRA_ERROR
+			}
+
+			if (params.updates.questions.length > 0) {
+				const questionsToInsert: TablesInsert<"survey_questions">[] = params.updates.questions.map((question, index) => ({
+					survey_id: params.surveyId,
+					title: question.title,
+					description: question.description ?? null,
+					type: question.type,
+					required: question.required,
+					position: index,
+					config_json: (question.configJson ?? {}) as Json
+				}))
+
+				const questionsRes = await insertSurveyQuestionsService(questionsToInsert)
+				if (questionsRes.success === false) {
+					return FALLBACK_INFRA_ERROR
+				}
+
+				const optionsToInsert: TablesInsert<"survey_question_options">[] = []
+				for (const [questionIndex, savedQuestion] of questionsRes.data.questions.entries()) {
+					const source = params.updates.questions[questionIndex]
+					for (const [optionIndex, option] of source.options.entries()) {
+						optionsToInsert.push({
+							question_id: savedQuestion.id,
+							label: option.label,
+							value: option.value,
+							position: optionIndex
+						})
+					}
+				}
+
+				if (optionsToInsert.length > 0) {
+					const optionsRes = await insertSurveyQuestionOptionsService(optionsToInsert)
+					if (optionsRes.success === false) {
+						return FALLBACK_INFRA_ERROR
+					}
+				}
+			}
 		}
 
 		return {

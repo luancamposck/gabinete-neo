@@ -5,7 +5,7 @@ import type { SurveyResponseRow } from "@/modules/surveys/shared/types/db"
 import { submitSurveyResponseActionSchema } from "@/modules/surveys/shared/validations/submit-survey-response.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
-type ErrorCodes = "invalid_input" | "already_answered" | "infra_error"
+type ErrorCodes = "invalid_input" | "already_answered" | "invalid_answers" | "infra_error"
 
 export async function submitSurveyResponseAction(input: unknown): OperationResponse<{ response: SurveyResponseRow }, ErrorCodes> {
 	const parsed = submitSurveyResponseActionSchema.safeParse(input)
@@ -20,6 +20,7 @@ export async function submitSurveyResponseAction(input: unknown): OperationRespo
 	return submitSurveyResponseUseCase({
 		surveyId: parsed.data.surveyId,
 		organizationId: parsed.data.organizationId ?? null,
-		isAnonymous: parsed.data.isAnonymous
+		isAnonymous: parsed.data.isAnonymous,
+		answers: parsed.data.answers
 	})
 }

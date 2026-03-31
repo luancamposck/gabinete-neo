@@ -26,7 +26,8 @@ export async function updateSurveyAction(input: unknown): OperationResponse<{ su
 			visibility: parsed.data.visibility,
 			acceptAnonymousAnswers: parsed.data.acceptAnonymousAnswers,
 			startsAt: parsed.data.startsAt,
-			endsAt: parsed.data.endsAt
+			endsAt: parsed.data.endsAt,
+			questions: parsed.data.questions
 		}
 	})
 }

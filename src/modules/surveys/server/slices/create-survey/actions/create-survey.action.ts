@@ -24,6 +24,7 @@ export async function createSurveyAction(input: unknown): OperationResponse<{ su
 		visibility: parsed.data.visibility,
 		acceptAnonymousAnswers: parsed.data.acceptAnonymousAnswers,
 		startsAt: parsed.data.startsAt ?? null,
-		endsAt: parsed.data.endsAt ?? null
+		endsAt: parsed.data.endsAt ?? null,
+		questions: parsed.data.questions
 	})
 }

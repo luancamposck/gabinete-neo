@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { surveyQuestionsSchema } from "@/modules/surveys/shared/validations/survey-question.schema"
 
 export const updateSurveyActionSchema = z.object({
 	organizationId: z.string().uuid(),
@@ -8,7 +9,8 @@ export const updateSurveyActionSchema = z.object({
 	visibility: z.enum(["public", "private"]).optional(),
 	acceptAnonymousAnswers: z.boolean().optional(),
 	startsAt: z.string().datetime().nullable().optional(),
-	endsAt: z.string().datetime().nullable().optional()
+	endsAt: z.string().datetime().nullable().optional(),
+	questions: surveyQuestionsSchema.optional()
 })
 
 export type UpdateSurveyActionInput = z.infer<typeof updateSurveyActionSchema>
