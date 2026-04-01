@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { insertSurveyResponseItemsService } from "@/modules/surveys/server/services/insert-survey-response-items.service"
 import { listSurveyQuestionsWithOptionsService } from "@/modules/surveys/server/services/list-survey-questions-with-options.service"
@@ -131,7 +132,11 @@ export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUs
 		// - erro infra => infra_error
 		// - sucesso => seguir para salvar itens
 		// ============================================================
+		const responseId = randomUUID()
+		const submittedAt = new Date().toISOString()
+
 		const submitRes = await submitSurveyResponseService({
+			id: responseId,
 			survey_id: params.surveyId,
 			organization_id: params.organizationId ?? null,
 			respondent_user_id: isAnonymousAnswer ? null : respondentUserId,
@@ -139,7 +144,8 @@ export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUs
 			respondent_email: isPublicIdentifiedAnswer ? respondentEmail : null,
 			respondent_phone: isPublicIdentifiedAnswer ? respondentPhone : null,
 			is_anonymous: isAnonymousAnswer,
-			responder_fingerprint_hash: responderFingerprintHash
+			responder_fingerprint_hash: responderFingerprintHash,
+			submitted_at: submittedAt
 		})
 
 		if (submitRes.success === false) {

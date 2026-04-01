@@ -9,6 +9,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Public survey submission must treat unauthenticated and anonymous as separate concerns: fingerprint dedupe applies to both, but `is_anonymous` should only be `true` when the respondent explicitly chooses anonymity.
 - Cross-table survey integrity that cannot be expressed with a plain foreign key should be enforced with a dedicated Postgres trigger, while letting existing FKs keep ownership of missing-parent errors.
 - Survey read RLS should anchor child-table visibility (`survey_questions`, `survey_question_options`) to the parent survey chain instead of duplicating availability and membership predicates in every table policy.
+- When enabling RLS on write-only survey flows, prefer `INSERT` operations without `.select()` and generate IDs in the application layer so raw response tables do not need extra `SELECT` policies just to return inserted rows.
 
 ---
 
@@ -106,4 +107,17 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Child survey read policies are simpler and more durable when they defer to the readable parent row instead of repeating tenant, availability, and permission predicates.
   - Keeping survey management access in a dedicated SQL helper makes future response and safe-view policies easier to align with the `OWNER` plus `surveys.manage` contract.
   - The repository-wide Biome warning in `src/shared/components/ui/sidebar.tsx` remains non-blocking for Ralph's mandatory gate because it is emitted as a warning, not an error.
+---
+
+## 2026-04-01 21:25 UTC - US-006
+- Enabled RLS write policies for `public.survey_responses` and `public.survey_response_items`.
+- Added security-definer SQL helpers so response inserts now require a published, currently available survey, while private survey submissions also require active membership.
+- Removed `insert(...).select(...)` from the submission repos and generated response IDs in the use-case so the write path keeps working under RLS without exposing raw response-table reads.
+- Files changed: `supabase/migrations/20260402001000_enable_survey_response_write_rls.sql`, `src/modules/surveys/server/repos/insert-survey-response.repo.ts`, `src/modules/surveys/server/repos/insert-survey-response-items.repo.ts`, `src/modules/surveys/server/services/submit-survey-response.service.ts`, `src/modules/surveys/server/slices/submit-survey-response/use-cases/submit-survey-response.use-case.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story is database/backend-only.
+- **Learnings for future iterations:**
+  - Write RLS for response child tables is easier to keep consistent when the policy delegates survey availability and membership checks to security-definer helper functions.
+  - Returning inserted rows from raw response tables under RLS forces extra read policies, so generating IDs client-side and skipping `.select()` is the safer default for submit-only flows.
+  - Response-item insert policies should validate against both the parent response and the target question so private-survey restrictions stay aligned even after the response header is created.
 ---

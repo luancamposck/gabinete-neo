@@ -10,7 +10,7 @@ const MSG_ALREADY_ANSWERED = "Você já respondeu esta pesquisa."
 
 export async function submitSurveyResponseService(params: SurveyResponseInsert): OperationResponse<{ response: SurveyResponseRow }, ErrorCodes> {
 	try {
-		const { data, error } = await insertSurveyResponseRepo(params)
+		const { error } = await insertSurveyResponseRepo(params)
 
 		if (error) {
 			if (error.code === "23505") {
@@ -29,20 +29,22 @@ export async function submitSurveyResponseService(params: SurveyResponseInsert):
 			}
 		}
 
-		if (!data) {
-			console.error(`${prefixLog} missing survey response after insert`)
-			return {
-				success: false,
-				message: MSG_INFRA_ERROR,
-				code: "infra_error"
-			}
-		}
-
 		return {
 			success: true,
 			message: "Resposta registrada com sucesso.",
 			data: {
-				response: data
+				response: {
+					id: params.id ?? "",
+					survey_id: params.survey_id,
+					organization_id: params.organization_id ?? null,
+					respondent_user_id: params.respondent_user_id ?? null,
+					respondent_name: params.respondent_name ?? null,
+					respondent_email: params.respondent_email ?? null,
+					respondent_phone: params.respondent_phone ?? null,
+					is_anonymous: params.is_anonymous ?? false,
+					responder_fingerprint_hash: params.responder_fingerprint_hash ?? null,
+					submitted_at: params.submitted_at ?? new Date().toISOString()
+				}
 			}
 		}
 	} catch (error) {
