@@ -5,6 +5,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 ## Codebase Patterns
 - Survey management authorization should preserve the existing OWNER bypass and use `hasMembershipPermissionService` with `PERMISSIONS.SURVEYS_MANAGE` for non-owner members.
 - The mandatory Ralph quality gate is blocked by Biome errors, but Biome warnings can remain without failing `fix:biome` or `lint:biome`.
+- Survey question and option ordering should be normalized from UI array order and persisted as base-1 positions (`index + 1`) to stay aligned with the database constraints.
 
 ---
 
@@ -52,4 +53,17 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Shared UI lint debt can block unrelated backend stories because Ralph's gate runs against the whole `src/` tree.
   - The current shared component baseline tolerates the existing `document.cookie` warning in `sidebar.tsx`; it does not block Biome checks.
   - The survey permission change itself remains localized to auth shared constants, the seed migration, and survey management use-cases.
+---
+
+## 2026-04-01 21:19 UTC - US-002
+- Implemented the base-1 ordering contract for surveys by correcting persisted question and option positions in both create and update flows.
+- Added a corrective Supabase migration that reindexes legacy `survey_questions` and `survey_question_options` rows to base 1 using deterministic window ordering.
+- Updated the shared survey builder and Zod validation schema so client payloads now produce and accept only base-1 positions.
+- Files changed: `supabase/migrations/20260401214500_realign_survey_positions_to_base_1.sql`, `src/modules/surveys/shared/ui/survey-builder.tsx`, `src/modules/surveys/shared/validations/survey-question.schema.ts`, `src/modules/surveys/server/slices/create-survey/use-cases/create-survey.use-case.ts`, `src/modules/surveys/server/slices/update-survey/use-cases/update-survey.use-case.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Browser verification was not run because this story only changed ordering contract and persistence logic.
+- **Learnings for future iterations:**
+  - The surveys module currently derives structural order from array order, so server persistence should continue to normalize positions instead of trusting incoming `position` values blindly.
+  - Reindex migrations that touch unique `(parent_id, position)` constraints are safer when they use `row_number()` over a deterministic ordering instead of incremental updates.
+  - UI helpers that remove or reorder nested survey entities should renormalize both question and option positions together to avoid stale payload state.
 ---

@@ -141,7 +141,7 @@ export async function createSurveyUseCase(params: CreateSurveyUseCaseParams): Op
 				description: question.description ?? null,
 				type: question.type,
 				required: question.required,
-				position: index,
+				position: index + 1,
 				config_json: (question.configJson ?? {}) as Json
 			}))
 
@@ -158,7 +158,7 @@ export async function createSurveyUseCase(params: CreateSurveyUseCaseParams): Op
 						question_id: savedQuestion.id,
 						label: option.label,
 						value: option.value,
-						position: optionIndex
+						position: optionIndex + 1
 					})
 				}
 			}

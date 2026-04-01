@@ -20,6 +20,14 @@ type SurveyBuilderProps = {
 }
 
 const QUESTION_TYPES: SurveyQuestionType[] = ["single_choice", "textarea", "checkbox", "ranking"]
+const getBaseOnePosition = (index: number) => index + 1
+const normalizeOptionPositions = (options: SurveyQuestionInput["options"]) => options.map((option, optionIndex) => ({ ...option, position: getBaseOnePosition(optionIndex) }))
+const normalizeQuestionPositions = (questions: SurveyQuestionInput[]) =>
+	questions.map((question, questionIndex) => ({
+		...question,
+		position: getBaseOnePosition(questionIndex),
+		options: normalizeOptionPositions(question.options)
+	}))
 
 export const SurveyBuilder = ({ questions, visibility, acceptAnonymousAnswers, onVisibilityChange, onAcceptAnonymousAnswersChange, onQuestionsChange }: SurveyBuilderProps) => {
 	const acceptAnonymousId = useId()
@@ -32,10 +40,10 @@ export const SurveyBuilder = ({ questions, visibility, acceptAnonymousAnswers, o
 				description: "",
 				type: "single_choice",
 				required: false,
-				position: questions.length,
+				position: getBaseOnePosition(questions.length),
 				options: [
-					{ id: crypto.randomUUID(), label: "Opção 1", value: "opcao_1", position: 0 },
-					{ id: crypto.randomUUID(), label: "Opção 2", value: "opcao_2", position: 1 }
+					{ id: crypto.randomUUID(), label: "Opção 1", value: "opcao_1", position: 1 },
+					{ id: crypto.randomUUID(), label: "Opção 2", value: "opcao_2", position: 2 }
 				]
 			}
 		])
@@ -46,7 +54,7 @@ export const SurveyBuilder = ({ questions, visibility, acceptAnonymousAnswers, o
 	}
 
 	const removeQuestion = (index: number) => {
-		onQuestionsChange(questions.filter((_, questionIndex) => questionIndex !== index).map((question, questionIndex) => ({ ...question, position: questionIndex })))
+		onQuestionsChange(normalizeQuestionPositions(questions.filter((_, questionIndex) => questionIndex !== index)))
 	}
 
 	const moveQuestion = (index: number, direction: -1 | 1) => {
@@ -60,7 +68,7 @@ export const SurveyBuilder = ({ questions, visibility, acceptAnonymousAnswers, o
 		next[index] = next[targetIndex]
 		next[targetIndex] = current
 
-		onQuestionsChange(next.map((question, questionIndex) => ({ ...question, position: questionIndex })))
+		onQuestionsChange(normalizeQuestionPositions(next))
 	}
 
 	return (
@@ -143,9 +151,7 @@ export const SurveyBuilder = ({ questions, visibility, acceptAnonymousAnswers, o
 											type="button"
 											variant="ghost"
 											size="icon"
-											onClick={() =>
-												updateQuestion(questionIndex, { options: question.options.filter((_, currentIndex) => currentIndex !== optionIndex).map((current, currentIndex) => ({ ...current, position: currentIndex })) })
-											}
+											onClick={() => updateQuestion(questionIndex, { options: normalizeOptionPositions(question.options.filter((_, currentIndex) => currentIndex !== optionIndex)) })}
 										>
 											<Trash2 className="size-4" />
 										</Button>
@@ -156,7 +162,10 @@ export const SurveyBuilder = ({ questions, visibility, acceptAnonymousAnswers, o
 									variant="outline"
 									onClick={() =>
 										updateQuestion(questionIndex, {
-											options: [...question.options, { id: crypto.randomUUID(), label: `Opção ${question.options.length + 1}`, value: `opcao_${question.options.length + 1}`, position: question.options.length }]
+											options: normalizeOptionPositions([
+												...question.options,
+												{ id: crypto.randomUUID(), label: `Opção ${question.options.length + 1}`, value: `opcao_${question.options.length + 1}`, position: getBaseOnePosition(question.options.length) }
+											])
 										})
 									}
 								>

@@ -6,7 +6,7 @@ const surveyQuestionOptionSchema = z.object({
 	id: z.string().uuid().optional(),
 	label: z.string().trim().min(1).max(120),
 	value: z.string().trim().min(1).max(120),
-	position: z.number().int().min(0)
+	position: z.number().int().min(1)
 })
 
 const surveyQuestionConfigSchema = z.unknown().default({})
@@ -18,7 +18,7 @@ export const surveyQuestionSchema = z
 		description: z.string().trim().max(1200).nullable().optional(),
 		type: surveyQuestionTypeSchema,
 		required: z.boolean().default(false),
-		position: z.number().int().min(0),
+		position: z.number().int().min(1),
 		configJson: surveyQuestionConfigSchema.optional(),
 		options: z.array(surveyQuestionOptionSchema).default([])
 	})
