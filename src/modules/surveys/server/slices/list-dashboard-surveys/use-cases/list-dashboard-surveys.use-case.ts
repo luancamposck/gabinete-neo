@@ -17,7 +17,7 @@ const prefixLog = "[listDashboardSurveysUseCase]:"
 const MSG_SUCCESS = "Pesquisas do dashboard listadas com sucesso."
 const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para acessar o dashboard."
 const MSG_ORG_NOT_FOUND = "Não foi possível identificar a organização deste domínio."
-const MSG_NOT_MEMBER = "Você não tem acesso a essa organização."
+const MSG_NOT_MEMBER = "Você precisa ter vínculo ativo com essa organização para acessar as pesquisas."
 const MSG_INFRA_ERROR = "Não foi possível listar as pesquisas do dashboard. Tente novamente em instantes."
 
 const FALLBACK_INFRA_ERROR = {
@@ -93,12 +93,12 @@ export async function listDashboardSurveysUseCase(): OperationResponse<ListDashb
 		const organizationId = orgRes.data.organizationId
 
 		// ============================================================
-		// 2) Validar membership do usuário na organização
+		// 2) Validar membership ativo do usuário na organização
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
-		// - sem membership => not_member
-		// - com membership => seguir listagem
+		// - sem membership / membership inativo => not_member
+		// - membership ativo => seguir listagem
 		// ============================================================
 		const membershipRes = await isUserMemberOfOrganizationService({ organizationId, userId })
 		if (membershipRes.success === false) {
@@ -106,7 +106,7 @@ export async function listDashboardSurveysUseCase(): OperationResponse<ListDashb
 			return FALLBACK_INFRA_ERROR
 		}
 
-		if (membershipRes.data.isMember === false) {
+		if (membershipRes.data.isActive === false) {
 			return {
 				success: false,
 				message: MSG_NOT_MEMBER,

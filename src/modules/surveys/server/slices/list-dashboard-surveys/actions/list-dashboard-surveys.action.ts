@@ -1,7 +1,7 @@
 "use server"
 
 import { listDashboardSurveysUseCase } from "@/modules/surveys/server/slices/list-dashboard-surveys/use-cases/list-dashboard-surveys.use-case"
-import { mapSurveyRowToSurveySummaryDTO, type SurveyDashboardListItemDTO } from "@/modules/surveys/shared/types/dto"
+import { mapSurveyRowToSurveyDashboardListItemDTO, type SurveyDashboardListItemDTO } from "@/modules/surveys/shared/types/dto"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ListDashboardSurveysActionRes = {
@@ -18,7 +18,7 @@ export async function listDashboardSurveysAction(): OperationResponse<ListDashbo
 		success: true,
 		message: res.message,
 		data: {
-			surveys: res.data.surveys.map(mapSurveyRowToSurveySummaryDTO)
+			surveys: res.data.surveys.map(mapSurveyRowToSurveyDashboardListItemDTO)
 		}
 	}
 }

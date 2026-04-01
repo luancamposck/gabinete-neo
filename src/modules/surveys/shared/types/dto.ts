@@ -18,7 +18,7 @@ export type SurveySummaryDTO = {
 
 export type SurveyPublicListItemDTO = Pick<SurveySummaryDTO, "id" | "title" | "description" | "status" | "visibility" | "startsAt" | "endsAt" | "acceptAnonymousAnswers">
 
-export type SurveyDashboardListItemDTO = SurveySummaryDTO
+export type SurveyDashboardListItemDTO = Pick<SurveySummaryDTO, "id" | "title" | "description" | "status" | "visibility" | "startsAt" | "endsAt" | "acceptAnonymousAnswers" | "createdAt" | "updatedAt">
 
 export type SurveyListItemDTO = SurveySummaryDTO
 
@@ -119,6 +119,21 @@ export function mapSurveyRowToSurveyPublicListItemDTO(survey: SurveyRow): Survey
 		startsAt: survey.starts_at,
 		endsAt: survey.ends_at,
 		acceptAnonymousAnswers: survey.accept_anonymous_answers
+	}
+}
+
+export function mapSurveyRowToSurveyDashboardListItemDTO(survey: SurveyRow): SurveyDashboardListItemDTO {
+	return {
+		id: survey.id,
+		title: survey.title,
+		description: survey.description,
+		status: survey.status,
+		visibility: survey.visibility,
+		startsAt: survey.starts_at,
+		endsAt: survey.ends_at,
+		acceptAnonymousAnswers: survey.accept_anonymous_answers,
+		createdAt: survey.created_at,
+		updatedAt: survey.updated_at
 	}
 }
 

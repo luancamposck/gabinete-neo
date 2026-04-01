@@ -14,6 +14,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey module code should prefer aliases from `src/modules/surveys/shared/types/db.ts` over inline `TablesInsert<T>` or enum lookups so schema drift is absorbed in one place.
 - Survey server actions should map Supabase rows into camelCase DTOs from `src/modules/surveys/shared/types/dto.ts` so UI-facing contracts stay stable even when database columns remain snake_case.
 - Public survey listing should apply publication plus active date-window filtering in the backend and expose a narrowed DTO so `/surveys` does not need extra availability filtering or raw survey metadata.
+- Dashboard survey listing should gate on active membership and expose a dedicated DTO mapper instead of reusing the broader survey summary contract.
 
 ---
 
@@ -172,4 +173,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Public listing availability should be derived from the current time against `starts_at` and `ends_at`, not left for the UI to infer after fetching mixed survey states.
   - A dedicated public-list DTO avoids leaking dashboard-only metadata such as organization ownership fields into anonymous surfaces.
   - When the repo still fetches full survey rows, the service layer is the right place to strip fields and enforce list-specific business filtering before the action responds.
+---
+
+## 2026-04-01 23:34 UTC - US-011
+- Refactored the dashboard surveys listing backend to require an authenticated user with active membership in the current tenant before returning survey data.
+- Narrowed `SurveyDashboardListItemDTO` to dashboard list metadata only and added a dedicated mapper so the action no longer reuses the broader survey summary contract.
+- Files changed: `src/modules/surveys/server/slices/list-dashboard-surveys/actions/list-dashboard-surveys.action.ts`, `src/modules/surveys/server/slices/list-dashboard-surveys/use-cases/list-dashboard-surveys.use-case.ts`, `src/modules/surveys/shared/types/dto.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification is still required because this story affects the dashboard listing contract and browser tooling was unavailable in this environment.
+- **Learnings for future iterations:**
+  - The dashboard listing should check `isActive` explicitly even when the membership service also derives a convenience `isMember` flag, because the story contract is about active membership.
+  - Separate mappers for public and dashboard list surfaces keep list DTOs intentionally narrow without forcing the rest of the survey summary contract onto every consumer.
+  - The existing survey repo can still fetch tenant survey rows broadly while the action layer owns the responsibility for shaping the safe UI contract.
 ---
