@@ -7,7 +7,20 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - The mandatory Ralph quality gate is blocked by Biome errors, but Biome warnings can remain without failing `fix:biome` or `lint:biome`.
 - Survey question and option ordering should be normalized from UI array order and persisted as base-1 positions (`index + 1`) to stay aligned with the database constraints.
 - Public survey submission must treat unauthenticated and anonymous as separate concerns: fingerprint dedupe applies to both, but `is_anonymous` should only be `true` when the respondent explicitly chooses anonymity.
+- Cross-table survey integrity that cannot be expressed with a plain foreign key should be enforced with a dedicated Postgres trigger, while letting existing FKs keep ownership of missing-parent errors.
 
+---
+
+## 2026-04-01 21:18 UTC - US-004
+- Implemented a database integrity trigger for `public.survey_response_items` so each item now verifies that its `question_id` belongs to the same survey as the parent `response_id`.
+- Added a dedicated Supabase migration that raises a check-style database error before commit when a tampered payload tries to mix questions from another survey.
+- Files changed: `supabase/migrations/20260401230000_enforce_survey_response_item_survey_integrity.sql`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story is database/backend-only.
+- **Learnings for future iterations:**
+  - `survey_response_items` needs trigger-based cross-table validation because the invariant depends on both `response_id` and `question_id`, not just one foreign key.
+  - The safest pattern here is to return early when parent rows are missing and let the existing foreign keys emit their standard database errors.
+  - A `23514` check-style exception is a good fit for rejecting tampered cross-survey payloads without changing the table shape.
 ---
 
 ## 2026-04-01 20:59 UTC - US-001
