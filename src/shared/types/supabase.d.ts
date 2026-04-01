@@ -592,6 +592,9 @@ export type Database = {
 					id: string
 					is_anonymous: boolean
 					organization_id: string | null
+					respondent_email: string | null
+					respondent_name: string | null
+					respondent_phone: string | null
 					respondent_user_id: string | null
 					responder_fingerprint_hash: string | null
 					submitted_at: string
@@ -601,6 +604,9 @@ export type Database = {
 					id?: string
 					is_anonymous?: boolean
 					organization_id?: string | null
+					respondent_email?: string | null
+					respondent_name?: string | null
+					respondent_phone?: string | null
 					respondent_user_id?: string | null
 					responder_fingerprint_hash?: string | null
 					submitted_at?: string
@@ -610,6 +616,9 @@ export type Database = {
 					id?: string
 					is_anonymous?: boolean
 					organization_id?: string | null
+					respondent_email?: string | null
+					respondent_name?: string | null
+					respondent_phone?: string | null
 					respondent_user_id?: string | null
 					responder_fingerprint_hash?: string | null
 					submitted_at?: string

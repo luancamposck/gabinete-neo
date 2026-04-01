@@ -11,6 +11,9 @@ type SubmitSurveyResponseUseCaseParams = {
 	surveyId: string
 	organizationId?: string | null
 	isAnonymous?: boolean
+	respondentName?: string | null
+	respondentEmail?: string | null
+	respondentPhone?: string | null
 	answers: {
 		questionId: string
 		answerText?: string | null
@@ -33,6 +36,12 @@ const FALLBACK_INFRA_ERROR = {
 	code: "infra_error"
 } as const
 
+function normalizeOptionalIdentityField(value?: string | null) {
+	const trimmed = value?.trim()
+
+	return trimmed && trimmed.length > 0 ? trimmed : null
+}
+
 export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUseCaseParams): OperationResponse<{ response: SurveyResponseRow }, ErrorCodes> {
 	try {
 		// ============================================================
@@ -40,7 +49,8 @@ export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUs
 		//
 		// Possibilidades:
 		// - usuário autenticado + não anônima => usar respondent_user_id
-		// - usuário não autenticado OU resposta anônima => usar fingerprint
+		// - usuário não autenticado + não anônima => usar fingerprint + snapshot manual
+		// - resposta anônima => usar fingerprint e limpar identidade
 		// ============================================================
 		const authRes = await getCurrentAuthUserService()
 		if (authRes.success === false && authRes.code === "infra_error") {
@@ -49,7 +59,11 @@ export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUs
 
 		const authUserId = authRes.success ? authRes.data.user.id : null
 		const isAnonymousAnswer = params.isAnonymous ?? false
+		const isPublicIdentifiedAnswer = !authUserId && !isAnonymousAnswer
 		const mustUseFingerprint = !authUserId || isAnonymousAnswer
+		const respondentName = isAnonymousAnswer ? null : normalizeOptionalIdentityField(params.respondentName)
+		const respondentEmail = isAnonymousAnswer ? null : normalizeOptionalIdentityField(params.respondentEmail)
+		const respondentPhone = isAnonymousAnswer ? null : normalizeOptionalIdentityField(params.respondentPhone)
 
 		// ============================================================
 		// 1) Carregar questões da survey e validar respostas enviadas
@@ -120,8 +134,11 @@ export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUs
 		const submitRes = await submitSurveyResponseService({
 			survey_id: params.surveyId,
 			organization_id: params.organizationId ?? null,
-			respondent_user_id: respondentUserId,
-			is_anonymous: mustUseFingerprint,
+			respondent_user_id: isAnonymousAnswer ? null : respondentUserId,
+			respondent_name: isPublicIdentifiedAnswer ? respondentName : null,
+			respondent_email: isPublicIdentifiedAnswer ? respondentEmail : null,
+			respondent_phone: isPublicIdentifiedAnswer ? respondentPhone : null,
+			is_anonymous: isAnonymousAnswer,
 			responder_fingerprint_hash: responderFingerprintHash
 		})
 

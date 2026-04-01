@@ -21,6 +21,9 @@ export async function submitSurveyResponseAction(input: unknown): OperationRespo
 		surveyId: parsed.data.surveyId,
 		organizationId: parsed.data.organizationId ?? null,
 		isAnonymous: parsed.data.isAnonymous,
+		respondentName: parsed.data.respondentName ?? null,
+		respondentEmail: parsed.data.respondentEmail ?? null,
+		respondentPhone: parsed.data.respondentPhone ?? null,
 		answers: parsed.data.answers
 	})
 }

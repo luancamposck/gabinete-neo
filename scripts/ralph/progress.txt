@@ -6,6 +6,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey management authorization should preserve the existing OWNER bypass and use `hasMembershipPermissionService` with `PERMISSIONS.SURVEYS_MANAGE` for non-owner members.
 - The mandatory Ralph quality gate is blocked by Biome errors, but Biome warnings can remain without failing `fix:biome` or `lint:biome`.
 - Survey question and option ordering should be normalized from UI array order and persisted as base-1 positions (`index + 1`) to stay aligned with the database constraints.
+- Public survey submission must treat unauthenticated and anonymous as separate concerns: fingerprint dedupe applies to both, but `is_anonymous` should only be `true` when the respondent explicitly chooses anonymity.
 
 ---
 
@@ -66,4 +67,17 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - The surveys module currently derives structural order from array order, so server persistence should continue to normalize positions instead of trusting incoming `position` values blindly.
   - Reindex migrations that touch unique `(parent_id, position)` constraints are safer when they use `row_number()` over a deterministic ordering instead of incremental updates.
   - UI helpers that remove or reorder nested survey entities should renormalize both question and option positions together to avoid stale payload state.
+---
+
+## 2026-04-01 21:16 UTC - US-003
+- Added a Supabase migration to create nullable `respondent_name`, `respondent_email`, and `respondent_phone` on `public.survey_responses`, and updated the anonymity trigger so anonymous submissions always clear manual identity while identified submissions can use either `respondent_user_id` or the manual snapshot.
+- Extended the survey response action schema and use-case so unauthenticated identified submissions can persist manual respondent fields without being forced into `is_anonymous = true`, while fingerprint dedupe still applies.
+- Updated `src/shared/types/supabase.d.ts` to include the new `survey_responses` fields because the repository's `npm run db:gen-types` command currently requires Supabase CLI auth that is unavailable in this Codex environment.
+- Files changed: `supabase/migrations/20260401223000_add_public_respondent_identity_fields.sql`, `src/modules/surveys/shared/validations/submit-survey-response.schema.ts`, `src/modules/surveys/server/slices/submit-survey-response/actions/submit-survey-response.action.ts`, `src/modules/surveys/server/slices/submit-survey-response/use-cases/submit-survey-response.use-case.ts`, `src/shared/types/supabase.d.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run db:gen-types` (failed: missing Supabase access token after truncating the target file, which was restored), `npm run fix:biome`, `npm run lint:biome`, and `npm run typecheck`.
+- Result: the required quality gates passed. Manual browser verification was not run because this story is schema/backend-only.
+- **Learnings for future iterations:**
+  - The current `db:gen-types` script redirects before Supabase CLI authentication completes, so a failed auth attempt can empty `src/shared/types/supabase.d.ts`; restore the file before applying manual follow-up changes.
+  - Manual respondent identity belongs in the submission contract, not only in the database schema, otherwise the current submit flow will keep collapsing public identified responses into anonymous ones.
+  - The existing anonymity trigger is the right place to enforce nulling identity fields for anonymous responses so future services and views can rely on sanitized rows.
 ---
