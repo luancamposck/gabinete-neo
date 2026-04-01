@@ -10,6 +10,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Cross-table survey integrity that cannot be expressed with a plain foreign key should be enforced with a dedicated Postgres trigger, while letting existing FKs keep ownership of missing-parent errors.
 - Survey read RLS should anchor child-table visibility (`survey_questions`, `survey_question_options`) to the parent survey chain instead of duplicating availability and membership predicates in every table policy.
 - When enabling RLS on write-only survey flows, prefer `INSERT` operations without `.select()` and generate IDs in the application layer so raw response tables do not need extra `SELECT` policies just to return inserted rows.
+- Safe survey response views should be the single place that masks both `respondent_user_id` and manual respondent snapshot fields for anonymous submissions, while preserving identified public snapshots for authorized result consumers.
 
 ---
 
@@ -120,4 +121,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Write RLS for response child tables is easier to keep consistent when the policy delegates survey availability and membership checks to security-definer helper functions.
   - Returning inserted rows from raw response tables under RLS forces extra read policies, so generating IDs client-side and skipping `.select()` is the safer default for submit-only flows.
   - Response-item insert policies should validate against both the parent response and the target question so private-survey restrictions stay aligned even after the response header is created.
+---
+
+## 2026-04-01 21:27 UTC - US-007
+- Updated the safe survey response views so anonymous responses now null out both `respondent_user_id` and the manual respondent snapshot fields, while identified public responses keep `respondent_name`, `respondent_email`, and `respondent_phone` available through the safe projection.
+- Added Supabase type coverage and survey DB aliases for `survey_responses_safe` and `survey_response_items_safe` so the codebase can consume the updated views without raw table access.
+- Files changed: `supabase/migrations/20260402002000_update_survey_safe_response_views.sql`, `src/shared/types/supabase.d.ts`, `src/modules/surveys/shared/types/db.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story is database/backend-only.
+- **Learnings for future iterations:**
+  - When survey result consumers need respondent identity, expose it via safe views instead of the raw `survey_responses` table so anonymity rules stay centralized.
+  - `survey_response_items_safe` should mirror the identity columns from `survey_responses_safe`; otherwise downstream analytics consumers may accidentally fall back to raw joins.
+  - Manual Supabase type maintenance needs the `Views` section updated whenever migrations redefine SQL views, even if table schemas stay unchanged.
 ---

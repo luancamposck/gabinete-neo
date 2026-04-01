@@ -787,7 +787,84 @@ export type Database = {
 			}
 		}
 		Views: {
-			[_ in never]: never
+			survey_response_items_safe: {
+				Row: {
+					answer_option_ids_json: Json | null
+					answer_ranking_json: Json | null
+					answer_text: string | null
+					id: string | null
+					is_anonymous: boolean | null
+					organization_id: string | null
+					question_id: string | null
+					respondent_email: string | null
+					respondent_name: string | null
+					respondent_phone: string | null
+					respondent_user_id: string | null
+					response_id: string | null
+					submitted_at: string | null
+					survey_id: string | null
+				}
+				Relationships: [
+					{
+						foreignKeyName: "survey_response_items_question_id_fkey"
+						columns: ["question_id"]
+						isOneToOne: false
+						referencedRelation: "survey_questions"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "survey_response_items_response_id_fkey"
+						columns: ["response_id"]
+						isOneToOne: false
+						referencedRelation: "survey_responses"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "survey_response_items_response_id_fkey"
+						columns: ["response_id"]
+						isOneToOne: false
+						referencedRelation: "survey_responses_safe"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			survey_responses_safe: {
+				Row: {
+					id: string | null
+					is_anonymous: boolean | null
+					organization_id: string | null
+					respondent_email: string | null
+					respondent_name: string | null
+					respondent_phone: string | null
+					respondent_user_id: string | null
+					responder_fingerprint_hash: string | null
+					submitted_at: string | null
+					survey_id: string | null
+				}
+				Relationships: [
+					{
+						foreignKeyName: "survey_responses_organization_id_fkey"
+						columns: ["organization_id"]
+						isOneToOne: false
+						referencedRelation: "organizations"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "survey_responses_respondent_user_id_fkey"
+						columns: ["respondent_user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "survey_responses_survey_id_fkey"
+						columns: ["survey_id"]
+						isOneToOne: false
+						referencedRelation: "surveys"
+						referencedColumns: ["id"]
+					}
+				]
+			}
 		}
 		Functions: {
 			generate_invite_code: { Args: { len?: number }; Returns: string }
