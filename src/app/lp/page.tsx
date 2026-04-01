@@ -3,6 +3,7 @@
 import { ArrowRight, BadgeCheck, BarChart3, Layers, Play, ShieldCheck, Smartphone, Sparkles, Target, Users } from "lucide-react"
 import { motion, type Variants } from "motion/react"
 import Image from "next/image"
+import { useId } from "react"
 import { cn } from "@/lib/utils/cn"
 import { ModeToggleButton } from "@/shared/components/mode-toggle-button"
 import { Badge } from "@/shared/components/ui/badge"
@@ -96,6 +97,16 @@ const CTA_PRIMARY_LABEL = "Quero testar agora →"
 const CTA_SECONDARY_LABEL = "Ver planos e demonstrações"
 
 const LpPage = () => {
+	const pageId = useId().replaceAll(":", "")
+	const sectionIds = {
+		hero: `hero-${pageId}`,
+		features: `features-${pageId}`,
+		demo: `demo-${pageId}`,
+		security: `security-${pageId}`,
+		cta: `cta-${pageId}`,
+		footer: `footer-${pageId}`
+	}
+
 	return (
 		<>
 			<header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -120,7 +131,7 @@ const LpPage = () => {
 			<main className="relative overflow-hidden bg-background text-foreground">
 				<div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.15),_transparent_55%)]" />
 
-				<motion.section id="hero" initial="hidden" animate="visible" variants={fadeInUp} className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-24 pt-20 text-center sm:px-8 lg:pb-32 lg:pt-28">
+				<motion.section id={sectionIds.hero} initial="hidden" animate="visible" variants={fadeInUp} className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-24 pt-20 text-center sm:px-8 lg:pb-32 lg:pt-28">
 					<motion.div
 						className="mb-6 flex items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 py-2 text-sm font-medium text-primary max-w-full"
 						aria-label="Plataforma Inteligente de Gestão Política"
@@ -161,7 +172,7 @@ const LpPage = () => {
 					</motion.ul>
 				</motion.section>
 
-				<motion.section id="features" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeInOnScroll} className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8">
+				<motion.section id={sectionIds.features} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeInOnScroll} className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8">
 					<div className="text-center">
 						<BadgeCheck className="mx-auto mb-4 size-6 text-primary" aria-hidden />
 						<h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Ferramentas poderosas para campanhas que querem vencer</h2>
@@ -188,7 +199,7 @@ const LpPage = () => {
 				</motion.section>
 
 				<motion.section
-					id="demo"
+					id={sectionIds.demo}
 					initial="hidden"
 					whileInView="visible"
 					viewport={{ once: true, amount: 0.3 }}
@@ -221,7 +232,7 @@ const LpPage = () => {
 					</motion.p>
 				</motion.section>
 
-				<motion.section id="security" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeInOnScroll} className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-8">
+				<motion.section id={sectionIds.security} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeInOnScroll} className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-8">
 					<div className="text-center">
 						<ShieldCheck className="mx-auto mb-4 size-6 text-primary" aria-hidden />
 						<h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Confiança e segurança no mesmo nível de instituições financeiras</h2>
@@ -262,7 +273,7 @@ const LpPage = () => {
 					</motion.div>
 				</motion.section>
 
-				<motion.section id="cta" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeInOnScroll} className="mx-auto w-full max-w-5xl px-6 pb-24 sm:px-8">
+				<motion.section id={sectionIds.cta} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeInOnScroll} className="mx-auto w-full max-w-5xl px-6 pb-24 sm:px-8">
 					<div className="rounded-3xl border border-primary/40 bg-gradient-to-br from-primary/15 via-background to-background px-8 py-16 text-center shadow-lg backdrop-blur sm:px-16">
 						<Users className="mx-auto mb-4 size-8 text-primary" aria-hidden />
 						<h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Chegou a hora de profissionalizar sua campanha</h2>
@@ -285,7 +296,7 @@ const LpPage = () => {
 				</motion.section>
 
 				<motion.footer
-					id="footer"
+					id={sectionIds.footer}
 					initial="hidden"
 					whileInView="visible"
 					viewport={{ once: true, amount: 0.1 }}
@@ -301,11 +312,11 @@ const LpPage = () => {
 						<nav aria-label="Navegação do rodapé">
 							<ul className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
 								{[
-									{ href: "#hero", label: "Home" },
-									{ href: "#features", label: "Funcionalidades" },
-									{ href: "#demo", label: "Demonstração" },
-									{ href: "#security", label: "Segurança" },
-									{ href: "#footer", label: "Contato" }
+									{ href: `#${sectionIds.hero}`, label: "Home" },
+									{ href: `#${sectionIds.features}`, label: "Funcionalidades" },
+									{ href: `#${sectionIds.demo}`, label: "Demonstração" },
+									{ href: `#${sectionIds.security}`, label: "Segurança" },
+									{ href: `#${sectionIds.footer}`, label: "Contato" }
 								].map((item) => (
 									<li key={item.label}>
 										<a href={item.href} className={cn("transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2")}>

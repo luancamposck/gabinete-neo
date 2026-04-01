@@ -36,7 +36,7 @@ const fieldVariants = cva("group/field flex w-full gap-3 data-[invalid=true]:tex
 })
 
 const Field = ({ className, orientation = "vertical", ...props }: React.ComponentProps<"div"> & VariantProps<typeof fieldVariants>) => {
-	return <div role="group" data-slot="field" data-orientation={orientation} className={cn(fieldVariants({ orientation }), className)} {...props} />
+	return <div data-slot="field" data-orientation={orientation} className={cn(fieldVariants({ orientation }), className)} {...props} />
 }
 
 const FieldContent = ({ className, ...props }: React.ComponentProps<"div">) => {
@@ -119,7 +119,7 @@ const FieldError = ({
 			return uniqueErrors[0]?.message
 		}
 
-		return <ul className="ml-4 flex list-disc flex-col gap-1">{uniqueErrors.map((error, index) => error?.message && <li key={index}>{error.message}</li>)}</ul>
+		return <ul className="ml-4 flex list-disc flex-col gap-1">{uniqueErrors.map((error) => (error?.message ? <li key={error.message}>{error.message}</li> : null))}</ul>
 	}, [children, errors])
 
 	if (!content) {

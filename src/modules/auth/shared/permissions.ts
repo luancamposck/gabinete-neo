@@ -1,6 +1,7 @@
 export const PERMISSIONS = {
 	ORG_ADMIN_READ: "org.admin.read",
 	ORG_ADMIN_UPDATE: "org.admin.update",
+	SURVEYS_MANAGE: "surveys.manage",
 	USERS_READ: "users.read",
 	ROLES_READ: "roles.read",
 	ROLES_UPDATE: "roles.update",

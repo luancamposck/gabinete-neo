@@ -25,7 +25,7 @@ type CreateSurveyUseCaseParams = {
 type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "infra_error"
 
 const prefixLog = "[createSurveyUseCase]:"
-const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.ORG_ADMIN_UPDATE
+const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.SURVEYS_MANAGE
 
 const MSG_SUCCESS = "Pesquisa criada com sucesso."
 const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para criar pesquisas."

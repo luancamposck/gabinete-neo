@@ -12,7 +12,7 @@ import type { OperationResponse } from "@/shared/types/operation-response.types"
 type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "min_questions_required" | "infra_error"
 
 const prefixLog = "[publishSurveyUseCase]:"
-const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.ORG_ADMIN_UPDATE
+const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.SURVEYS_MANAGE
 
 const MSG_SUCCESS = "Pesquisa publicada com sucesso."
 const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para publicar pesquisas."

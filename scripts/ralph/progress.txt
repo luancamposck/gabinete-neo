@@ -1,250 +1,55 @@
 # Ralph Progress Log
-Started: Thu Mar 26 12:16:00 PDT 2026
+Started: Wed Apr  1 13:31:06 PDT 2026
 ---
 
 ## Codebase Patterns
-- Module UI files live under `src/modules/<module>/shared/ui/`, not `src/modules/<module>/ui/`
-- Some moved files have path comments on line 1 (e.g., `// @/modules/...`) that need updating when moved
-- No internal cross-references between onboarding UI files — they're independent
-- Pre-existing biome lint errors exist in sidebar.tsx and world-people-map-maplibre.tsx — not from migrations
-- When moving `data-table/`, also update references from sibling folders (`users/`) that import data-table files
+- Survey management authorization should preserve the existing OWNER bypass and use `hasMembershipPermissionService` with `PERMISSIONS.SURVEYS_MANAGE` for non-owner members.
+- The mandatory Ralph quality gate is blocked by Biome errors, but Biome warnings can remain without failing `fix:biome` or `lint:biome`.
+
 ---
 
-## 2026-03-26 - US-007
-- Moved 3 files from `src/modules/accounts/onboarding/ui/` to `src/modules/accounts/onboarding/shared/ui/`
-- Updated imports in: `src/app/reset-password/page.tsx`, `src/app/forgot-password/page.tsx`, `src/modules/auth/shared/ui/auth-tabs.tsx`
-- Updated file header comments in all 3 moved files
-- Removed empty `src/modules/accounts/onboarding/ui/` directory
-- Files changed: 6 source files
+## 2026-04-01 20:59 UTC - US-001
+- Implemented the dedicated `surveys.manage` permission contract across auth shared constants and survey management use-cases.
+- Added a Supabase migration to seed `surveys.manage` in `public.permissions`.
+- Files changed: `src/modules/auth/shared/permissions.ts`, `src/modules/auth/shared/permission-presenter.ts`, `src/modules/surveys/server/slices/create-survey/use-cases/create-survey.use-case.ts`, `src/modules/surveys/server/slices/close-survey/use-cases/close-survey.use-case.ts`, `src/modules/surveys/server/slices/publish-survey/use-cases/publish-survey.use-case.ts`, `src/modules/surveys/server/slices/update-survey/use-cases/update-survey.use-case.ts`, `supabase/migrations/20260401143000_seed_permission_surveys_manage.sql`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: `typecheck` passed, but the full gate is still blocked by pre-existing Biome errors outside the surveys scope (`src/app/lp/page.tsx`, `src/shared/components/vortex.tsx`, `src/modules/organizations/insights/people-map/shared/ui/world-people-map-maplibre.tsx`), so this story was not marked as passed and no commit was created.
 - **Learnings for future iterations:**
-  - Files have path comments on line 1 that should be updated after moving
-  - No internal cross-references in this batch — each form component is independent
-  - `npm run fix:biome` shows pre-existing errors in other files but doesn't affect these changes
-  - Typecheck passes cleanly after import updates
+  - Survey authorization is already centralized in use-cases, so permission-key changes should be applied there rather than in repos or services.
+  - The repository baseline currently has global Biome violations outside surveys; future Ralph iterations should expect the mandatory quality gate to fail until that baseline is cleaned up.
+  - Auth permission labels are maintained in `permission-presenter.ts`; new permission keys need both the constant and the friendly label to keep admin surfaces readable.
 ---
 
-## 2026-03-26 - US-008
-- Moved 3 files from `src/modules/accounts/users/ui/` to `src/modules/accounts/users/shared/ui/`: edit-password-form.tsx, edit-username-form.tsx, edit-address-form.tsx
-- Updated 3 imports in `src/app/dashboard/my-account/page.tsx`
-- Removed empty `src/modules/accounts/users/ui/` directory
-- Files changed: 4 files (3 renames + 1 import update)
+## 2026-04-01 21:01 UTC - US-001
+- Re-validated that the highest-priority pending story is still `US-001` on branch `ralph/surveys-module`, and confirmed the permission/migration implementation is already present in the worktree.
+- Re-ran the required quality gates for this story: `npm run fix:biome`, `npm run lint:biome`, and `npm run typecheck`.
+- Files changed: `scripts/ralph/progress.txt`.
+- Result: `typecheck` passed again, but `fix:biome` and `lint:biome` still fail on unrelated baseline files (`src/app/lp/page.tsx`, `src/shared/components/ui/calendar.tsx`, `src/shared/components/ui/field.tsx`, `src/shared/components/ui/input-group.tsx`, `src/shared/components/vortex.tsx`, `src/modules/organizations/insights/people-map/shared/ui/world-people-map-maplibre.tsx`), so `US-001` remains uncommitted and `passes` stays `false`.
 - **Learnings for future iterations:**
-  - Path comments on line 1 of these files were already correct (updated by previous iteration)
-  - No internal cross-references between users UI files — they're independent
-  - Only one consumer file (`page.tsx`) needed updating
+  - Ralph should treat `US-001` as functionally implemented but blocked by repository-wide Biome debt until those unrelated files are cleaned up.
+  - Running `npm run fix:biome` does not clear the current blockers because several diagnostics require manual refactors, not safe auto-fixes.
+  - With a dirty shared worktree, unrelated modified files should not be folded into the story commit just to satisfy the gate.
 ---
 
-## 2026-03-26 - US-009
-- Moved 2 files from `src/modules/app-shell/ui/` to `src/modules/app-shell/shared/ui/`: app-sidebar.tsx, nav-footer.tsx
-- Updated internal cross-reference in app-sidebar.tsx (NavFooter import)
-- Updated import in `src/app/dashboard/layout.tsx`
-- Removed empty `src/modules/app-shell/ui/` directory
-- Files changed: 3 files (2 renames + 1 import update in layout.tsx)
+## 2026-04-01 21:02 UTC - US-001
+- Confirmed branch `ralph/surveys-module` matches `scripts/ralph/prd.json` and that `US-001` is still the highest-priority story with `passes: false`.
+- Re-validated the existing `surveys.manage` implementation across auth shared permission files, survey management use-cases, and the Supabase seed migration.
+- Files changed: `scripts/ralph/progress.txt`.
+- Result: `npm run typecheck` passed, but `npm run fix:biome` and `npm run lint:biome` still fail on unrelated baseline files (`src/app/lp/page.tsx`, `src/shared/components/ui/calendar.tsx`, `src/shared/components/ui/input-group.tsx`, `src/shared/components/vortex.tsx`, `src/modules/organizations/insights/people-map/shared/ui/world-people-map-maplibre.tsx`), so this iteration cannot mark `US-001` as passed or create the required commit.
 - **Learnings for future iterations:**
-  - app-sidebar.tsx has an internal cross-reference to nav-footer.tsx that needs updating
-  - No path comments on line 1 in these files
-  - Typecheck passes cleanly
+  - `US-001` does not need additional product code; the remaining blocker is the repository-wide Biome baseline outside the story scope.
+  - The mandatory Ralph loop should keep `passes: false` when the implementation exists but the required quality gate cannot pass cleanly.
+  - Future iterations should avoid touching unrelated lint-debt files unless the selected story explicitly includes that cleanup work.
 ---
 
-## 2026-03-26 - US-010
-- Moved 4 files from `src/modules/organizations/ui/` to `src/modules/organizations/shared/ui/`: link-share-preview.tsx, organization-config.context.tsx, edit-organization-image-form.tsx, edit-organization-field-form.tsx
-- Updated 4 imports in `src/app/dashboard/config/organization/page.tsx`
-- Updated 3 internal cross-references (edit-organization-field-form, edit-organization-image-form, and link-share-preview all import organization-config.context)
-- Updated path comments on line 1 in all 4 moved files
-- Removed empty `src/modules/organizations/ui/` directory
-- Files changed: 5 files (4 renames + 1 page import update)
+## 2026-04-01 21:08 UTC - US-001
+- Finalized the `surveys.manage` permission story by keeping the dedicated auth constant, friendly label, seed migration, and survey management use-cases aligned on the new permission key.
+- Unblocked the mandatory repository quality gate by fixing the current Biome error set in shared UI and visualization files without changing the survey contract itself.
+- Files changed: `src/modules/auth/shared/permissions.ts`, `src/modules/auth/shared/permission-presenter.ts`, `src/modules/surveys/server/slices/create-survey/use-cases/create-survey.use-case.ts`, `src/modules/surveys/server/slices/close-survey/use-cases/close-survey.use-case.ts`, `src/modules/surveys/server/slices/publish-survey/use-cases/publish-survey.use-case.ts`, `src/modules/surveys/server/slices/update-survey/use-cases/update-survey.use-case.ts`, `supabase/migrations/20260401143000_seed_permission_surveys_manage.sql`, `src/app/lp/page.tsx`, `src/shared/components/vortex.tsx`, `src/shared/components/ui/calendar.tsx`, `src/shared/components/ui/field.tsx`, `src/shared/components/ui/input-group.tsx`, `src/shared/components/ui/sidebar.tsx`, `src/modules/organizations/insights/people-map/shared/data/brazilian-city-coordinates.ts`, `src/modules/organizations/insights/people-map/shared/ui/world-people-map-maplibre.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story is backend/permission-focused.
 - **Learnings for future iterations:**
-  - Organizations UI files have internal cross-references via the context provider — all 3 consumer files import organization-config.context
-  - biome fix reorders imports automatically after path changes
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-011a
-- Moved entire `src/modules/organizations/memberships/ui/data-table/` tree (10 files) to `src/modules/organizations/memberships/shared/ui/data-table/`
-- Updated import in `src/app/dashboard/network/my-network/page.tsx`
-- Updated all internal cross-references within data-table files (3 files: member-actions-cell.tsx, members-columns.tsx, members-table.tsx)
-- Also updated 2 references in `users/` subfolder that pointed to data-table files (user-role-action-button.tsx, users-columns.tsx) to prevent typecheck breakage
-- Files changed: 13 files (10 renames + 3 import updates)
-- **Learnings for future iterations:**
-  - The `users/` subfolder has cross-references into `data-table/` (role-change-sheet, member-address-popover) — these must be updated when moving data-table even though users/ is in a separate story
-  - Biome errors are pre-existing in other files and don't affect migration work
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-011b
-- Moved 13 files from `src/modules/organizations/memberships/ui/` to `src/modules/organizations/memberships/shared/ui/`: join-organization-button.tsx, roles/ (2 files), users/ (10 files across actions/, cards/, table/ subfolders + users-explorer.tsx)
-- Updated 4 page imports: join/page.tsx, config/roles/page.tsx, config/roles/new/page.tsx, config/users/page.tsx
-- Updated 10 internal cross-references within moved files (users-explorer.tsx had 6, users-columns.tsx had 2, user-actions-cell.tsx had 2, users-cards.tsx had 2)
-- Removed empty `src/modules/organizations/memberships/ui/` directory
-- Files changed: 17 files (13 renames + 4 page import updates)
-- **Learnings for future iterations:**
-  - The users/ subfolder has deep internal cross-references (explorer -> table/cards -> actions) — all must be updated together
-  - users-cards.tsx and user-actions-cell.tsx both import from users/actions/ — easy to miss the cards file
-  - No path comments on line 1 in these files, unlike some earlier batches
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-012
-- Moved 2 files from `src/modules/organizations/referrals/ui/` to `src/modules/organizations/referrals/shared/ui/`: organization-referrals-table.tsx, my-referral-link-button.tsx
-- Updated 2 imports in `src/app/dashboard/network/my-invites/page.tsx`
-- Updated path comment on line 1 of my-referral-link-button.tsx
-- Removed empty `src/modules/organizations/referrals/ui/` directory
-- Files changed: 3 files (2 renames + 1 page import update)
-- **Learnings for future iterations:**
-  - Simple 2-file migration with no internal cross-references between the moved files
-  - my-referral-link-button.tsx has path comment on line 1 that needed updating
-  - organization-referrals-table.tsx had no path comment
-  - Both files import from `@/components/ui/` and `@/hooks/` which will be updated in US-015a and US-019
----
-
-## 2026-03-26 - US-013
-- Moved 6 files from `src/modules/organizations/tasks/ui/` to `src/modules/organizations/tasks/shared/ui/`: create-task-form.tsx, assign-users-to-task-dialog.tsx, data-table/organization-tasks-table.tsx, data-table/organization-tasks-table-toolbar.tsx, data-table/columns.tsx, data-table/organization-task-actions.tsx
-- Updated 2 page imports: task/new/page.tsx, task/all/page.tsx
-- Updated 1 internal cross-reference: organization-task-actions.tsx imports assign-users-to-task-dialog
-- Removed empty `src/modules/organizations/tasks/ui/` directory
-- Files changed: 8 files (6 renames + 2 page imports + 1 internal ref)
-- **Learnings for future iterations:**
-  - organization-task-actions.tsx has one internal cross-reference to assign-users-to-task-dialog.tsx
-  - No path comments on line 1 in these files
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-014
-- Moved 2 files from `src/modules/organizations/insights/people-map/ui/` to `src/modules/organizations/insights/people-map/shared/ui/`: map-client.tsx, world-people-map-maplibre.tsx
-- Updated import in `src/app/dashboard/network/map/page.tsx`
-- Updated internal cross-reference in map-client.tsx (imports world-people-map-maplibre.tsx)
-- Updated path comment on line 1 of map-client.tsx
-- Removed empty `src/modules/organizations/insights/people-map/ui/` directory
-- Files changed: 3 files (2 renames + 1 page import update)
-- **Learnings for future iterations:**
-  - Simple 2-file migration with one internal cross-reference (map-client -> world-people-map-maplibre)
-  - map-client.tsx had path comment on line 1 that needed updating
-  - world-people-map-maplibre.tsx had no path comment
-  - Both files import from `@/components/ui/` which will be updated in US-015a-c
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-015a
-- Moved 13 files from `src/components/ui/` to `src/shared/components/ui/`: accordion.tsx, badge.tsx, button.tsx, calendar.tsx, card.tsx, checkbox.tsx, collapsible.tsx, combobox.tsx, command.tsx, data-table-faceted-filter.tsx, data-table-pagination.tsx, data-table-skeleton.tsx, data-table-view-options.tsx
-- Updated ~90 imports across 47 consumer files from `@/components/ui/<file>` to `@/shared/components/ui/<file>`
-- Updated internal cross-references in moved files (calendar->button, combobox->button+command, data-table-faceted-filter->badge+button+command, data-table-pagination->button, data-table-view-options->button)
-- Files changed: 60 files (13 renames + 47 import updates)
-- **Learnings for future iterations:**
-  - Bulk sed replacement works well for these uniform import paths
-  - Internal cross-references within shadcn files are common (combobox->command, faceted-filter->command+badge)
-  - Files still in `src/components/ui/` (data-table, dialog, etc.) still reference `@/components/ui/` for files not yet moved — these will be fixed in US-015b
-  - Pre-existing lint errors in sidebar.tsx and world-people-map-maplibre.tsx are unrelated to this migration
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-015b
-- Moved 13 files from `src/components/ui/` to `src/shared/components/ui/`: data-table.tsx, dialog.tsx, dropdown-menu.tsx, field.tsx, form.tsx, input-group.tsx, input.tsx, label.tsx, popover.tsx, scroll-area.tsx, select.tsx, separator.tsx, sheet.tsx
-- Updated imports across 46 consumer files from `@/components/ui/<file>` to `@/shared/components/ui/<file>`
-- Left 2 cross-references to not-yet-moved files (table.tsx, textarea.tsx) for US-015c
-- Files changed: 46 files (13 renames + 33 import updates)
-- **Learnings for future iterations:**
-  - data-table.tsx imports from table.tsx and input-group.tsx imports from textarea.tsx — both still in src/components/ui/ until US-015c
-  - Bulk sed replacement continues to work well for uniform import paths
-  - Pre-existing biome lint errors remain unrelated to migration
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-015c
-- Moved 7 files from `src/components/ui/` to `src/shared/components/ui/`: sidebar.tsx, skeleton.tsx, sonner.tsx, table.tsx, tabs.tsx, textarea.tsx, tooltip.tsx
-- Updated imports across 13 consumer files from `@/components/ui/<file>` to `@/shared/components/ui/<file>`
-- Updated internal cross-references in moved files (sidebar->skeleton+tooltip, data-table-skeleton->skeleton+table, data-table->table, input-group->textarea)
-- Removed empty `src/components/ui/` directory
-- Files changed: 20 files (7 renames + 13 import updates)
-- **Learnings for future iterations:**
-  - sidebar.tsx had 2 internal cross-references (skeleton, tooltip) that needed updating
-  - data-table-skeleton.tsx and data-table.tsx both reference table.tsx — easy to miss
-  - All shadcn UI primitives are now consolidated in `src/shared/components/ui/`
-  - `src/components/` still has 4 composed components (mode-toggle-button, theme-provider, vortex, waves) for US-016
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-016
-- Moved 4 files from `src/components/` to `src/shared/components/`: mode-toggle-button.tsx, theme-provider.tsx, vortex.tsx, waves.tsx
-- Updated imports in 9 consumer files: dashboard/layout.tsx, lp/page.tsx, layout.tsx, page.tsx, reset-password/page.tsx, forgot-password/page.tsx, tenant-not-found/page.tsx, error.tsx, join/page.tsx
-- Removed empty `src/components/` directory — no more files at the old location
-- Files changed: 13 files (4 renames + 9 import updates)
-- **Learnings for future iterations:**
-  - `src/components/` is now fully eliminated — all components live under `src/shared/components/`
-  - No internal cross-references between these 4 composed components
-  - No path comments on line 1 in these files
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-017
-- Updated `components.json` aliases to reflect new directory structure after all migrations
-- Changed `aliases.components` from `@/components` to `@/shared/components`
-- Changed `aliases.ui` from `@/components/ui` to `@/shared/components/ui`
-- Changed `aliases.hooks` from `@/hooks` to `@/shared/hooks`
-- `aliases.utils` was already correct (`@/lib/utils`)
-- Files changed: 1 file (components.json)
-- **Learnings for future iterations:**
-  - components.json also has a `hooks` alias that should match `src/shared/hooks/` after US-019
-  - Only the aliases section needed updating; tailwind config and other settings remain the same
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-018
-- Moved `src/providers/query-provider.tsx` to `src/lib/providers/query-provider.tsx`
-- Updated 1 import in `src/app/layout.tsx`
-- Removed empty `src/providers/` directory
-- Files changed: 2 files (1 rename + 1 import update)
-- **Learnings for future iterations:**
-  - Simple 1-file migration with only 1 consumer
-  - Biome auto-reordered imports in layout.tsx after path change
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-019
-- Moved 3 files from `src/hooks/` to `src/shared/hooks/`: use-mobile.ts, use-persisted-table-state.ts, use-referral-link-storage.ts
-- Updated 4 imports in consumer files: sidebar.tsx, organization-tasks-table.tsx, my-referral-link-button.tsx, edit-username-form.tsx
-- Removed empty `src/hooks/` directory
-- Files changed: 7 files (3 renames + 4 import updates)
-- **Learnings for future iterations:**
-  - Simple 3-file migration with no internal cross-references between hooks
-  - Biome auto-reordered imports in all 4 consumer files after path changes
-  - All consumer file paths matched the PRD acceptance criteria (updated paths from Phase 2/3)
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-020
-- Moved `src/shared/data/brazilian-cities-by-state.ts` to `src/shared/constants/brazilian-cities-by-state.ts`
-- Updated 2 imports in consumer files: edit-address-form.tsx, register-and-join-form.tsx
-- Removed empty `src/shared/data/` directory
-- Files changed: 3 files (1 rename + 2 import updates)
-- **Learnings for future iterations:**
-  - Simple 1-file migration with 2 consumers
-  - Biome auto-reordered imports in both consumer files after path change
-  - `src/shared/data/` is now eliminated — static data lives under `src/shared/constants/`
-  - Typecheck passes cleanly
----
-
-## 2026-03-26 - US-021
-- Standardized step comments in 4 task use-cases from `// Step N:` format to the AGENTS.md block format with `// ============` separators, numbered steps like `0) Description`, and `Possibilidades:` sections
-- Files changed: 4 use-case files (create-task, assign-users-to-task, get-assignable-users, get-tasks-for-table)
-- **Learnings for future iterations:**
-  - The standard block format is in `require-dashboard-access.use-case.ts` — good reference file
-  - Only comment changes, no code logic changes — typecheck and lint unaffected
-  - Pre-existing biome lint errors (23 errors, 31 warnings) are unrelated to any migration work
----
-
-## 2026-03-26 - US-022
-- Updated AGENTS.md to reflect final directory structure after all migrations
-- Removed `src/shared/storage/` from documented structure (directory was deleted previously)
-- Removed `src/shared/ui/` from documented structure (primitives now in `src/shared/components/ui/`)
-- Added `src/shared/hooks/` to documented structure
-- Added `src/lib/providers/` to documented structure
-- Documented `src/shared/components/ui/` as shadcn/ui primitives location
-- Updated `src/shared/components/` section with actual examples (mode-toggle-button, etc.)
-- Added note that shadcn components use function declarations (accepted exception to arrow function rule)
-- Verified all documented paths match actual directory structure
-- Files changed: 1 file (AGENTS.md)
-- **Learnings for future iterations:**
-  - `src/shared/ui/` never existed as a standalone directory — shadcn primitives ended up in `src/shared/components/ui/`
-  - All documented paths should be verified against actual filesystem before finalizing
-  - Typecheck passes cleanly — AGENTS.md is documentation-only, no code impact
+  - Shared UI lint debt can block unrelated backend stories because Ralph's gate runs against the whole `src/` tree.
+  - The current shared component baseline tolerates the existing `document.cookie` warning in `sidebar.tsx`; it does not block Biome checks.
+  - The survey permission change itself remains localized to auth shared constants, the seed migration, and survey management use-cases.
 ---

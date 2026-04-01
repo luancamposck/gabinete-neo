@@ -58,9 +58,7 @@ const VortexCore = (props: VortexProps) => {
 	const HUE = 8
 	const COLOR = 9
 
-	const HALF_PI: number = 0.5 * Math.PI
 	const TAU: number = 2 * Math.PI
-	const TO_RAD: number = Math.PI / 180
 	const rand = (n: number): number => n * Math.random()
 	const randRange = (n: number): number => n - rand(2 * n)
 	const fadeInOut = (t: number, m: number): number => {
@@ -93,7 +91,7 @@ const VortexCore = (props: VortexProps) => {
 			const ctx = canvas.getContext("2d")
 
 			if (ctx) {
-				resize(canvas, ctx)
+				resize(canvas)
 				initParticles()
 				draw(canvas, ctx)
 			}
@@ -114,18 +112,16 @@ const VortexCore = (props: VortexProps) => {
 		const canvas = canvasRef.current
 		if (!canvas) return
 
-		let x, y, vx, vy, life, ttl, speed, radius, hue, colorIndex
-
-		x = rand(canvas.width)
-		y = center[1] + randRange(rangeY)
-		vx = 0
-		vy = 0
-		life = 0
-		ttl = baseTTL + rand(rangeTTL)
-		speed = baseSpeed + rand(rangeSpeed)
-		radius = baseRadius + rand(rangeRadius)
-		hue = baseHue + rand(rangeHue)
-		colorIndex = Math.floor(rand(Math.max(paletteRef.current.length, 1)))
+		const x = rand(canvas.width)
+		const y = center[1] + randRange(rangeY)
+		const vx = 0
+		const vy = 0
+		const life = 0
+		const ttl = baseTTL + rand(rangeTTL)
+		const speed = baseSpeed + rand(rangeSpeed)
+		const radius = baseRadius + rand(rangeRadius)
+		const hue = baseHue + rand(rangeHue)
+		const colorIndex = Math.floor(rand(Math.max(paletteRef.current.length, 1)))
 
 		particleProps.set([x, y, vx, vy, life, ttl, speed, radius, hue, colorIndex], i)
 	}
@@ -155,33 +151,29 @@ const VortexCore = (props: VortexProps) => {
 		const canvas = canvasRef.current
 		if (!canvas) return
 
-		let n, x, y, vx, vy, life, ttl, speed, x2, y2, radius, hue, colorIndex
+		const x = particleProps[i + X] ?? 0
+		const y = particleProps[i + Y] ?? 0
+		const n = noise3D(x * xOff, y * yOff, tick * zOff) * noiseSteps * TAU
+		const vx = lerp(particleProps[i + VX] ?? 0, Math.cos(n), 0.5)
+		const vy = lerp(particleProps[i + VY] ?? 0, Math.sin(n), 0.5)
+		const ttl = particleProps[i + TTL] ?? 0
+		const speed = particleProps[i + SPEED] ?? 0
+		const radius = particleProps[i + RADIUS] ?? 0
+		const hue = particleProps[i + HUE] ?? 0
+		const colorIndex = particleProps[i + COLOR] ?? 0
+		const x2 = x + vx * speed
+		const y2 = y + vy * speed
+		const life = (particleProps[i + LIFE] ?? 0) + 1
 
-		x = particleProps[i + X]
-		y = particleProps[i + Y]
-		n = noise3D(x! * xOff, y! * yOff, tick * zOff) * noiseSteps * TAU
-		vx = lerp(particleProps[i + VX]!, Math.cos(n), 0.5)
-		vy = lerp(particleProps[i + VY]!, Math.sin(n), 0.5)
-		life = particleProps[i + LIFE]
-		ttl = particleProps[i + TTL]
-		speed = particleProps[i + SPEED]
-		x2 = x! + vx * speed!
-		y2 = y! + vy * speed!
-		radius = particleProps[i + RADIUS]
-		hue = particleProps[i + HUE]
-		colorIndex = particleProps[i + COLOR]
-
-		drawParticle(x!, y!, x2, y2, life!, ttl!, radius!, hue!, colorIndex!, ctx)
-
-		life!++
+		drawParticle(x, y, x2, y2, life, ttl, radius, hue, colorIndex, ctx)
 
 		particleProps[i + X] = x2
 		particleProps[i + Y] = y2
 		particleProps[i + VX] = vx
 		particleProps[i + VY] = vy
-		particleProps[i + LIFE] = life!
+		particleProps[i + LIFE] = life
 
-		const bounds = checkBounds(x!, y!, canvas) || life! > ttl!
+		const bounds = checkBounds(x, y, canvas) || life > ttl
 
 		bounds && initParticle(i)
 	}
@@ -208,7 +200,7 @@ const VortexCore = (props: VortexProps) => {
 		return x > canvas.width || x < 0 || y > canvas.height || y < 0
 	}
 
-	const resize = (canvas: HTMLCanvasElement, ctx?: CanvasRenderingContext2D) => {
+	const resize = (canvas: HTMLCanvasElement) => {
 		const { innerWidth, innerHeight } = window
 
 		canvas.width = innerWidth
@@ -239,6 +231,7 @@ const VortexCore = (props: VortexProps) => {
 		ctx.restore()
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: this animation loop is intentionally reinitialized from the explicit visual inputs below.
 	useEffect(() => {
 		refreshThemeColors()
 		setup()
@@ -246,7 +239,7 @@ const VortexCore = (props: VortexProps) => {
 			const canvas = canvasRef.current
 			const ctx = canvas?.getContext("2d")
 			if (canvas && ctx) {
-				resize(canvas, ctx)
+				resize(canvas)
 			}
 		}
 		window.addEventListener("resize", handleResize)
