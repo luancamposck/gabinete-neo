@@ -12,6 +12,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - When enabling RLS on write-only survey flows, prefer `INSERT` operations without `.select()` and generate IDs in the application layer so raw response tables do not need extra `SELECT` policies just to return inserted rows.
 - Safe survey response views should be the single place that masks both `respondent_user_id` and manual respondent snapshot fields for anonymous submissions, while preserving identified public snapshots for authorized result consumers.
 - Survey module code should prefer aliases from `src/modules/surveys/shared/types/db.ts` over inline `TablesInsert<T>` or enum lookups so schema drift is absorbed in one place.
+- Survey server actions should map Supabase rows into camelCase DTOs from `src/modules/surveys/shared/types/dto.ts` so UI-facing contracts stay stable even when database columns remain snake_case.
 
 ---
 
@@ -146,4 +147,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Survey schema aliases are easier to keep consistent when all module-facing inserts, updates, enums, and safe-view rows live in one `shared/types/db.ts` file.
   - Manual Supabase type maintenance must include SQL helper functions created by migrations, not only tables and views, otherwise RPC references drift from the actual schema.
   - The connected Supabase project can lag behind local migrations, so Ralph should compare generated output against the local migration set before trusting it as the final contract.
+---
+
+## 2026-04-01 23:41 UTC - US-009
+- Expanded the shared survey DTO contract with explicit list, summary, detail, public respondent identity, response, and results shapes, plus reusable mappers for survey rows and response rows.
+- Updated survey server actions to return camelCase DTOs instead of raw Supabase row types for public list, dashboard list, create, update, publish, close, and submit-response flows.
+- Files changed: `src/modules/surveys/shared/types/dto.ts`, `src/modules/surveys/server/slices/list-public-surveys/actions/list-public-surveys.action.ts`, `src/modules/surveys/server/slices/list-dashboard-surveys/actions/list-dashboard-surveys.action.ts`, `src/modules/surveys/server/slices/create-survey/actions/create-survey.action.ts`, `src/modules/surveys/server/slices/update-survey/actions/update-survey.action.ts`, `src/modules/surveys/server/slices/publish-survey/actions/publish-survey.action.ts`, `src/modules/surveys/server/slices/close-survey/actions/close-survey.action.ts`, `src/modules/surveys/server/slices/submit-survey-response/actions/submit-survey-response.action.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story changes shared backend contracts rather than browser-rendered UI.
+- **Learnings for future iterations:**
+  - DTO mappers belong in the surveys shared contract layer so multiple actions can reuse one camelCase conversion instead of hand-mapping the same row fields repeatedly.
+  - Distinguishing `SurveySummaryDTO` from future `SurveyDetailDTO` keeps current mutation/list responses lean while reserving a richer contract for the upcoming detail loaders.
+  - Public response DTOs should expose respondent snapshot data through a nested identity object and omit storage-only fields such as fingerprint hashes.
 ---

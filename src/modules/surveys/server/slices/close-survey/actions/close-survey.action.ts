@@ -1,13 +1,13 @@
 "use server"
 
 import { closeSurveyUseCase } from "@/modules/surveys/server/slices/close-survey/use-cases/close-survey.use-case"
-import type { SurveyRow } from "@/modules/surveys/shared/types/db"
+import { mapSurveyRowToSurveySummaryDTO, type SurveySummaryDTO } from "@/modules/surveys/shared/types/dto"
 import { closeSurveyActionSchema } from "@/modules/surveys/shared/validations/close-survey.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ErrorCodes = "invalid_input" | "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "infra_error"
 
-export async function closeSurveyAction(input: unknown): OperationResponse<{ survey: SurveyRow }, ErrorCodes> {
+export async function closeSurveyAction(input: unknown): OperationResponse<{ survey: SurveySummaryDTO }, ErrorCodes> {
 	const parsed = closeSurveyActionSchema.safeParse(input)
 	if (!parsed.success) {
 		return {
@@ -17,5 +17,14 @@ export async function closeSurveyAction(input: unknown): OperationResponse<{ sur
 		}
 	}
 
-	return closeSurveyUseCase(parsed.data)
+	const res = await closeSurveyUseCase(parsed.data)
+	if (res.success === false) return res
+
+	return {
+		success: true,
+		message: res.message,
+		data: {
+			survey: mapSurveyRowToSurveySummaryDTO(res.data.survey)
+		}
+	}
 }
