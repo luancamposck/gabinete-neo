@@ -867,12 +867,41 @@ export type Database = {
 			}
 		}
 		Functions: {
+			can_insert_survey_response_item: {
+				Args: {
+					p_question_id: string
+					p_response_id: string
+					p_user_id?: string
+				}
+				Returns: boolean
+			}
+			can_manage_surveys: {
+				Args: {
+					p_organization_id: string
+					p_user_id?: string
+				}
+				Returns: boolean
+			}
+			can_submit_survey_response: {
+				Args: {
+					p_survey_id: string
+					p_user_id?: string
+				}
+				Returns: boolean
+			}
 			generate_invite_code: { Args: { len?: number }; Returns: string }
 			has_membership_permission: {
 				Args: {
 					p_organization_id: string
 					p_permission_key: string
 					p_user_id: string
+				}
+				Returns: boolean
+			}
+			is_active_organization_member: {
+				Args: {
+					p_organization_id: string
+					p_user_id?: string
 				}
 				Returns: boolean
 			}

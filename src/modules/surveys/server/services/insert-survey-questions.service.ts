@@ -1,9 +1,8 @@
 import { insertSurveyQuestionsRepo } from "@/modules/surveys/server/repos/insert-survey-questions.repo"
-import type { SurveyQuestionRow } from "@/modules/surveys/shared/types/db"
+import type { SurveyQuestionInsert, SurveyQuestionRow } from "@/modules/surveys/shared/types/db"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
-import type { TablesInsert } from "@/shared/types/supabase"
 
-export async function insertSurveyQuestionsService(params: TablesInsert<"survey_questions">[]): OperationResponse<{ questions: SurveyQuestionRow[] }, "infra_error"> {
+export async function insertSurveyQuestionsService(params: SurveyQuestionInsert[]): OperationResponse<{ questions: SurveyQuestionRow[] }, "infra_error"> {
 	const { data, error } = await insertSurveyQuestionsRepo(params)
 
 	if (error) {

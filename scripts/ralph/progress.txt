@@ -11,6 +11,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey read RLS should anchor child-table visibility (`survey_questions`, `survey_question_options`) to the parent survey chain instead of duplicating availability and membership predicates in every table policy.
 - When enabling RLS on write-only survey flows, prefer `INSERT` operations without `.select()` and generate IDs in the application layer so raw response tables do not need extra `SELECT` policies just to return inserted rows.
 - Safe survey response views should be the single place that masks both `respondent_user_id` and manual respondent snapshot fields for anonymous submissions, while preserving identified public snapshots for authorized result consumers.
+- Survey module code should prefer aliases from `src/modules/surveys/shared/types/db.ts` over inline `TablesInsert<T>` or enum lookups so schema drift is absorbed in one place.
 
 ---
 
@@ -133,4 +134,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - When survey result consumers need respondent identity, expose it via safe views instead of the raw `survey_responses` table so anonymity rules stay centralized.
   - `survey_response_items_safe` should mirror the identity columns from `survey_responses_safe`; otherwise downstream analytics consumers may accidentally fall back to raw joins.
   - Manual Supabase type maintenance needs the `Views` section updated whenever migrations redefine SQL views, even if table schemas stay unchanged.
+---
+
+## 2026-04-01 23:24 UTC - US-008
+- Expanded the survey module DB aliases to cover inserts, updates, enums, and safe-view rows, then replaced inline `TablesInsert<...>` usages in survey create/update persistence with those aliases.
+- Updated `src/shared/types/supabase.d.ts` so the generated contract includes the survey RLS helper functions introduced by the final schema migrations.
+- Files changed: `src/modules/surveys/shared/types/db.ts`, `src/modules/surveys/server/repos/insert-survey-questions.repo.ts`, `src/modules/surveys/server/repos/insert-survey-question-options.repo.ts`, `src/modules/surveys/server/services/insert-survey-questions.service.ts`, `src/modules/surveys/server/services/insert-survey-question-options.service.ts`, `src/modules/surveys/server/slices/create-survey/use-cases/create-survey.use-case.ts`, `src/modules/surveys/server/slices/update-survey/use-cases/update-survey.use-case.ts`, `src/shared/types/supabase.d.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story only changes TypeScript contracts and backend typing.
+- **Learnings for future iterations:**
+  - Survey schema aliases are easier to keep consistent when all module-facing inserts, updates, enums, and safe-view rows live in one `shared/types/db.ts` file.
+  - Manual Supabase type maintenance must include SQL helper functions created by migrations, not only tables and views, otherwise RPC references drift from the actual schema.
+  - The connected Supabase project can lag behind local migrations, so Ralph should compare generated output against the local migration set before trusting it as the final contract.
 ---

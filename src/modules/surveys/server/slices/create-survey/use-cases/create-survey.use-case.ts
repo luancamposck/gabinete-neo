@@ -6,10 +6,10 @@ import { getOrganizationByIdService } from "@/modules/organizations/server/servi
 import { createSurveyService } from "@/modules/surveys/server/services/create-survey.service"
 import { insertSurveyQuestionOptionsService } from "@/modules/surveys/server/services/insert-survey-question-options.service"
 import { insertSurveyQuestionsService } from "@/modules/surveys/server/services/insert-survey-questions.service"
-import type { SurveyRow } from "@/modules/surveys/shared/types/db"
+import type { SurveyQuestionInsert, SurveyQuestionOptionInsert, SurveyRow } from "@/modules/surveys/shared/types/db"
 import type { SurveyQuestionSchemaData } from "@/modules/surveys/shared/validations/survey-question.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
-import type { Json, TablesInsert } from "@/shared/types/supabase"
+import type { Json } from "@/shared/types/supabase"
 
 type CreateSurveyUseCaseParams = {
 	organizationId: string
@@ -135,7 +135,7 @@ export async function createSurveyUseCase(params: CreateSurveyUseCaseParams): Op
 		}
 
 		if (params.questions.length > 0) {
-			const questionsToInsert: TablesInsert<"survey_questions">[] = params.questions.map((question, index) => ({
+			const questionsToInsert: SurveyQuestionInsert[] = params.questions.map((question, index) => ({
 				survey_id: createRes.data.survey.id,
 				title: question.title,
 				description: question.description ?? null,
@@ -150,7 +150,7 @@ export async function createSurveyUseCase(params: CreateSurveyUseCaseParams): Op
 				return FALLBACK_INFRA_ERROR
 			}
 
-			const optionsToInsert: TablesInsert<"survey_question_options">[] = []
+			const optionsToInsert: SurveyQuestionOptionInsert[] = []
 			for (const [questionIndex, savedQuestion] of questionsRes.data.questions.entries()) {
 				const source = params.questions[questionIndex]
 				for (const [optionIndex, option] of source.options.entries()) {
