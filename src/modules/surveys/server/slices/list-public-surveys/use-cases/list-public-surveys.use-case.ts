@@ -1,11 +1,11 @@
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { listPublicSurveysService } from "@/modules/surveys/server/services/list-public-surveys.service"
-import type { SurveyRow } from "@/modules/surveys/shared/types/db"
+import type { SurveyPublicListItemDTO } from "@/modules/surveys/shared/types/dto"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ListPublicSurveysUseCaseRes = {
-	surveys: SurveyRow[]
+	surveys: SurveyPublicListItemDTO[]
 }
 
 type ListPublicSurveysUseCaseCode = "org_not_found" | "infra_error"

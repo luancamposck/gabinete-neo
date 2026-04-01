@@ -1,7 +1,7 @@
 "use server"
 
 import { listPublicSurveysUseCase } from "@/modules/surveys/server/slices/list-public-surveys/use-cases/list-public-surveys.use-case"
-import { mapSurveyRowToSurveySummaryDTO, type SurveyPublicListItemDTO } from "@/modules/surveys/shared/types/dto"
+import type { SurveyPublicListItemDTO } from "@/modules/surveys/shared/types/dto"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type ListPublicSurveysActionRes = {
@@ -18,7 +18,7 @@ export async function listPublicSurveysAction(): OperationResponse<ListPublicSur
 		success: true,
 		message: res.message,
 		data: {
-			surveys: res.data.surveys.map(mapSurveyRowToSurveySummaryDTO)
+			surveys: res.data.surveys
 		}
 	}
 }

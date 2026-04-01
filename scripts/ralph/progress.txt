@@ -13,6 +13,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Safe survey response views should be the single place that masks both `respondent_user_id` and manual respondent snapshot fields for anonymous submissions, while preserving identified public snapshots for authorized result consumers.
 - Survey module code should prefer aliases from `src/modules/surveys/shared/types/db.ts` over inline `TablesInsert<T>` or enum lookups so schema drift is absorbed in one place.
 - Survey server actions should map Supabase rows into camelCase DTOs from `src/modules/surveys/shared/types/dto.ts` so UI-facing contracts stay stable even when database columns remain snake_case.
+- Public survey listing should apply publication plus active date-window filtering in the backend and expose a narrowed DTO so `/surveys` does not need extra availability filtering or raw survey metadata.
 
 ---
 
@@ -159,4 +160,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - DTO mappers belong in the surveys shared contract layer so multiple actions can reuse one camelCase conversion instead of hand-mapping the same row fields repeatedly.
   - Distinguishing `SurveySummaryDTO` from future `SurveyDetailDTO` keeps current mutation/list responses lean while reserving a richer contract for the upcoming detail loaders.
   - Public response DTOs should expose respondent snapshot data through a nested identity object and omit storage-only fields such as fingerprint hashes.
+---
+
+## 2026-04-01 23:31 UTC - US-010
+- Refactored the public survey listing backend so the service now filters surveys by the active availability window (`starts_at`/`ends_at`) before returning results for the current tenant domain.
+- Narrowed `SurveyPublicListItemDTO` to the public listing contract and added a dedicated mapper so the action now returns only `id`, `title`, `description`, `status`, `visibility`, `startsAt`, `endsAt`, and `acceptAnonymousAnswers`.
+- Files changed: `src/modules/surveys/shared/types/dto.ts`, `src/modules/surveys/server/services/list-public-surveys.service.ts`, `src/modules/surveys/server/slices/list-public-surveys/use-cases/list-public-surveys.use-case.ts`, `src/modules/surveys/server/slices/list-public-surveys/actions/list-public-surveys.action.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification is still required because this story affects the `/surveys` UI contract and browser tooling was unavailable in this environment.
+- **Learnings for future iterations:**
+  - Public listing availability should be derived from the current time against `starts_at` and `ends_at`, not left for the UI to infer after fetching mixed survey states.
+  - A dedicated public-list DTO avoids leaking dashboard-only metadata such as organization ownership fields into anonymous surfaces.
+  - When the repo still fetches full survey rows, the service layer is the right place to strip fields and enforce list-specific business filtering before the action responds.
 ---
