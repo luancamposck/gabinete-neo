@@ -16,6 +16,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey server actions should map Supabase rows into camelCase DTOs from `src/modules/surveys/shared/types/dto.ts` so UI-facing contracts stay stable even when database columns remain snake_case.
 - Public survey listing should apply publication plus active date-window filtering in the backend and expose a narrowed DTO so `/surveys` does not need extra availability filtering or raw survey metadata.
 - Dashboard survey listing should gate on active membership and expose a dedicated DTO mapper instead of reusing the broader survey summary contract.
+- Once a survey has responses, update flows must not reuse the delete-and-reinsert question sync path; compare the incoming structure against persisted questions/options and reject structural changes before touching historical rows.
 
 ---
 
@@ -198,4 +199,17 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - The dashboard listing should check `isActive` explicitly even when the membership service also derives a convenience `isMember` flag, because the story contract is about active membership.
   - Separate mappers for public and dashboard list surfaces keep list DTOs intentionally narrow without forcing the rest of the survey summary contract onto every consumer.
   - The existing survey repo can still fetch tenant survey rows broadly while the action layer owns the responsibility for shaping the safe UI contract.
+---
+
+## 2026-04-02 15:35 UTC - US-013
+- Implemented a response-aware lock in `update-survey` so any question or option structure change after the first submission now fails with the explicit business code `survey_locked_after_response`.
+- Added a dedicated response-count repo/service and reused the ordered question loader to compare the incoming question contract against the persisted survey structure before any destructive sync runs.
+- Preserved metadata-only survey edits after responses by skipping the delete-and-reinsert question sync when the submitted structure matches the stored one exactly.
+- Files changed: `src/modules/surveys/server/repos/count-survey-responses.repo.ts`, `src/modules/surveys/server/services/count-survey-responses.service.ts`, `src/modules/surveys/server/slices/update-survey/use-cases/update-survey.use-case.ts`, `src/modules/surveys/server/slices/update-survey/actions/update-survey.action.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification is still required because this story affects the survey edit workflow and browser tooling was unavailable in this environment.
+- **Learnings for future iterations:**
+  - Survey edit flows that rebuild child records must guard against existing responses before deleting question rows, otherwise historical response items lose their referential meaning even if the top-level survey update succeeds.
+  - Comparing normalized persisted question/option content against the incoming payload is safer than keying only on payload presence because the current editor can resend the unchanged structure during metadata-only saves.
+  - The explicit `survey_locked_after_response` business code belongs in both the use-case and the action contract so the UI can surface a stable lock-state message without inferring from generic infra failures.
 ---

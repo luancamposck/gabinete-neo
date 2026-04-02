@@ -5,7 +5,7 @@ import { mapSurveyRowToSurveySummaryDTO, type SurveySummaryDTO } from "@/modules
 import { updateSurveyActionSchema } from "@/modules/surveys/shared/validations/update-survey.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
-type ErrorCodes = "invalid_input" | "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "infra_error"
+type ErrorCodes = "invalid_input" | "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "survey_locked_after_response" | "infra_error"
 
 export async function updateSurveyAction(input: unknown): OperationResponse<{ survey: SurveySummaryDTO }, ErrorCodes> {
 	const parsed = updateSurveyActionSchema.safeParse(input)

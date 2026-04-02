@@ -3,12 +3,14 @@ import { hasMembershipPermissionService } from "@/modules/auth/server/services/h
 import { PERMISSIONS } from "@/modules/auth/shared/permissions"
 import { getMembershipByOrgAndUserIdWithRoleService } from "@/modules/organizations/memberships/server/services/get-membership-by-org-and-user-id-with-role.service"
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
+import { countSurveyResponsesService } from "@/modules/surveys/server/services/count-survey-responses.service"
 import { deleteSurveyQuestionsBySurveyIdService } from "@/modules/surveys/server/services/delete-survey-questions-by-survey-id.service"
 import { findSurveyByIdService } from "@/modules/surveys/server/services/find-survey-by-id.service"
 import { insertSurveyQuestionOptionsService } from "@/modules/surveys/server/services/insert-survey-question-options.service"
 import { insertSurveyQuestionsService } from "@/modules/surveys/server/services/insert-survey-questions.service"
+import { listSurveyQuestionsWithOptionsService } from "@/modules/surveys/server/services/list-survey-questions-with-options.service"
 import { updateSurveyService } from "@/modules/surveys/server/services/update-survey.service"
-import type { SurveyQuestionInsert, SurveyQuestionOptionInsert, SurveyRow } from "@/modules/surveys/shared/types/db"
+import type { SurveyQuestionInsert, SurveyQuestionOptionInsert, SurveyQuestionOptionRow, SurveyQuestionRow, SurveyRow } from "@/modules/surveys/shared/types/db"
 import type { SurveyQuestionSchemaData } from "@/modules/surveys/shared/validations/survey-question.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 import type { Json } from "@/shared/types/supabase"
@@ -27,7 +29,7 @@ type UpdateSurveyUseCaseParams = {
 	}
 }
 
-type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "infra_error"
+type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "survey_locked_after_response" | "infra_error"
 
 const prefixLog = "[updateSurveyUseCase]:"
 const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.SURVEYS_MANAGE
@@ -37,10 +39,71 @@ const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para editar pesquis
 const MSG_NOT_ALLOWED = "Você não tem permissão para editar pesquisas nesta organização."
 const MSG_ORGANIZATION_NOT_FOUND = "Organização não encontrada."
 const MSG_SURVEY_NOT_FOUND = "Pesquisa não encontrada."
+const MSG_SURVEY_LOCKED_AFTER_RESPONSE = "A estrutura da pesquisa não pode ser alterada após a primeira resposta."
 const MSG_INFRA_ERROR = "Não foi possível atualizar a pesquisa no momento."
 
 const FALLBACK_INFRA_ERROR = { success: false, message: MSG_INFRA_ERROR, code: "infra_error" } as const
 const isOwnerRole = (roleName: string) => roleName.trim().toUpperCase() === "OWNER"
+
+function normalizeQuestionDescription(description: string | null | undefined) {
+	if (!description) {
+		return null
+	}
+
+	const trimmed = description.trim()
+	return trimmed.length > 0 ? trimmed : null
+}
+
+function normalizeQuestionsForComparison(questions: SurveyQuestionSchemaData[]) {
+	return questions
+		.map((question) => ({
+			title: question.title.trim(),
+			description: normalizeQuestionDescription(question.description ?? null),
+			type: question.type,
+			required: question.required,
+			position: question.position,
+			configJson: question.configJson ?? {},
+			options: [...question.options]
+				.map((option) => ({
+					label: option.label.trim(),
+					value: option.value.trim(),
+					position: option.position
+				}))
+				.sort((left, right) => left.position - right.position)
+		}))
+		.sort((left, right) => left.position - right.position)
+}
+
+type PersistedSurveyQuestionWithOptions = Pick<SurveyQuestionRow, "title" | "description" | "type" | "required" | "position" | "config_json"> & {
+	survey_question_options: Pick<SurveyQuestionOptionRow, "label" | "value" | "position">[]
+}
+
+function normalizePersistedQuestionsForComparison(questions: PersistedSurveyQuestionWithOptions[]) {
+	return questions
+		.map((question) => ({
+			title: question.title.trim(),
+			description: normalizeQuestionDescription(question.description),
+			type: question.type,
+			required: question.required,
+			position: question.position,
+			configJson: question.config_json ?? {},
+			options: [...question.survey_question_options]
+				.map((option) => ({
+					label: option.label.trim(),
+					value: option.value.trim(),
+					position: option.position
+				}))
+				.sort((left, right) => left.position - right.position)
+		}))
+		.sort((left, right) => left.position - right.position)
+}
+
+function hasSurveyStructureChanges(params: { incomingQuestions: SurveyQuestionSchemaData[]; persistedQuestions: PersistedSurveyQuestionWithOptions[] }) {
+	const incomingNormalized = normalizeQuestionsForComparison(params.incomingQuestions)
+	const persistedNormalized = normalizePersistedQuestionsForComparison(params.persistedQuestions)
+
+	return JSON.stringify(incomingNormalized) !== JSON.stringify(persistedNormalized)
+}
 
 export async function updateSurveyUseCase(params: UpdateSurveyUseCaseParams): OperationResponse<{ survey: SurveyRow }, ErrorCodes> {
 	try {
@@ -108,7 +171,7 @@ export async function updateSurveyUseCase(params: UpdateSurveyUseCaseParams): Op
 		}
 
 		// ============================================================
-		// 2) Garantir existência da survey e atualizar metadados
+		// 2) Garantir existência da survey alvo
 		//
 		// Possibilidades:
 		// - survey inexistente => survey_not_found
@@ -123,20 +186,68 @@ export async function updateSurveyUseCase(params: UpdateSurveyUseCaseParams): Op
 			return FALLBACK_INFRA_ERROR
 		}
 
+		// ============================================================
+		// 3) Bloquear alterações estruturais após a primeira resposta
+		//
+		// Possibilidades:
+		// - sem questions no payload => seguir apenas com metadados
+		// - erro técnico ao contar/carregar estrutura => infra_error
+		// - existe resposta + estrutura alterada => survey_locked_after_response
+		// - existe resposta + mesma estrutura => preservar histórico e seguir
+		// - sem respostas => permitir sincronização estrutural
+		// ============================================================
+		let shouldSyncQuestions = Boolean(params.updates.questions)
+		if (params.updates.questions) {
+			const responsesRes = await countSurveyResponsesService({ surveyId: params.surveyId })
+			if (responsesRes.success === false) {
+				return FALLBACK_INFRA_ERROR
+			}
+
+			if (responsesRes.data.count > 0) {
+				const questionsRes = await listSurveyQuestionsWithOptionsService({ surveyId: params.surveyId })
+				if (questionsRes.success === false) {
+					return FALLBACK_INFRA_ERROR
+				}
+
+				const structureChanged = hasSurveyStructureChanges({
+					incomingQuestions: params.updates.questions,
+					persistedQuestions: questionsRes.data.questions
+				})
+
+				if (structureChanged) {
+					return {
+						success: false,
+						message: MSG_SURVEY_LOCKED_AFTER_RESPONSE,
+						code: "survey_locked_after_response"
+					}
+				}
+
+				shouldSyncQuestions = false
+			}
+		}
+
+		// ============================================================
+		// 4) Atualizar metadados da survey
+		//
+		// Possibilidades:
+		// - erro técnico ao atualizar => infra_error
+		// - update ok => seguir fluxo
+		// ============================================================
 		const updateRes = await updateSurveyService(params)
 		if (updateRes.success === false) {
 			return FALLBACK_INFRA_ERROR
 		}
 
 		// ============================================================
-		// 3) Sincronizar questões/opções quando informado no payload
+		// 5) Sincronizar questões/opções quando a estrutura ainda é editável
 		//
 		// Possibilidades:
 		// - questions ausente => manter estrutura atual
+		// - questions presente, mas travada após respostas => não tocar na estrutura
 		// - questions informada => limpar + inserir novas questões/opções
 		// - erro técnico em qualquer etapa => infra_error
 		// ============================================================
-		if (params.updates.questions) {
+		if (params.updates.questions && shouldSyncQuestions) {
 			const clearRes = await deleteSurveyQuestionsBySurveyIdService({ surveyId: params.surveyId })
 			if (clearRes.success === false) {
 				return FALLBACK_INFRA_ERROR
