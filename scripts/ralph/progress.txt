@@ -22,7 +22,21 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Public survey detail loaders that must distinguish `draft`, `closed`, `unavailable`, and `cross-tenant` states should inspect survey metadata through an admin repo first, then load public questions only after the tenant and availability checks pass.
 - Survey response submission should resolve the current tenant from the request host when possible, fall back to an explicit `organizationId` only when headers are unavailable, and validate the survey through an admin lookup before relying on RLS-backed question reads.
 - Response flows that must persist a parent `survey_responses` row plus child `survey_response_items` rows should use one database RPC and keep `already_answered` mapped from the unique constraint, so dedupe and atomicity stay aligned.
+- Survey results aggregation should keep authorization in the use-case and use an admin repo to load question structure plus response items in one read, leaving percentage and ranking math to the service layer.
 
+---
+
+## 2026-04-02 16:03 UTC - US-019
+- Added a `load-survey-results` backend slice with Zod validation and a manager-only use-case that authorizes `OWNER` or `surveys.manage`, validates the organization, and rejects surveys outside the tenant.
+- Added an admin-backed aggregation service that loads choice and ranking questions with their options and response items, then returns per-option counts, percentages, and average rank metrics in `SurveyResultsDTO`.
+- Added an admin response-count service so the results contract exposes the survey-level total responses without relying on RLS reads from raw response tables.
+- Files changed: `src/modules/surveys/server/repos/list-survey-results.admin.repo.ts`, `src/modules/surveys/server/repos/count-survey-responses.admin.repo.ts`, `src/modules/surveys/server/services/load-survey-results.service.ts`, `src/modules/surveys/server/services/count-survey-responses-admin.service.ts`, `src/modules/surveys/shared/validations/load-survey-results.schema.ts`, `src/modules/surveys/server/slices/load-survey-results/actions/load-survey-results.action.ts`, `src/modules/surveys/server/slices/load-survey-results/use-cases/load-survey-results.use-case.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Manual browser verification was not run because this story adds backend-only results loading.
+- **Learnings for future iterations:**
+  - Results backends should aggregate from one admin read over question structure plus response items, which avoids multi-repo counting logic inside services while keeping manager auth outside the data layer.
+  - Ranking questions benefit from an explicit `averageRank` metric per option, while keeping `responseCount` and `percentage` aligned with the count of respondents that placed each option anywhere in their ranking.
+  - A separate admin response-count read keeps the top-level survey total accurate even when future result slices only project a subset of question types.
 ---
 
 ## 2026-04-02 15:59 UTC - US-018
