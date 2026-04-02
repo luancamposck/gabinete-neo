@@ -30,6 +30,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Shared survey management forms should keep `startsAt` and `endsAt` in ISO strings in component state and convert to `datetime-local` only at the input boundary, so builder consumers stay aligned with the action schemas.
 - Dashboard survey management pages that must allow OWNER access should use a dedicated server context slice that resolves the tenant and checks membership role plus `surveys.manage`, instead of relying only on sidebar permission keys.
 - Member-facing dashboard survey pages should derive response availability from survey status plus date window, then hide the submit CTA while still rendering the shared question renderer for draft, closed, or out-of-window surveys.
+- Dashboard results pages for managers can reuse `getManageSurveyContextAction` to resolve the current tenant and management authorization first, then load aggregates through `loadSurveyResultsAction` with the resolved `organizationId`.
 
 ---
 
@@ -43,6 +44,19 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Dashboard management surfaces should load permission, organization metadata, survey detail, and response-lock state in one server context slice instead of duplicating these checks between the route and client form.
   - `SurveyBuilder` already supports the correct lock semantics for post-response surveys, so edit flows should reuse it and let the backend remain the source of truth for `survey_locked_after_response`.
   - Status-aware management CTAs are simplest when the client tracks only the mutable survey status locally and leaves transition validation to the existing publish and close actions.
+---
+
+## 2026-04-02 16:52 UTC - US-029
+- Created the dashboard results route at `src/app/dashboard/surveys/[surveyId]/results/page.tsx`, reusing the management context slice for tenant and permission resolution before loading aggregated results.
+- Added a dedicated dashboard results view with survey summary cards, per-question quantitative blocks for choice and ranking questions, qualitative textarea answer cards, and identity display that respects the masked safe-view contract for anonymous submissions.
+- Rendered a clear empty state when the survey has no responses while still showing high-level survey metadata and result summary cards.
+- Files changed: `src/app/dashboard/surveys/[surveyId]/results/page.tsx`, `src/modules/surveys/shared/ui/dashboard-survey-results-view.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - Manager-only survey result pages can stay thin by composing the existing management context slice with the results loader instead of rebuilding tenant and permission checks in the route.
+  - The results DTO already carries the anonymity-safe respondent snapshot, so UI code should render respondent metadata directly from that contract rather than inspecting raw database columns.
+  - Empty-state handling is clearer when the page still renders top-level survey and summary metadata but skips per-question result blocks until the first valid response exists.
 ---
 
 ## 2026-04-02 16:34 UTC - US-022
