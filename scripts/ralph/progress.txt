@@ -21,7 +21,21 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey status transitions should be enforced in the use-case layer with explicit `invalid_publication_state` responses, allowing only `draft -> published` and `published -> closed`.
 - Public survey detail loaders that must distinguish `draft`, `closed`, `unavailable`, and `cross-tenant` states should inspect survey metadata through an admin repo first, then load public questions only after the tenant and availability checks pass.
 - Survey response submission should resolve the current tenant from the request host when possible, fall back to an explicit `organizationId` only when headers are unavailable, and validate the survey through an admin lookup before relying on RLS-backed question reads.
+- Response flows that must persist a parent `survey_responses` row plus child `survey_response_items` rows should use one database RPC and keep `already_answered` mapped from the unique constraint, so dedupe and atomicity stay aligned.
 
+---
+
+## 2026-04-02 15:59 UTC - US-018
+- Replaced the two-step response write path with a single `submit_survey_response` RPC that inserts the response header and all answer items in one transaction.
+- Kept dedupe on the existing database unique constraints, so authenticated submissions still collide on `(survey_id, respondent_user_id)` and anonymous or public identified submissions still collide on `(survey_id, responder_fingerprint_hash)` with the same `already_answered` contract.
+- Preserved the public respondent snapshot contract by sending manual identity fields only for unauthenticated identified public submissions, while anonymous submissions continue to persist those fields as `null`.
+- Files changed: `supabase/migrations/20260402162000_submit_survey_response_rpc.sql`, `src/modules/surveys/server/repos/submit-survey-response.repo.ts`, `src/modules/surveys/server/services/submit-survey-response.service.ts`, `src/modules/surveys/server/slices/submit-survey-response/use-cases/submit-survey-response.use-case.ts`, `src/shared/types/supabase.d.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Manual browser verification was not run because this story changes backend persistence only.
+- **Learnings for future iterations:**
+  - Response writes that span multiple survey tables should move the transaction boundary into Postgres, because app-level sequencing cannot recover cleanly from child insert failures after the response header already exists.
+  - Keeping dedupe ownership in the database is preferable to pre-check queries, since the unique indexes already model the authenticated vs fingerprint split and remain race-safe under concurrent submissions.
+  - Returning the inserted `survey_responses` row from the RPC lets the action keep the existing DTO contract without re-querying raw response tables under RLS.
 ---
 
 ## 2026-04-02 15:50 UTC - US-016

@@ -896,6 +896,22 @@ export type Database = {
 				}
 				Returns: Database["public"]["Tables"]["surveys"]["Row"]
 			}
+			submit_survey_response: {
+				Args: {
+					p_answers?: Json
+					p_is_anonymous?: boolean
+					p_organization_id?: string | null
+					p_responder_fingerprint_hash?: string | null
+					p_respondent_email?: string | null
+					p_respondent_name?: string | null
+					p_respondent_phone?: string | null
+					p_respondent_user_id?: string | null
+					p_response_id: string
+					p_submitted_at?: string
+					p_survey_id: string
+				}
+				Returns: Database["public"]["Tables"]["survey_responses"]["Row"]
+			}
 			can_submit_survey_response: {
 				Args: {
 					p_survey_id: string

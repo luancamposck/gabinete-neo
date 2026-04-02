@@ -4,7 +4,6 @@ import { isUserMemberOfOrganizationService } from "@/modules/organizations/membe
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { findSurveyByIdAdminService } from "@/modules/surveys/server/services/find-survey-by-id-admin.service"
-import { insertSurveyResponseItemsService } from "@/modules/surveys/server/services/insert-survey-response-items.service"
 import { listSurveyQuestionsWithOptionsService } from "@/modules/surveys/server/services/list-survey-questions-with-options.service"
 import { submitSurveyResponseService } from "@/modules/surveys/server/services/submit-survey-response.service"
 import { buildResponderFingerprintHash, ensureStableResponderCookie } from "@/modules/surveys/server/utils/responder-fingerprint"
@@ -291,27 +290,28 @@ export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUs
 		}
 
 		// ============================================================
-		// 5) Persistir cabeçalho da resposta e mapear conflitos
+		// 5) Persistir resposta e itens em uma única operação atômica
 		//
 		// Possibilidades:
 		// - unique violation => already_answered
 		// - erro infra => infra_error
-		// - sucesso => seguir para salvar itens
+		// - sucesso => finalizar com response criada
 		// ============================================================
 		const responseId = randomUUID()
 		const submittedAt = new Date().toISOString()
 
 		const submitRes = await submitSurveyResponseService({
-			id: responseId,
-			survey_id: params.surveyId,
-			organization_id: survey.organization_id,
-			respondent_user_id: isAnonymousAnswer ? null : respondentUserId,
-			respondent_name: isPublicIdentifiedAnswer ? respondentName : null,
-			respondent_email: isPublicIdentifiedAnswer ? respondentEmail : null,
-			respondent_phone: isPublicIdentifiedAnswer ? respondentPhone : null,
-			is_anonymous: isAnonymousAnswer,
-			responder_fingerprint_hash: responderFingerprintHash,
-			submitted_at: submittedAt
+			responseId,
+			surveyId: params.surveyId,
+			organizationId: survey.organization_id,
+			respondentUserId: isAnonymousAnswer ? null : respondentUserId,
+			respondentName: isPublicIdentifiedAnswer ? respondentName : null,
+			respondentEmail: isPublicIdentifiedAnswer ? respondentEmail : null,
+			respondentPhone: isPublicIdentifiedAnswer ? respondentPhone : null,
+			isAnonymous: isAnonymousAnswer,
+			responderFingerprintHash,
+			submittedAt,
+			answers: params.answers
 		})
 
 		if (submitRes.success === false) {
@@ -324,28 +324,6 @@ export async function submitSurveyResponseUseCase(params: SubmitSurveyResponseUs
 			}
 
 			return FALLBACK_INFRA_ERROR
-		}
-
-		// ============================================================
-		// 6) Persistir itens da resposta por questão
-		//
-		// Possibilidades:
-		// - erro de infra ao inserir itens => infra_error
-		// - sucesso => finalizar com response criada
-		// ============================================================
-		const answerItems = params.answers.map((answer) => ({
-			response_id: submitRes.data.response.id,
-			question_id: answer.questionId,
-			answer_text: answer.answerText ?? null,
-			answer_option_ids_json: answer.answerOptionIds ?? null,
-			answer_ranking_json: answer.answerRanking ?? null
-		}))
-
-		if (answerItems.length > 0) {
-			const itemsRes = await insertSurveyResponseItemsService(answerItems)
-			if (itemsRes.success === false) {
-				return FALLBACK_INFRA_ERROR
-			}
 		}
 
 		return {

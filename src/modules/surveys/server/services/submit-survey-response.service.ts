@@ -1,6 +1,7 @@
-import { insertSurveyResponseRepo } from "@/modules/surveys/server/repos/insert-survey-response.repo"
-import type { SurveyResponseInsert, SurveyResponseRow } from "@/modules/surveys/shared/types/db"
+import { submitSurveyResponseRepo } from "@/modules/surveys/server/repos/submit-survey-response.repo"
+import type { SurveyResponseRow } from "@/modules/surveys/shared/types/db"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
+import type { Json } from "@/shared/types/supabase"
 
 type ErrorCodes = "already_answered" | "infra_error"
 
@@ -8,12 +9,43 @@ const prefixLog = "[submitSurveyResponseService]:"
 const MSG_INFRA_ERROR = "Não foi possível registrar a resposta da pesquisa. Tente novamente em instantes."
 const MSG_ALREADY_ANSWERED = "Você já respondeu esta pesquisa."
 
-export async function submitSurveyResponseService(params: SurveyResponseInsert): OperationResponse<{ response: SurveyResponseRow }, ErrorCodes> {
-	try {
-		const { error } = await insertSurveyResponseRepo(params)
+type SubmitSurveyResponseServiceParams = {
+	responseId: string
+	surveyId: string
+	organizationId: string | null
+	respondentUserId: string | null
+	respondentName: string | null
+	respondentEmail: string | null
+	respondentPhone: string | null
+	isAnonymous: boolean
+	responderFingerprintHash: string | null
+	submittedAt: string
+	answers: {
+		questionId: string
+		answerText?: string | null
+		answerOptionIds?: string[]
+		answerRanking?: string[]
+	}[]
+}
 
-		if (error) {
-			if (error.code === "23505") {
+export async function submitSurveyResponseService(params: SubmitSurveyResponseServiceParams): OperationResponse<{ response: SurveyResponseRow }, ErrorCodes> {
+	try {
+		const { data, error } = await submitSurveyResponseRepo({
+			responseId: params.responseId,
+			surveyId: params.surveyId,
+			organizationId: params.organizationId,
+			respondentUserId: params.respondentUserId,
+			respondentName: params.respondentName,
+			respondentEmail: params.respondentEmail,
+			respondentPhone: params.respondentPhone,
+			isAnonymous: params.isAnonymous,
+			responderFingerprintHash: params.responderFingerprintHash,
+			submittedAt: params.submittedAt,
+			answers: params.answers as Json
+		})
+
+		if (error || !data) {
+			if (error?.code === "23505") {
 				return {
 					success: false,
 					message: MSG_ALREADY_ANSWERED,
@@ -21,7 +53,10 @@ export async function submitSurveyResponseService(params: SurveyResponseInsert):
 				}
 			}
 
-			console.error(`${prefixLog} ${error.message}`)
+			if (error) {
+				console.error(`${prefixLog} ${error.message}`)
+			}
+
 			return {
 				success: false,
 				message: MSG_INFRA_ERROR,
@@ -33,18 +68,7 @@ export async function submitSurveyResponseService(params: SurveyResponseInsert):
 			success: true,
 			message: "Resposta registrada com sucesso.",
 			data: {
-				response: {
-					id: params.id ?? "",
-					survey_id: params.survey_id,
-					organization_id: params.organization_id ?? null,
-					respondent_user_id: params.respondent_user_id ?? null,
-					respondent_name: params.respondent_name ?? null,
-					respondent_email: params.respondent_email ?? null,
-					respondent_phone: params.respondent_phone ?? null,
-					is_anonymous: params.is_anonymous ?? false,
-					responder_fingerprint_hash: params.responder_fingerprint_hash ?? null,
-					submitted_at: params.submitted_at ?? new Date().toISOString()
-				}
+				response: data
 			}
 		}
 	} catch (error) {
