@@ -26,6 +26,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Qualitative survey results should source respondent metadata from `survey_response_items_safe`, then map that safe projection into DTOs instead of exposing raw response rows or rebuilding anonymity masking in TypeScript.
 - Public survey detail pages that must show closed or not-yet-open states should validate tenant and visibility via admin survey metadata first, then use an admin question loader so the shell can still render the survey structure even when public read RLS blocks out-of-window questions.
 - Public response UX should extend `SurveyRenderer` through pre-submit composition hooks instead of duplicating question rendering, so identity controls and answer validation stay in one shared flow.
+- Dashboard survey index pages can reuse `getSidebarContextAction` for UI-only permission gating while keeping the actual survey list read on `list-dashboard-surveys`, which already owns tenant and membership enforcement.
 
 ---
 
@@ -348,4 +349,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Public App Router entrypoints should stay thin and server-first, with tenant-aware loading in the action/use-case layer and survey-specific presentation moved into `src/modules/surveys/shared/ui/`.
   - The public surveys list contract already arrives filtered to currently available surveys, so the page should focus on presentation and empty/error handling instead of re-implementing availability rules.
   - Shortening long survey descriptions in the presentation layer keeps list cards stable without weakening the full-detail contract used by the survey detail page.
+---
+
+## 2026-04-02 16:25 UTC - US-024
+- Created the `/dashboard/surveys` server route and wired it to the existing dashboard surveys list action plus sidebar context action, keeping the App Router entry file thin.
+- Added a dedicated dashboard surveys list view with empty and error states, localized status and visibility chips, survey metadata cards, and permission-based admin CTAs.
+- Files changed: `src/app/dashboard/surveys/page.tsx`, `src/modules/surveys/shared/ui/dashboard-surveys-list-view.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - Dashboard list surfaces can stay server-rendered and thin by composing existing actions rather than pushing new tenant or permission logic into `src/app`.
+  - The survey dashboard needs UI-level permission gating separate from membership-only read access, because members may answer surveys without seeing management CTAs.
+  - Linking the list cards to future member, edit, and results routes keeps the survey navigation contract consistent before those pages are implemented.
 ---
