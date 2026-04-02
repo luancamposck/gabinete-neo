@@ -5,7 +5,7 @@ import { mapSurveyRowToSurveySummaryDTO, type SurveySummaryDTO } from "@/modules
 import { publishSurveyActionSchema } from "@/modules/surveys/shared/validations/publish-survey.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
-type ErrorCodes = "invalid_input" | "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "min_questions_required" | "infra_error"
+type ErrorCodes = "invalid_input" | "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "invalid_publication_state" | "min_questions_required" | "infra_error"
 
 export async function publishSurveyAction(input: unknown): OperationResponse<{ survey: SurveySummaryDTO }, ErrorCodes> {
 	const parsed = publishSurveyActionSchema.safeParse(input)

@@ -5,10 +5,10 @@ import { getMembershipByOrgAndUserIdWithRoleService } from "@/modules/organizati
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
 import { closeSurveyService } from "@/modules/surveys/server/services/close-survey.service"
 import { findSurveyByIdService } from "@/modules/surveys/server/services/find-survey-by-id.service"
-import type { SurveyRow } from "@/modules/surveys/shared/types/db"
+import type { SurveyRow, SurveyStatus } from "@/modules/surveys/shared/types/db"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
-type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "infra_error"
+type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "invalid_publication_state" | "infra_error"
 
 const prefixLog = "[closeSurveyUseCase]:"
 const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.SURVEYS_MANAGE
@@ -18,10 +18,12 @@ const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para encerrar pesqu
 const MSG_NOT_ALLOWED = "Você não tem permissão para encerrar pesquisas nesta organização."
 const MSG_ORGANIZATION_NOT_FOUND = "Organização não encontrada."
 const MSG_SURVEY_NOT_FOUND = "Pesquisa não encontrada."
+const MSG_INVALID_PUBLICATION_STATE = "A pesquisa só pode ser encerrada quando estiver publicada."
 const MSG_INFRA_ERROR = "Não foi possível encerrar a pesquisa no momento."
 
 const FALLBACK_INFRA_ERROR = { success: false, message: MSG_INFRA_ERROR, code: "infra_error" } as const
 const isOwnerRole = (roleName: string) => roleName.trim().toUpperCase() === "OWNER"
+const isPublishedSurveyStatus = (status: SurveyStatus) => status === "published"
 
 export async function closeSurveyUseCase(params: { organizationId: string; surveyId: string }): OperationResponse<{ survey: SurveyRow }, ErrorCodes> {
 	try {
@@ -125,7 +127,22 @@ export async function closeSurveyUseCase(params: { organizationId: string; surve
 		}
 
 		// ============================================================
-		// 5) Encerrar survey (status = closed)
+		// 5) Validar estado atual da survey antes do encerramento
+		//
+		// Possibilidades:
+		// - status diferente de published => invalid_publication_state
+		// - published => seguir para encerrar
+		// ============================================================
+		if (!isPublishedSurveyStatus(surveyRes.data.survey.status)) {
+			return {
+				success: false,
+				message: MSG_INVALID_PUBLICATION_STATE,
+				code: "invalid_publication_state"
+			}
+		}
+
+		// ============================================================
+		// 6) Encerrar survey (status = closed)
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error

@@ -17,7 +17,20 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Public survey listing should apply publication plus active date-window filtering in the backend and expose a narrowed DTO so `/surveys` does not need extra availability filtering or raw survey metadata.
 - Dashboard survey listing should gate on active membership and expose a dedicated DTO mapper instead of reusing the broader survey summary contract.
 - Once a survey has responses, update flows must not reuse the delete-and-reinsert question sync path; compare the incoming structure against persisted questions/options and reject structural changes before touching historical rows.
+- Survey status transitions should be enforced in the use-case layer with explicit `invalid_publication_state` responses, allowing only `draft -> published` and `published -> closed`.
 
+---
+
+## 2026-04-02 15:39 UTC - US-014
+- Finalized survey status transition rules by rejecting invalid publish and close operations with the explicit business code `invalid_publication_state`.
+- Kept publish constrained to draft surveys with at least one question, and close constrained to published surveys so the existing response availability rules continue to treat closed surveys as unavailable.
+- Files changed: `src/modules/surveys/server/slices/publish-survey/use-cases/publish-survey.use-case.ts`, `src/modules/surveys/server/slices/publish-survey/actions/publish-survey.action.ts`, `src/modules/surveys/server/slices/close-survey/use-cases/close-survey.use-case.ts`, `src/modules/surveys/server/slices/close-survey/actions/close-survey.action.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story changes backend mutation rules rather than browser-rendered UI.
+- **Learnings for future iterations:**
+  - Survey publish/close actions should validate the current `status` before calling the write service; otherwise the repo layer will happily apply no-op or invalid transitions without a stable business error.
+  - Reusing one `invalid_publication_state` code across publish and close keeps the action contract explicit without leaking raw status strings to the UI.
+  - Closing a survey does not need extra response-write code when the submit path already relies on “published and currently available” backend rules; the critical requirement is to make the close transition itself unambiguous.
 ---
 
 ## 2026-04-02 15:31 UTC - US-012

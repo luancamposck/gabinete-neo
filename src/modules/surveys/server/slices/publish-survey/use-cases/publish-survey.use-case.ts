@@ -6,10 +6,10 @@ import { getOrganizationByIdService } from "@/modules/organizations/server/servi
 import { countSurveyQuestionsService } from "@/modules/surveys/server/services/count-survey-questions.service"
 import { findSurveyByIdService } from "@/modules/surveys/server/services/find-survey-by-id.service"
 import { publishSurveyService } from "@/modules/surveys/server/services/publish-survey.service"
-import type { SurveyRow } from "@/modules/surveys/shared/types/db"
+import type { SurveyRow, SurveyStatus } from "@/modules/surveys/shared/types/db"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
-type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "min_questions_required" | "infra_error"
+type ErrorCodes = "unauthenticated" | "not_allowed" | "organization_not_found" | "survey_not_found" | "invalid_publication_state" | "min_questions_required" | "infra_error"
 
 const prefixLog = "[publishSurveyUseCase]:"
 const MANAGE_SURVEYS_PERMISSION_KEY = PERMISSIONS.SURVEYS_MANAGE
@@ -19,11 +19,13 @@ const MSG_UNAUTHENTICATED = "Você precisa estar autenticado para publicar pesqu
 const MSG_NOT_ALLOWED = "Você não tem permissão para publicar pesquisas nesta organização."
 const MSG_ORGANIZATION_NOT_FOUND = "Organização não encontrada."
 const MSG_SURVEY_NOT_FOUND = "Pesquisa não encontrada."
+const MSG_INVALID_PUBLICATION_STATE = "A pesquisa só pode ser publicada quando estiver em rascunho."
 const MSG_MIN_QUESTIONS_REQUIRED = "A pesquisa precisa de pelo menos uma pergunta antes da publicação."
 const MSG_INFRA_ERROR = "Não foi possível publicar a pesquisa no momento."
 
 const FALLBACK_INFRA_ERROR = { success: false, message: MSG_INFRA_ERROR, code: "infra_error" } as const
 const isOwnerRole = (roleName: string) => roleName.trim().toUpperCase() === "OWNER"
+const isDraftSurveyStatus = (status: SurveyStatus) => status === "draft"
 
 export async function publishSurveyUseCase(params: { organizationId: string; surveyId: string }): OperationResponse<{ survey: SurveyRow }, ErrorCodes> {
 	try {
@@ -127,7 +129,22 @@ export async function publishSurveyUseCase(params: { organizationId: string; sur
 		}
 
 		// ============================================================
-		// 5) Validar regra de perguntas mínimas para publicação
+		// 5) Validar estado atual da survey antes da publicação
+		//
+		// Possibilidades:
+		// - status diferente de draft => invalid_publication_state
+		// - draft => seguir para validar perguntas mínimas
+		// ============================================================
+		if (!isDraftSurveyStatus(surveyRes.data.survey.status)) {
+			return {
+				success: false,
+				message: MSG_INVALID_PUBLICATION_STATE,
+				code: "invalid_publication_state"
+			}
+		}
+
+		// ============================================================
+		// 6) Validar regra de perguntas mínimas para publicação
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
@@ -144,7 +161,7 @@ export async function publishSurveyUseCase(params: { organizationId: string; sur
 		}
 
 		// ============================================================
-		// 6) Publicar survey (status = published)
+		// 7) Publicar survey (status = published)
 		//
 		// Possibilidades:
 		// - erro técnico => infra_error
