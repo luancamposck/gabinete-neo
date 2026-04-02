@@ -27,6 +27,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Public survey detail pages that must show closed or not-yet-open states should validate tenant and visibility via admin survey metadata first, then use an admin question loader so the shell can still render the survey structure even when public read RLS blocks out-of-window questions.
 - Public response UX should extend `SurveyRenderer` through pre-submit composition hooks instead of duplicating question rendering, so identity controls and answer validation stay in one shared flow.
 - Dashboard survey index pages can reuse `getSidebarContextAction` for UI-only permission gating while keeping the actual survey list read on `list-dashboard-surveys`, which already owns tenant and membership enforcement.
+- Shared survey management forms should keep `startsAt` and `endsAt` in ISO strings in component state and convert to `datetime-local` only at the input boundary, so builder consumers stay aligned with the action schemas.
 
 ---
 
@@ -361,4 +362,17 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Dashboard list surfaces can stay server-rendered and thin by composing existing actions rather than pushing new tenant or permission logic into `src/app`.
   - The survey dashboard needs UI-level permission gating separate from membership-only read access, because members may answer surveys without seeing management CTAs.
   - Linking the list cards to future member, edit, and results routes keeps the survey navigation contract consistent before those pages are implemented.
+---
+
+## 2026-04-02 16:33 UTC - US-025
+- Refactored `SurveyBuilder` into a single controlled contract that now covers survey title, description, visibility, anonymous-answer toggle, startsAt, endsAt, and the full questions array.
+- Added add, remove, and reorder support for both questions and options while renormalizing every position to base-1 after each mutation.
+- Rendered an explicit locked state for structural survey fields so future edit flows can disable question and option changes once a survey has responses.
+- Files changed: `src/modules/surveys/shared/ui/survey-builder.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the requested dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - The shared builder is now shaped for `new` and `edit` pages as one controlled value object, which is simpler than keeping parallel callbacks for each field once the survey contract includes scheduling and metadata.
+  - Structural lock behavior should disable the full question editor surface, not only add or remove buttons, because the backend also treats question title, description, type, required flag, and options as locked after the first response.
+  - Option and question reordering should always run through a renormalization helper so UI array operations never drift from the database's base-1 ordering contract.
 ---
