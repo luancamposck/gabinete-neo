@@ -32,6 +32,18 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 
 ---
 
+## 2026-04-02 16:44 UTC - US-027
+- Added the dashboard survey edit/manage route and a dedicated management context slice that resolves tenant, organization, survey detail, and structural lock state for authorized managers.
+- Built a client management screen that reuses `SurveyBuilder` for editing, keeps metadata editable, disables structural changes when responses already exist, and wires save, publish, and close actions with status-aware controls.
+- Files changed: `src/app/dashboard/surveys/[surveyId]/edit/page.tsx`, `src/modules/surveys/server/slices/get-manage-survey-context/actions/get-manage-survey-context.action.ts`, `src/modules/surveys/server/slices/get-manage-survey-context/use-cases/get-manage-survey-context.use-case.ts`, `src/modules/surveys/shared/ui/manage-survey-form.tsx`, `src/modules/surveys/shared/validations/get-manage-survey-context.schema.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - Dashboard management surfaces should load permission, organization metadata, survey detail, and response-lock state in one server context slice instead of duplicating these checks between the route and client form.
+  - `SurveyBuilder` already supports the correct lock semantics for post-response surveys, so edit flows should reuse it and let the backend remain the source of truth for `survey_locked_after_response`.
+  - Status-aware management CTAs are simplest when the client tracks only the mutable survey status locally and leaves transition validation to the existing publish and close actions.
+---
+
 ## 2026-04-02 16:34 UTC - US-022
 - Updated the public survey detail shell so it now reuses `SurveyRenderer` to render all four question types and shows availability messaging alongside `startsAt` and `endsAt`.
 - Extended the public detail DTO with an `accessState` field and changed the public detail use-case to keep closed and out-of-window public surveys renderable instead of returning them as hard errors.
