@@ -1,6 +1,6 @@
 import { listSurveyResultsAdminRepo } from "@/modules/surveys/server/repos/list-survey-results.admin.repo"
 import type { SurveyQuestionType } from "@/modules/surveys/shared/types/db"
-import type { SurveyResultOptionDTO, SurveyResultQuestionDTO } from "@/modules/surveys/shared/types/dto"
+import type { SurveyResultOptionDTO, SurveyResultQuestionDTO, SurveyResultTextAnswerDTO } from "@/modules/surveys/shared/types/dto"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 import type { Json } from "@/shared/types/supabase"
 
@@ -21,6 +21,16 @@ type SurveyResultQuestionRow = {
 		response_id: string
 		answer_option_ids_json: Json | null
 		answer_ranking_json: Json | null
+	}>
+	survey_response_items_safe: Array<{
+		response_id: string | null
+		answer_text: string | null
+		submitted_at: string | null
+		is_anonymous: boolean | null
+		respondent_user_id: string | null
+		respondent_name: string | null
+		respondent_email: string | null
+		respondent_phone: string | null
 	}>
 }
 
@@ -76,9 +86,47 @@ function buildRankingOptionResult(params: { option: SurveyResultQuestionRow["sur
 	}
 }
 
+function mapTextAnswer(item: SurveyResultQuestionRow["survey_response_items_safe"][number]): SurveyResultTextAnswerDTO | null {
+	if (!item.response_id || item.answer_text === null || !item.submitted_at) {
+		return null
+	}
+
+	return {
+		responseId: item.response_id,
+		answerText: item.answer_text,
+		submittedAt: item.submitted_at,
+		isAnonymous: item.is_anonymous ?? true,
+		respondent: {
+			respondentUserId: item.respondent_user_id,
+			respondentName: item.respondent_name,
+			respondentEmail: item.respondent_email,
+			respondentPhone: item.respondent_phone
+		}
+	}
+}
+
 function mapQuestionToResults(question: SurveyResultQuestionRow): SurveyResultQuestionDTO {
 	const orderedOptions = [...question.survey_question_options].sort((optionA, optionB) => optionA.position - optionB.position)
 	const totalResponses = question.survey_response_items.length
+
+	if (question.type === "textarea") {
+		const textAnswers = question.survey_response_items_safe
+			.map(mapTextAnswer)
+			.filter((item): item is SurveyResultTextAnswerDTO => item !== null)
+			.sort((answerA, answerB) => answerB.submittedAt.localeCompare(answerA.submittedAt))
+
+		return {
+			questionId: question.id,
+			title: question.title,
+			description: question.description,
+			type: question.type,
+			required: question.required,
+			position: question.position,
+			totalResponses: textAnswers.length,
+			textAnswers,
+			options: []
+		}
+	}
 
 	if (question.type === "ranking") {
 		const rankings = question.survey_response_items.map((item) => parseStringArray(item.answer_ranking_json))

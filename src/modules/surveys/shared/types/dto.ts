@@ -74,6 +74,21 @@ export type SurveyResultOptionDTO = {
 	averageRank: number | null
 }
 
+export type SurveyResultRespondentDTO = {
+	respondentUserId: string | null
+	respondentName: string | null
+	respondentEmail: string | null
+	respondentPhone: string | null
+}
+
+export type SurveyResultTextAnswerDTO = {
+	responseId: string
+	answerText: string
+	submittedAt: string
+	isAnonymous: boolean
+	respondent: SurveyResultRespondentDTO
+}
+
 export type SurveyResultQuestionDTO = {
 	questionId: string
 	title: string
@@ -82,7 +97,7 @@ export type SurveyResultQuestionDTO = {
 	required: boolean
 	position: number
 	totalResponses: number
-	textAnswers: string[]
+	textAnswers: SurveyResultTextAnswerDTO[]
 	options: SurveyResultOptionDTO[]
 }
 

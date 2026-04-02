@@ -23,7 +23,20 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey response submission should resolve the current tenant from the request host when possible, fall back to an explicit `organizationId` only when headers are unavailable, and validate the survey through an admin lookup before relying on RLS-backed question reads.
 - Response flows that must persist a parent `survey_responses` row plus child `survey_response_items` rows should use one database RPC and keep `already_answered` mapped from the unique constraint, so dedupe and atomicity stay aligned.
 - Survey results aggregation should keep authorization in the use-case and use an admin repo to load question structure plus response items in one read, leaving percentage and ranking math to the service layer.
+- Qualitative survey results should source respondent metadata from `survey_response_items_safe`, then map that safe projection into DTOs instead of exposing raw response rows or rebuilding anonymity masking in TypeScript.
 
+---
+
+## 2026-04-02 16:08 UTC - US-020
+- Extended the survey results DTO contract so `textarea` questions now return structured qualitative answers with `responseId`, `answerText`, `submittedAt`, `isAnonymous`, and a nested respondent identity snapshot.
+- Updated the admin results read and aggregation service to include `textarea` questions and pull respondent metadata from `survey_response_items_safe`, keeping anonymous identities masked by the database view.
+- Files changed: `src/modules/surveys/shared/types/dto.ts`, `src/modules/surveys/server/repos/list-survey-results.admin.repo.ts`, `src/modules/surveys/server/services/load-survey-results.service.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Manual browser verification was not run because this story changes backend results loading only.
+- **Learnings for future iterations:**
+  - Qualitative result payloads should expose a dedicated DTO per text answer rather than overloading the aggregate option contract, because review UIs need submission metadata and anonymity state per response.
+  - When anonymity masking already exists in SQL safe views, services should preserve that contract instead of re-implementing conditional field stripping in application code.
+  - Sorting text answers by `submittedAt` in the service keeps downstream dashboard pages simple while preserving the DTO boundary from raw database rows.
 ---
 
 ## 2026-04-02 16:03 UTC - US-019
