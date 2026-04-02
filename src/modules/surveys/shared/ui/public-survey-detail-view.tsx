@@ -1,6 +1,7 @@
 import type { SurveyPublicDetailDTO } from "@/modules/surveys/shared/types/dto"
 import { PublicSurveyResponseForm } from "@/modules/surveys/shared/ui/public-survey-response-form"
 import { SurveyRenderer } from "@/modules/surveys/shared/ui/survey-renderer"
+import { SurveyStatusBadge, SurveyVisibilityBadge } from "@/modules/surveys/shared/ui/survey-status-badge"
 import { Badge } from "@/shared/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 
@@ -64,8 +65,8 @@ export const PublicSurveyDetailView = ({ survey }: PublicSurveyDetailViewProps) 
 			<Card>
 				<CardHeader className="gap-4">
 					<div className="flex flex-wrap items-center gap-2">
-						<Badge variant="secondary">{survey.status}</Badge>
-						<Badge variant="outline">{survey.visibility}</Badge>
+						<SurveyStatusBadge status={survey.status} />
+						<SurveyVisibilityBadge visibility={survey.visibility} />
 						<Badge variant={survey.acceptAnonymousAnswers ? "default" : "secondary"}>{survey.acceptAnonymousAnswers ? "Aceita respostas anônimas" : "Exige identificação"}</Badge>
 						<Badge variant={canSubmit ? "default" : "secondary"}>{accessStateCopy.badge}</Badge>
 					</div>

@@ -1,6 +1,7 @@
 import { ArrowLeft, BarChart3, ListChecks, MessageSquareText, Sigma, Trophy, UserRound } from "lucide-react"
 import Link from "next/link"
 import type { SurveyDetailDTO, SurveyResultOptionDTO, SurveyResultQuestionDTO, SurveyResultsDTO, SurveyResultTextAnswerDTO } from "@/modules/surveys/shared/types/dto"
+import { SurveyStatusBadge, SurveyVisibilityBadge } from "@/modules/surveys/shared/ui/survey-status-badge"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
@@ -36,17 +37,6 @@ function formatPercentage(value: number | null) {
 	}
 
 	return `${value.toFixed(2).replace(".", ",")}%`
-}
-
-function getStatusLabel(status: SurveyDetailDTO["status"]) {
-	switch (status) {
-		case "draft":
-			return "Rascunho"
-		case "published":
-			return "Publicada"
-		case "closed":
-			return "Encerrada"
-	}
 }
 
 function getQuestionTypeLabel(type: SurveyResultQuestionDTO["type"]) {
@@ -267,8 +257,8 @@ export const DashboardSurveyResultsView = ({ organization, survey, results }: Da
 				<CardHeader className="space-y-4">
 					<div className="flex flex-wrap items-center gap-2">
 						<Badge variant="outline">Resultados da pesquisa</Badge>
-						<Badge variant={survey.status === "published" ? "default" : survey.status === "closed" ? "secondary" : "outline"}>{getStatusLabel(survey.status)}</Badge>
-						<Badge variant={survey.visibility === "public" ? "default" : "outline"}>{survey.visibility === "public" ? "Pública" : "Privada"}</Badge>
+						<SurveyStatusBadge status={survey.status} />
+						<SurveyVisibilityBadge visibility={survey.visibility} />
 						<Badge variant={survey.acceptAnonymousAnswers ? "secondary" : "default"}>{getResponseModeLabel(survey)}</Badge>
 					</div>
 					<div className="space-y-2">

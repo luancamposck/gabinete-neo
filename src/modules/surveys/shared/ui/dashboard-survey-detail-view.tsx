@@ -8,6 +8,7 @@ import { submitSurveyResponseAction } from "@/modules/surveys/server/slices/subm
 import type { SurveyDetailDTO } from "@/modules/surveys/shared/types/dto"
 import type { SurveyAnswerInput } from "@/modules/surveys/shared/types/survey-question.types"
 import { SurveyRenderer } from "@/modules/surveys/shared/ui/survey-renderer"
+import { SurveyStatusBadge, SurveyVisibilityBadge } from "@/modules/surveys/shared/ui/survey-status-badge"
 import { getSurveyResponseAccessState } from "@/modules/surveys/shared/utils/get-survey-response-access-state"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
@@ -77,10 +78,6 @@ function getAccessStateCopy(accessState: ReturnType<typeof getSurveyResponseAcce
 		title: "Responder pesquisa",
 		description: "Use o mesmo renderer da experiência pública para revisar as perguntas e enviar sua participação pelo dashboard."
 	}
-}
-
-function getVisibilityLabel(visibility: SurveyDetailDTO["visibility"]) {
-	return visibility === "public" ? "Pública" : "Privada"
 }
 
 const DashboardSurveyDetailView = ({ survey }: DashboardSurveyDetailViewProps) => {
@@ -159,10 +156,8 @@ const DashboardSurveyDetailView = ({ survey }: DashboardSurveyDetailViewProps) =
 			<Card>
 				<CardHeader className="gap-4">
 					<div className="flex flex-wrap items-center gap-2">
-						<Badge variant={survey.status === "published" ? "default" : survey.status === "closed" ? "secondary" : "outline"}>
-							{survey.status === "published" ? "Publicada" : survey.status === "closed" ? "Encerrada" : "Rascunho"}
-						</Badge>
-						<Badge variant={survey.visibility === "public" ? "default" : "outline"}>{getVisibilityLabel(survey.visibility)}</Badge>
+						<SurveyStatusBadge status={survey.status} />
+						<SurveyVisibilityBadge visibility={survey.visibility} />
 						<Badge variant={survey.acceptAnonymousAnswers ? "default" : "secondary"}>{survey.acceptAnonymousAnswers ? "Aceita respostas anônimas" : "Resposta identificada por conta"}</Badge>
 						<Badge variant={canSubmit ? "default" : "secondary"}>{accessStateCopy.badge}</Badge>
 					</div>

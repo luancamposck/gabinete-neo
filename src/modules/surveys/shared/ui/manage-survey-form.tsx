@@ -10,6 +10,7 @@ import { publishSurveyAction } from "@/modules/surveys/server/slices/publish-sur
 import { updateSurveyAction } from "@/modules/surveys/server/slices/update-survey/actions/update-survey.action"
 import type { SurveyDetailDTO } from "@/modules/surveys/shared/types/dto"
 import { SurveyBuilder, type SurveyBuilderValue } from "@/modules/surveys/shared/ui/survey-builder"
+import { SurveyStatusBadge, SurveyVisibilityBadge } from "@/modules/surveys/shared/ui/survey-status-badge"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card"
@@ -21,11 +22,6 @@ type ManageSurveyFormProps = {
 	}
 	survey: SurveyDetailDTO
 	isStructureLocked: boolean
-}
-
-type SurveyStatusPresentation = {
-	label: string
-	variant: "default" | "secondary" | "outline"
 }
 
 function mapSurveyToBuilderValue(survey: SurveyDetailDTO): SurveyBuilderValue {
@@ -63,30 +59,6 @@ function normalizeNullableText(value: string | null) {
 	return trimmed.length > 0 ? trimmed : null
 }
 
-function getStatusPresentation(status: SurveyDetailDTO["status"]): SurveyStatusPresentation {
-	switch (status) {
-		case "draft":
-			return {
-				label: "Rascunho",
-				variant: "outline"
-			}
-		case "published":
-			return {
-				label: "Publicada",
-				variant: "default"
-			}
-		case "closed":
-			return {
-				label: "Encerrada",
-				variant: "secondary"
-			}
-	}
-}
-
-function getVisibilityLabel(visibility: SurveyDetailDTO["visibility"]) {
-	return visibility === "public" ? "Pública" : "Privada"
-}
-
 function getActionAvailability(status: SurveyDetailDTO["status"]) {
 	return {
 		canPublish: status === "draft",
@@ -101,7 +73,6 @@ export const ManageSurveyForm = ({ organization, survey, isStructureLocked }: Ma
 	const [currentStatus, setCurrentStatus] = useState<SurveyDetailDTO["status"]>(survey.status)
 	const [serverMessage, setServerMessage] = useState<string | null>(null)
 
-	const statusPresentation = getStatusPresentation(currentStatus)
 	const actionAvailability = getActionAvailability(currentStatus)
 
 	const handleAuthBoundary = (code: string | undefined) => {
@@ -264,8 +235,8 @@ export const ManageSurveyForm = ({ organization, survey, isStructureLocked }: Ma
 				<div className="space-y-2">
 					<div className="flex flex-wrap items-center gap-2">
 						<Badge variant="outline">Gerenciar pesquisa</Badge>
-						<Badge variant={statusPresentation.variant}>{statusPresentation.label}</Badge>
-						<Badge variant={builderValue.visibility === "public" ? "default" : "secondary"}>{getVisibilityLabel(builderValue.visibility)}</Badge>
+						<SurveyStatusBadge status={currentStatus} />
+						<SurveyVisibilityBadge visibility={builderValue.visibility} />
 						{isStructureLocked ? <Badge variant="secondary">Estrutura travada</Badge> : <Badge variant="outline">Estrutura editável</Badge>}
 					</div>
 					<h1 className="text-3xl font-semibold tracking-tight">{builderValue.title || survey.title}</h1>

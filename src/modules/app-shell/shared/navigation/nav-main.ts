@@ -1,4 +1,4 @@
-import { ListTodo, Users } from "lucide-react"
+import { ClipboardList, ListTodo, Users } from "lucide-react"
 
 export const navMain = [
 	{
@@ -33,6 +33,17 @@ export const navMain = [
 			{
 				title: "Todas as Tarefas",
 				url: "/dashboard/task/all"
+			}
+		]
+	},
+	{
+		title: "Pesquisas",
+		url: "#",
+		icon: ClipboardList,
+		items: [
+			{
+				title: "Todas as pesquisas",
+				url: "/dashboard/surveys"
 			}
 		]
 	}

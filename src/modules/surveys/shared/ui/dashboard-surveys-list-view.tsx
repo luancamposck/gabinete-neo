@@ -1,6 +1,7 @@
 import { ArrowRight, CalendarClock, FilePenLine, Layers3, type LucideIcon, PlusCircle, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 import type { SurveyDashboardListItemDTO } from "@/modules/surveys/shared/types/dto"
+import { SurveyStatusBadge, SurveyVisibilityBadge } from "@/modules/surveys/shared/ui/survey-status-badge"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card"
@@ -13,11 +14,6 @@ type DashboardSurveysListViewProps = {
 type DashboardSurveysListErrorStateProps = {
 	title: string
 	description: string
-}
-
-type SurveyStatusPresentation = {
-	label: string
-	variant: "default" | "secondary" | "outline"
 }
 
 type SurveyVisibilityPresentation = {
@@ -51,28 +47,6 @@ function getDescriptionPreview(description: string | null) {
 	}
 
 	return `${description.slice(0, 147).trimEnd()}...`
-}
-
-function getSurveyStatusPresentation(status: SurveyDashboardListItemDTO["status"]): SurveyStatusPresentation {
-	switch (status) {
-		case "draft":
-			return {
-				label: "Rascunho",
-				variant: "outline"
-			}
-
-		case "published":
-			return {
-				label: "Publicada",
-				variant: "default"
-			}
-
-		case "closed":
-			return {
-				label: "Encerrada",
-				variant: "secondary"
-			}
-	}
 }
 
 function getSurveyVisibilityPresentation(visibility: SurveyDashboardListItemDTO["visibility"]): SurveyVisibilityPresentation {
@@ -168,15 +142,14 @@ export const DashboardSurveysListView = ({ surveys, canManageSurveys }: Dashboar
 
 			<div className="grid gap-4 xl:grid-cols-2">
 				{surveys.map((survey) => {
-					const status = getSurveyStatusPresentation(survey.status)
 					const visibility = getSurveyVisibilityPresentation(survey.visibility)
 
 					return (
 						<Card key={survey.id} className="flex h-full flex-col">
 							<CardHeader className="space-y-4">
 								<div className="flex flex-wrap items-center gap-2">
-									<Badge variant={status.variant}>{status.label}</Badge>
-									<Badge variant={visibility.variant}>{visibility.label}</Badge>
+									<SurveyStatusBadge status={survey.status} />
+									<SurveyVisibilityBadge visibility={survey.visibility} />
 									<Badge variant={survey.acceptAnonymousAnswers ? "secondary" : "outline"}>{survey.acceptAnonymousAnswers ? "Aceita anonimato" : "Exige identificação"}</Badge>
 								</div>
 

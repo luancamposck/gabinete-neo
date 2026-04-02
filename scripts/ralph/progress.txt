@@ -31,6 +31,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Dashboard survey management pages that must allow OWNER access should use a dedicated server context slice that resolves the tenant and checks membership role plus `surveys.manage`, instead of relying only on sidebar permission keys.
 - Member-facing dashboard survey pages should derive response availability from survey status plus date window, then hide the submit CTA while still rendering the shared question renderer for draft, closed, or out-of-window surveys.
 - Dashboard results pages for managers can reuse `getManageSurveyContextAction` to resolve the current tenant and management authorization first, then load aggregates through `loadSurveyResultsAction` with the resolved `organizationId`.
+- Survey UI surfaces should reuse the shared status and visibility badge components so localized labels and badge variants stay consistent between public, dashboard, management, and results screens.
 
 ---
 
@@ -57,6 +58,18 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Manager-only survey result pages can stay thin by composing the existing management context slice with the results loader instead of rebuilding tenant and permission checks in the route.
   - The results DTO already carries the anonymity-safe respondent snapshot, so UI code should render respondent metadata directly from that contract rather than inspecting raw database columns.
   - Empty-state handling is clearer when the page still renders top-level survey and summary metadata but skips per-question result blocks until the first valid response exists.
+---
+
+## 2026-04-02 16:56 UTC - US-030
+- Added a `Pesquisas` entry to the main dashboard navigation pointing to `/dashboard/surveys`.
+- Refactored the shared survey badge contract so `survey-status-badge.tsx` now provides localized status labels and a companion visibility badge reused across public list/detail and dashboard list/detail/manage/results surfaces.
+- Files changed: `src/modules/app-shell/shared/navigation/nav-main.ts`, `src/modules/surveys/shared/ui/survey-status-badge.tsx`, `src/modules/surveys/shared/ui/public-surveys-list-view.tsx`, `src/modules/surveys/shared/ui/public-survey-detail-view.tsx`, `src/modules/surveys/shared/ui/dashboard-surveys-list-view.tsx`, `src/modules/surveys/shared/ui/dashboard-survey-detail-view.tsx`, `src/modules/surveys/shared/ui/dashboard-survey-results-view.tsx`, `src/modules/surveys/shared/ui/manage-survey-form.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the required dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - Survey chrome that repeats status or visibility should import the shared badge components instead of re-encoding localized labels in each page.
+  - Keeping navigation wiring in `src/modules/app-shell/shared/navigation/nav-main.ts` is enough for dashboard discoverability; survey routes do not need local sidebar duplication.
+  - This story changes visible UI surfaces, so a manual browser pass is still required whenever the dev-browser skill remains unavailable.
 ---
 
 ## 2026-04-02 16:34 UTC - US-022

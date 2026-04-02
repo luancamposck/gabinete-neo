@@ -1,6 +1,7 @@
 import { ArrowRight, CalendarClock, ShieldCheck, UserRound } from "lucide-react"
 import Link from "next/link"
 import type { SurveyPublicListItemDTO } from "@/modules/surveys/shared/types/dto"
+import { SurveyStatusBadge, SurveyVisibilityBadge } from "@/modules/surveys/shared/ui/survey-status-badge"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card"
@@ -74,8 +75,8 @@ export const PublicSurveysListView = ({ surveys }: PublicSurveysListViewProps) =
 					<Card key={survey.id} className="flex h-full flex-col">
 						<CardHeader className="space-y-4">
 							<div className="flex flex-wrap items-center gap-2">
-								<Badge>{survey.status}</Badge>
-								<Badge variant="outline">{survey.visibility}</Badge>
+								<SurveyStatusBadge status={survey.status} />
+								<SurveyVisibilityBadge visibility={survey.visibility} />
 								<Badge variant={survey.acceptAnonymousAnswers ? "secondary" : "outline"}>{survey.acceptAnonymousAnswers ? "Aceita respostas anônimas" : "Exige identificação"}</Badge>
 							</div>
 
