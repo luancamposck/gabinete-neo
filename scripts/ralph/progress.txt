@@ -28,6 +28,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Public response UX should extend `SurveyRenderer` through pre-submit composition hooks instead of duplicating question rendering, so identity controls and answer validation stay in one shared flow.
 - Dashboard survey index pages can reuse `getSidebarContextAction` for UI-only permission gating while keeping the actual survey list read on `list-dashboard-surveys`, which already owns tenant and membership enforcement.
 - Shared survey management forms should keep `startsAt` and `endsAt` in ISO strings in component state and convert to `datetime-local` only at the input boundary, so builder consumers stay aligned with the action schemas.
+- Dashboard survey management pages that must allow OWNER access should use a dedicated server context slice that resolves the tenant and checks membership role plus `surveys.manage`, instead of relying only on sidebar permission keys.
 
 ---
 
@@ -375,4 +376,17 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - The shared builder is now shaped for `new` and `edit` pages as one controlled value object, which is simpler than keeping parallel callbacks for each field once the survey contract includes scheduling and metadata.
   - Structural lock behavior should disable the full question editor surface, not only add or remove buttons, because the backend also treats question title, description, type, required flag, and options as locked after the first response.
   - Option and question reordering should always run through a renormalization helper so UI array operations never drift from the database's base-1 ordering contract.
+---
+
+## 2026-04-02 16:38 UTC - US-026
+- Created the protected `/dashboard/surveys/new` route and kept the App Router entry thin by delegating tenant lookup and authorization to a dedicated surveys context action.
+- Added a new survey creation form in the surveys module that reuses `SurveyBuilder`, persists drafts through `createSurveyAction`, shows toast feedback, and redirects back to the dashboard survey list after a successful save.
+- Enforced page access for authenticated users with active membership who are either `OWNER` or hold `surveys.manage`, matching the survey creation use-case contract instead of relying on sidebar-only permission data.
+- Files changed: `src/app/dashboard/surveys/new/page.tsx`, `src/modules/surveys/server/slices/get-create-survey-context/actions/get-create-survey-context.action.ts`, `src/modules/surveys/server/slices/get-create-survey-context/use-cases/get-create-survey-context.use-case.ts`, `src/modules/surveys/shared/ui/create-survey-form.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the requested dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - Survey management pages cannot assume sidebar permissions are enough for authorization because `OWNER` access is enforced through membership role in the create/edit use-cases.
+  - `SurveyBuilder` already carries the full draft contract, so new management pages should wrap it with route-specific submit behavior instead of introducing a second survey form state shape.
+  - Redirecting back to `/dashboard/surveys` after a successful create is the safe default until the dedicated edit/manage route is in place.
 ---
