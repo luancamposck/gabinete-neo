@@ -18,7 +18,21 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Dashboard survey listing should gate on active membership and expose a dedicated DTO mapper instead of reusing the broader survey summary contract.
 - Once a survey has responses, update flows must not reuse the delete-and-reinsert question sync path; compare the incoming structure against persisted questions/options and reject structural changes before touching historical rows.
 - Survey status transitions should be enforced in the use-case layer with explicit `invalid_publication_state` responses, allowing only `draft -> published` and `published -> closed`.
+- Public survey detail loaders that must distinguish `draft`, `closed`, `unavailable`, and `cross-tenant` states should inspect survey metadata through an admin repo first, then load public questions only after the tenant and availability checks pass.
 
+---
+
+## 2026-04-02 15:45 UTC - US-015
+- Added a public survey detail loader slice that resolves the tenant from the current host, classifies cross-tenant and availability errors explicitly, and returns a narrowed public detail DTO with ordered questions and options.
+- Introduced an admin-backed survey lookup plus a reusable public-access-state helper so the loader can distinguish `draft`, `closed`, and other unavailable states even though public RLS only exposes already-answerable surveys.
+- Added the `/surveys/[surveyId]` server route and module-scoped presentation UI to render the survey detail contract or a deterministic business-error state without moving domain logic into `src/app`.
+- Files changed: `src/modules/surveys/shared/types/dto.ts`, `src/modules/surveys/server/repos/find-survey-by-id.admin.repo.ts`, `src/modules/surveys/server/services/find-survey-by-id-admin.service.ts`, `src/modules/surveys/shared/utils/get-public-survey-access-state.ts`, `src/modules/surveys/shared/validations/load-public-survey-detail.schema.ts`, `src/modules/surveys/server/slices/load-public-survey-detail/actions/load-public-survey-detail.action.ts`, `src/modules/surveys/server/slices/load-public-survey-detail/use-cases/load-public-survey-detail.use-case.ts`, `src/modules/surveys/shared/ui/public-survey-detail-view.tsx`, `src/app/surveys/[surveyId]/page.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification is still required because this story adds a new public page contract and browser tooling was unavailable in this environment.
+- **Learnings for future iterations:**
+  - Public detail loaders cannot rely on regular public-table reads when the product contract needs to distinguish hidden-but-existing states, because RLS intentionally collapses those rows to “not readable”.
+  - A narrow `SurveyPublicDetailDTO` keeps the page contract focused on answerable metadata instead of leaking management-only fields such as `organizationId` or `createdByUserId`.
+  - Keeping the route file thin and pushing survey-specific rendering into `src/modules/surveys/shared/ui/` preserves the App Router boundary from `AGENTS.md` while still letting the page render meaningful fallback states.
 ---
 
 ## 2026-04-02 15:39 UTC - US-014

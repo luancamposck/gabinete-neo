@@ -44,6 +44,10 @@ export type SurveyDetailDTO = SurveySummaryDTO & {
 	questions: SurveyQuestionDTO[]
 }
 
+export type SurveyPublicDetailDTO = Pick<SurveySummaryDTO, "id" | "title" | "description" | "status" | "visibility" | "startsAt" | "endsAt" | "acceptAnonymousAnswers"> & {
+	questions: SurveyQuestionDTO[]
+}
+
 export type SurveyPublicRespondentIdentityDTO = {
 	respondentName: string | null
 	respondentEmail: string | null
@@ -158,6 +162,20 @@ export function mapSurveyQuestionWithOptionsToDTO(question: SurveyQuestionWithOp
 export function mapSurveyRowToSurveyDetailDTO(params: { survey: SurveyRow; questions?: SurveyQuestionDTO[] }): SurveyDetailDTO {
 	return {
 		...mapSurveyRowToSurveySummaryDTO(params.survey),
+		questions: params.questions ?? []
+	}
+}
+
+export function mapSurveyRowToSurveyPublicDetailDTO(params: { survey: SurveyRow; questions?: SurveyQuestionDTO[] }): SurveyPublicDetailDTO {
+	return {
+		id: params.survey.id,
+		title: params.survey.title,
+		description: params.survey.description,
+		status: params.survey.status,
+		visibility: params.survey.visibility,
+		startsAt: params.survey.starts_at,
+		endsAt: params.survey.ends_at,
+		acceptAnonymousAnswers: params.survey.accept_anonymous_answers,
 		questions: params.questions ?? []
 	}
 }
