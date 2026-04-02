@@ -1,4 +1,5 @@
 import type { SurveyPublicDetailDTO } from "@/modules/surveys/shared/types/dto"
+import { PublicSurveyResponseForm } from "@/modules/surveys/shared/ui/public-survey-response-form"
 import { SurveyRenderer } from "@/modules/surveys/shared/ui/survey-renderer"
 import { Badge } from "@/shared/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
@@ -49,8 +50,8 @@ function getAccessStateCopy(survey: SurveyPublicDetailDTO) {
 		badge: "Disponível para resposta",
 		title: "Responda à pesquisa",
 		description: survey.acceptAnonymousAnswers
-			? "A etapa de identidade e o envio final serão conectados nas próximas histórias do fluxo público."
-			: "Esta pesquisa exige identificação e terá essa etapa conectada nas próximas histórias do fluxo público."
+			? "Escolha entre resposta anônima ou identificada, revise as perguntas e envie sua participação nesta página."
+			: "Esta pesquisa exige identificação. Preencha seus dados de contato antes de concluir o envio."
 	}
 }
 
@@ -92,15 +93,17 @@ export const PublicSurveyDetailView = ({ survey }: PublicSurveyDetailViewProps) 
 					<CardDescription className="text-base">{accessStateCopy.description}</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<SurveyRenderer
-						questions={survey.questions}
-						onSubmit={async () => {}}
-						submitLabel={canSubmit ? "Continuar para envio" : "Envio indisponível"}
-						disabled={!canSubmit}
-						disabledMessage={
-							canSubmit ? "Esta shell já renderiza todos os tipos de pergunta; a submissão será conectada na próxima story." : "A pesquisa está visível para consulta, mas este estado bloqueia novas respostas."
-						}
-					/>
+					{canSubmit ? (
+						<PublicSurveyResponseForm survey={survey} />
+					) : (
+						<SurveyRenderer
+							questions={survey.questions}
+							onSubmit={async () => {}}
+							submitLabel="Envio indisponível"
+							disabled
+							disabledMessage="A pesquisa está visível para consulta, mas este estado bloqueia novas respostas."
+						/>
+					)}
 				</CardContent>
 			</Card>
 		</div>

@@ -1,5 +1,6 @@
 "use client"
 
+import type { ReactNode } from "react"
 import { useMemo, useState } from "react"
 import type { SurveyAnswerInput, SurveyQuestionInput } from "@/modules/surveys/shared/types/survey-question.types"
 import { validateSurveyAnswers } from "@/modules/surveys/shared/validations/survey-response.schema"
@@ -15,9 +16,11 @@ type SurveyRendererProps = {
 	submitLabel?: string
 	disabled?: boolean
 	disabledMessage?: string | null
+	beforeSubmitContent?: ReactNode
+	validateBeforeSubmit?: (() => string | null) | undefined
 }
 
-export const SurveyRenderer = ({ questions, onSubmit, submitLabel = "Enviar respostas", disabled = false, disabledMessage = null }: SurveyRendererProps) => {
+export const SurveyRenderer = ({ questions, onSubmit, submitLabel = "Enviar respostas", disabled = false, disabledMessage = null, beforeSubmitContent = null, validateBeforeSubmit }: SurveyRendererProps) => {
 	const [answers, setAnswers] = useState<Record<string, SurveyAnswerInput>>({})
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
@@ -34,6 +37,12 @@ export const SurveyRenderer = ({ questions, onSubmit, submitLabel = "Enviar resp
 
 	const handleSubmit = async () => {
 		if (disabled) {
+			return
+		}
+
+		const beforeSubmitError = validateBeforeSubmit?.() ?? null
+		if (beforeSubmitError) {
+			setErrorMessage(beforeSubmitError)
 			return
 		}
 
@@ -149,6 +158,7 @@ export const SurveyRenderer = ({ questions, onSubmit, submitLabel = "Enviar resp
 				)
 			})}
 
+			{beforeSubmitContent}
 			{errorMessage ? <p className="text-destructive text-sm">{errorMessage}</p> : null}
 			{disabledMessage ? <p className="text-muted-foreground text-sm">{disabledMessage}</p> : null}
 
