@@ -29,6 +29,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Dashboard survey index pages can reuse `getSidebarContextAction` for UI-only permission gating while keeping the actual survey list read on `list-dashboard-surveys`, which already owns tenant and membership enforcement.
 - Shared survey management forms should keep `startsAt` and `endsAt` in ISO strings in component state and convert to `datetime-local` only at the input boundary, so builder consumers stay aligned with the action schemas.
 - Dashboard survey management pages that must allow OWNER access should use a dedicated server context slice that resolves the tenant and checks membership role plus `surveys.manage`, instead of relying only on sidebar permission keys.
+- Member-facing dashboard survey pages should derive response availability from survey status plus date window, then hide the submit CTA while still rendering the shared question renderer for draft, closed, or out-of-window surveys.
 
 ---
 
@@ -401,4 +402,17 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Survey management pages cannot assume sidebar permissions are enough for authorization because `OWNER` access is enforced through membership role in the create/edit use-cases.
   - `SurveyBuilder` already carries the full draft contract, so new management pages should wrap it with route-specific submit behavior instead of introducing a second survey form state shape.
   - Redirecting back to `/dashboard/surveys` after a successful create is the safe default until the dedicated edit/manage route is in place.
+---
+
+## 2026-04-02 16:48 UTC - US-028
+- Created `src/app/dashboard/surveys/[surveyId]/page.tsx` as a thin server route that loads the dashboard survey detail action and applies the existing dashboard auth and tenant redirects.
+- Added a dedicated member response view that reuses `SurveyRenderer`, lets authenticated members answer public or private surveys in anonymous or identified mode when allowed, and hides the submit CTA when the survey is draft, closed, or outside its response window.
+- Extended `SurveyRenderer` with an optional `showSubmitButton` prop and added a shared survey-response access helper so dashboard response availability matches the existing submission rules without duplicating question validation.
+- Files changed: `src/app/dashboard/surveys/[surveyId]/page.tsx`, `src/modules/surveys/shared/ui/dashboard-survey-detail-view.tsx`, `src/modules/surveys/shared/ui/survey-renderer.tsx`, `src/modules/surveys/shared/utils/get-survey-response-access-state.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - Dashboard member response flows should reuse the shared question renderer but keep identity UX separate from the public form, because authenticated members submit identified answers through their account instead of manual contact fields.
+  - Hiding the submit CTA at the page layer is still necessary even when the submit action enforces access rules, because dashboard users need a clear read-only state for draft, closed, or scheduled surveys.
+  - A small shared access-state helper is enough for member surfaces when visibility is already enforced by the loader; the dashboard page only needs status and window checks to decide whether submission should be interactive.
 ---
