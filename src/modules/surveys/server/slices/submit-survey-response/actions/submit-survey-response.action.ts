@@ -5,7 +5,7 @@ import { mapSurveyResponseRowToDTO, type SurveyResponseDTO } from "@/modules/sur
 import { submitSurveyResponseActionSchema } from "@/modules/surveys/shared/validations/submit-survey-response.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
-type ErrorCodes = "invalid_input" | "already_answered" | "invalid_answers" | "infra_error"
+type ErrorCodes = "invalid_input" | "org_not_found" | "survey_not_found" | "not_allowed" | "already_answered" | "invalid_answers" | "infra_error"
 
 export async function submitSurveyResponseAction(input: unknown): OperationResponse<{ response: SurveyResponseDTO }, ErrorCodes> {
 	const parsed = submitSurveyResponseActionSchema.safeParse(input)

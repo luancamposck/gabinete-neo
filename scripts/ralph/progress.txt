@@ -20,6 +20,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Once a survey has responses, update flows must not reuse the delete-and-reinsert question sync path; compare the incoming structure against persisted questions/options and reject structural changes before touching historical rows.
 - Survey status transitions should be enforced in the use-case layer with explicit `invalid_publication_state` responses, allowing only `draft -> published` and `published -> closed`.
 - Public survey detail loaders that must distinguish `draft`, `closed`, `unavailable`, and `cross-tenant` states should inspect survey metadata through an admin repo first, then load public questions only after the tenant and availability checks pass.
+- Survey response submission should resolve the current tenant from the request host when possible, fall back to an explicit `organizationId` only when headers are unavailable, and validate the survey through an admin lookup before relying on RLS-backed question reads.
 
 ---
 
@@ -32,7 +33,20 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - **Learnings for future iterations:**
   - Dashboard member loaders should reuse the same auth and tenant resolution steps as the dashboard guard, but still keep their own explicit `not_member` and `survey_not_found` contract for page-level handling.
   - For answer flows, loading the survey through regular RLS-backed repos is preferable to admin reads because unpublished or unavailable surveys should naturally collapse to "not readable" for non-manager members.
-  - Reusing `SurveyDetailDTO` avoids introducing a second member-detail contract when the dashboard page needs full ordered questions plus tenant-safe survey metadata.
+- Reusing `SurveyDetailDTO` avoids introducing a second member-detail contract when the dashboard page needs full ordered questions plus tenant-safe survey metadata.
+---
+
+## 2026-04-02 15:55 UTC - US-017
+- Hardened `submit-survey-response` so it now resolves the current tenant, loads survey metadata before persistence, rejects cross-tenant or unavailable surveys, enforces active membership for private surveys, and blocks anonymous submissions when the survey forbids them.
+- Required `respondentName`, `respondentEmail`, and `respondentPhone` for unauthenticated identified public responses, and persisted the response under the survey organization instead of trusting caller-provided organization data.
+- Tightened answer validation to reject any `questionId` that does not belong to the loaded survey before inserts begin.
+- Files changed: `src/modules/surveys/server/slices/submit-survey-response/actions/submit-survey-response.action.ts`, `src/modules/surveys/server/slices/submit-survey-response/use-cases/submit-survey-response.use-case.ts`, `src/modules/surveys/shared/validations/survey-response.schema.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Manual browser verification was not run because this story changes backend submission validation only.
+- **Learnings for future iterations:**
+  - Response submission should classify access from survey metadata first, because RLS-backed question reads alone cannot distinguish cross-tenant, unpublished, or out-of-window surveys cleanly.
+  - Extra answer entries must be rejected explicitly; iterating only over known questions is not enough because unknown `questionId`s otherwise bypass validation.
+  - Response rows should derive `organization_id` from the loaded survey, not from caller input, so tenant integrity is preserved even when the client payload is tampered with.
 ---
 
 ## 2026-04-02 15:45 UTC - US-015

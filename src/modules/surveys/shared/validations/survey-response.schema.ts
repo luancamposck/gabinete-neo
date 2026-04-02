@@ -11,7 +11,14 @@ export const surveyAnswerInputSchema = z.object({
 export const surveyAnswersInputSchema = z.array(surveyAnswerInputSchema)
 
 export function validateSurveyAnswers(params: { questions: SurveyQuestionSchemaData[]; answers: z.infer<typeof surveyAnswersInputSchema> }) {
+	const questionIds = new Set(params.questions.map((question) => question.id).filter((questionId): questionId is string => Boolean(questionId)))
 	const answerByQuestionId = new Map(params.answers.map((answer) => [answer.questionId, answer]))
+
+	for (const answer of params.answers) {
+		if (!questionIds.has(answer.questionId)) {
+			return { success: false as const, message: "As respostas enviadas contêm uma questão que não pertence a esta pesquisa." }
+		}
+	}
 
 	for (const question of params.questions) {
 		const answer = answerByQuestionId.get(question.id ?? "")
