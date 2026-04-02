@@ -308,3 +308,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Comparing normalized persisted question/option content against the incoming payload is safer than keying only on payload presence because the current editor can resend the unchanged structure during metadata-only saves.
   - The explicit `survey_locked_after_response` business code belongs in both the use-case and the action contract so the UI can surface a stable lock-state message without inferring from generic infra failures.
 ---
+
+## 2026-04-02 16:11 UTC - US-021
+- Created the public surveys listing route as a server component in `src/app/surveys/page.tsx`, wired to `listPublicSurveysAction`, and delegated domain rendering to the surveys module UI layer.
+- Added a dedicated public listing view with survey cards that show title, shortened description, status, response deadline, anonymity behavior, and a CTA to open the survey response page.
+- Added explicit public empty and error states so the route stays predictable when the tenant has no available surveys or the tenant lookup fails.
+- Files changed: `src/app/surveys/page.tsx`, `src/modules/surveys/shared/ui/public-surveys-list-view.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification is still required because the requested browser tooling/skill is unavailable in this Codex session.
+- **Learnings for future iterations:**
+  - Public App Router entrypoints should stay thin and server-first, with tenant-aware loading in the action/use-case layer and survey-specific presentation moved into `src/modules/surveys/shared/ui/`.
+  - The public surveys list contract already arrives filtered to currently available surveys, so the page should focus on presentation and empty/error handling instead of re-implementing availability rules.
+  - Shortening long survey descriptions in the presentation layer keeps list cards stable without weakening the full-detail contract used by the survey detail page.
+---
