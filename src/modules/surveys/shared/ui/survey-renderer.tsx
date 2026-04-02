@@ -12,9 +12,12 @@ import { Textarea } from "@/shared/components/ui/textarea"
 type SurveyRendererProps = {
 	questions: SurveyQuestionInput[]
 	onSubmit: (answers: SurveyAnswerInput[]) => Promise<void>
+	submitLabel?: string
+	disabled?: boolean
+	disabledMessage?: string | null
 }
 
-export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => {
+export const SurveyRenderer = ({ questions, onSubmit, submitLabel = "Enviar respostas", disabled = false, disabledMessage = null }: SurveyRendererProps) => {
 	const [answers, setAnswers] = useState<Record<string, SurveyAnswerInput>>({})
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
@@ -30,6 +33,10 @@ export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => 
 	)
 
 	const handleSubmit = async () => {
+		if (disabled) {
+			return
+		}
+
 		const payload = Object.values(answers)
 		const validation = validateSurveyAnswers({
 			questions: normalizedQuestions,
@@ -50,6 +57,8 @@ export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => 
 		}
 	}
 
+	const isFormDisabled = disabled || isSubmitting
+
 	return (
 		<div className="space-y-4">
 			{normalizedQuestions.map((question) => {
@@ -67,7 +76,8 @@ export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => 
 									<button
 										key={option.id}
 										type="button"
-										className="block w-full rounded-md border p-2 text-left"
+										className="block w-full rounded-md border p-2 text-left disabled:cursor-not-allowed disabled:opacity-60"
+										disabled={isFormDisabled}
 										onClick={() => setAnswers((current) => ({ ...current, [question.id]: { questionId: question.id, answerOptionIds: [option.id ?? ""] } }))}
 									>
 										{option.label}
@@ -81,6 +91,7 @@ export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => 
 								value={answer.answerText ?? ""}
 								maxLength={5000}
 								placeholder="Escreva sua resposta"
+								disabled={isFormDisabled}
 								onChange={(event) => setAnswers((current) => ({ ...current, [question.id]: { questionId: question.id, answerText: event.target.value } }))}
 							/>
 						) : null}
@@ -93,6 +104,7 @@ export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => 
 										<div key={option.id} className="flex items-center gap-2">
 											<Checkbox
 												checked={checked}
+												disabled={isFormDisabled}
 												onCheckedChange={(nextChecked) => {
 													const current = answer.answerOptionIds ?? []
 													const optionId = option.id ?? ""
@@ -115,6 +127,7 @@ export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => 
 											type="number"
 											min={1}
 											max={question.options.length}
+											disabled={isFormDisabled}
 											value={(answer.answerRanking ?? [])[optionIndex] ? (answer.answerRanking ?? []).indexOf(option.id ?? "") + 1 : ""}
 											onChange={(event) => {
 												const rank = Number(event.target.value)
@@ -137,9 +150,10 @@ export const SurveyRenderer = ({ questions, onSubmit }: SurveyRendererProps) => 
 			})}
 
 			{errorMessage ? <p className="text-destructive text-sm">{errorMessage}</p> : null}
+			{disabledMessage ? <p className="text-muted-foreground text-sm">{disabledMessage}</p> : null}
 
-			<Button type="button" onClick={handleSubmit} disabled={isSubmitting}>
-				{isSubmitting ? "Enviando..." : "Enviar respostas"}
+			<Button type="button" onClick={handleSubmit} disabled={isFormDisabled}>
+				{isSubmitting ? "Enviando..." : submitLabel}
 			</Button>
 		</div>
 	)

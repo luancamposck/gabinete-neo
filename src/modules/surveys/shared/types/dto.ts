@@ -1,4 +1,5 @@
 import type { SurveyQuestionOptionRow, SurveyQuestionRow, SurveyQuestionType, SurveyResponseRow, SurveyRow, SurveyStatus, SurveyVisibility } from "@/modules/surveys/shared/types/db"
+import type { PublicSurveyAccessState } from "@/modules/surveys/shared/utils/get-public-survey-access-state"
 import type { Json } from "@/shared/types/supabase"
 
 export type SurveySummaryDTO = {
@@ -45,6 +46,7 @@ export type SurveyDetailDTO = SurveySummaryDTO & {
 }
 
 export type SurveyPublicDetailDTO = Pick<SurveySummaryDTO, "id" | "title" | "description" | "status" | "visibility" | "startsAt" | "endsAt" | "acceptAnonymousAnswers"> & {
+	accessState: PublicSurveyAccessState
 	questions: SurveyQuestionDTO[]
 }
 
@@ -181,7 +183,7 @@ export function mapSurveyRowToSurveyDetailDTO(params: { survey: SurveyRow; quest
 	}
 }
 
-export function mapSurveyRowToSurveyPublicDetailDTO(params: { survey: SurveyRow; questions?: SurveyQuestionDTO[] }): SurveyPublicDetailDTO {
+export function mapSurveyRowToSurveyPublicDetailDTO(params: { survey: SurveyRow; accessState: PublicSurveyAccessState; questions?: SurveyQuestionDTO[] }): SurveyPublicDetailDTO {
 	return {
 		id: params.survey.id,
 		title: params.survey.title,
@@ -191,6 +193,7 @@ export function mapSurveyRowToSurveyPublicDetailDTO(params: { survey: SurveyRow;
 		startsAt: params.survey.starts_at,
 		endsAt: params.survey.ends_at,
 		acceptAnonymousAnswers: params.survey.accept_anonymous_answers,
+		accessState: params.accessState,
 		questions: params.questions ?? []
 	}
 }

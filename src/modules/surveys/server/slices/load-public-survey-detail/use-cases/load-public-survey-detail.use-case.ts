@@ -1,6 +1,6 @@
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { findSurveyByIdAdminService } from "@/modules/surveys/server/services/find-survey-by-id-admin.service"
-import { listSurveyQuestionsWithOptionsService } from "@/modules/surveys/server/services/list-survey-questions-with-options.service"
+import { listSurveyQuestionsWithOptionsAdminService } from "@/modules/surveys/server/services/list-survey-questions-with-options-admin.service"
 import { mapSurveyQuestionWithOptionsToDTO, mapSurveyRowToSurveyPublicDetailDTO, type SurveyPublicDetailDTO } from "@/modules/surveys/shared/types/dto"
 import { getPublicSurveyAccessState } from "@/modules/surveys/shared/utils/get-public-survey-access-state"
 import { getRequestHost } from "@/shared/http/get-request-host"
@@ -23,7 +23,6 @@ const MSG_ORG_NOT_FOUND = "Não foi possível identificar a organização deste 
 const MSG_SURVEY_NOT_FOUND = "Pesquisa não encontrada."
 const MSG_SURVEY_CROSS_TENANT = "Esta pesquisa não pertence à organização atual."
 const MSG_SURVEY_DRAFT = "Esta pesquisa ainda não foi publicada."
-const MSG_SURVEY_CLOSED = "Esta pesquisa já foi encerrada."
 const MSG_SURVEY_UNAVAILABLE = "Esta pesquisa não está disponível para respostas públicas no momento."
 const MSG_INFRA_ERROR = "Não foi possível carregar os detalhes da pesquisa agora. Tente novamente em instantes."
 
@@ -101,9 +100,9 @@ export async function loadPublicSurveyDetailUseCase(params: LoadPublicSurveyDeta
 		// Possibilidades:
 		// - survey de outro tenant => survey_cross_tenant
 		// - survey draft => survey_draft
-		// - survey closed => survey_closed
-		// - survey privada / fora da janela => survey_unavailable
-		// - survey pública publicada e disponível => seguir fluxo
+		// - survey private => survey_unavailable
+		// - survey closed / fora da janela => seguir com renderização bloqueada
+		// - survey pública publicada => seguir fluxo
 		// ============================================================
 		if (survey.organization_id !== orgRes.data.organizationId) {
 			return {
@@ -122,15 +121,7 @@ export async function loadPublicSurveyDetailUseCase(params: LoadPublicSurveyDeta
 			}
 		}
 
-		if (accessState === "closed") {
-			return {
-				success: false,
-				message: MSG_SURVEY_CLOSED,
-				code: "survey_closed"
-			}
-		}
-
-		if (accessState === "unavailable") {
+		if (survey.visibility !== "public") {
 			return {
 				success: false,
 				message: MSG_SURVEY_UNAVAILABLE,
@@ -145,7 +136,7 @@ export async function loadPublicSurveyDetailUseCase(params: LoadPublicSurveyDeta
 		// - erro técnico ao listar questões => infra_error
 		// - sucesso => montar DTO público detalhado
 		// ============================================================
-		const questionsRes = await listSurveyQuestionsWithOptionsService({ surveyId: survey.id })
+		const questionsRes = await listSurveyQuestionsWithOptionsAdminService({ surveyId: survey.id })
 		if (questionsRes.success === false) {
 			return FALLBACK_INFRA_ERROR
 		}
@@ -156,6 +147,7 @@ export async function loadPublicSurveyDetailUseCase(params: LoadPublicSurveyDeta
 			data: {
 				survey: mapSurveyRowToSurveyPublicDetailDTO({
 					survey,
+					accessState,
 					questions: questionsRes.data.questions.map(mapSurveyQuestionWithOptionsToDTO)
 				})
 			}

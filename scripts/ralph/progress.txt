@@ -24,7 +24,21 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Response flows that must persist a parent `survey_responses` row plus child `survey_response_items` rows should use one database RPC and keep `already_answered` mapped from the unique constraint, so dedupe and atomicity stay aligned.
 - Survey results aggregation should keep authorization in the use-case and use an admin repo to load question structure plus response items in one read, leaving percentage and ranking math to the service layer.
 - Qualitative survey results should source respondent metadata from `survey_response_items_safe`, then map that safe projection into DTOs instead of exposing raw response rows or rebuilding anonymity masking in TypeScript.
+- Public survey detail pages that must show closed or not-yet-open states should validate tenant and visibility via admin survey metadata first, then use an admin question loader so the shell can still render the survey structure even when public read RLS blocks out-of-window questions.
 
+---
+
+## 2026-04-02 16:34 UTC - US-022
+- Updated the public survey detail shell so it now reuses `SurveyRenderer` to render all four question types and shows availability messaging alongside `startsAt` and `endsAt`.
+- Extended the public detail DTO with an `accessState` field and changed the public detail use-case to keep closed and out-of-window public surveys renderable instead of returning them as hard errors.
+- Added an admin-backed survey question loader for the public detail route because the current RLS policy hides question rows when a public survey is outside its active response window.
+- Files changed: `src/modules/surveys/server/repos/list-survey-questions-with-options.admin.repo.ts`, `src/modules/surveys/server/services/list-survey-questions-with-options-admin.service.ts`, `src/modules/surveys/server/slices/load-public-survey-detail/use-cases/load-public-survey-detail.use-case.ts`, `src/modules/surveys/shared/types/dto.ts`, `src/modules/surveys/shared/ui/public-survey-detail-view.tsx`, `src/modules/surveys/shared/ui/survey-renderer.tsx`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser verification using the dev-browser skill was not possible because that skill/tooling is unavailable in this Codex session, so manual browser verification is still required.
+- **Learnings for future iterations:**
+  - Public detail shells should carry an explicit `accessState` in the DTO so UI flows can distinguish renderable blocked states from true not-found or cross-tenant errors without recomputing availability rules.
+  - The current survey read RLS is intentionally stricter than the public shell requirement, so closed and future-window survey detail pages need a controlled admin question read after tenant and visibility checks.
+  - `SurveyRenderer` is now the shared contract for all public question-type rendering, and future public submission stories should extend it instead of creating a second renderer path.
 ---
 
 ## 2026-04-02 16:08 UTC - US-020

@@ -1,4 +1,5 @@
 import type { SurveyPublicDetailDTO } from "@/modules/surveys/shared/types/dto"
+import { SurveyRenderer } from "@/modules/surveys/shared/ui/survey-renderer"
 import { Badge } from "@/shared/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 
@@ -27,7 +28,36 @@ function formatDate(date: string | null) {
 	}).format(parsedDate)
 }
 
+function getAccessStateCopy(survey: SurveyPublicDetailDTO) {
+	if (survey.accessState === "closed") {
+		return {
+			badge: "Pesquisa encerrada",
+			title: "Esta pesquisa foi encerrada",
+			description: "As perguntas continuam visíveis para consulta, mas o envio de respostas não está mais disponível."
+		}
+	}
+
+	if (survey.accessState === "unavailable") {
+		return {
+			badge: "Indisponível no momento",
+			title: "Esta pesquisa ainda não está aceitando respostas",
+			description: "Confira as datas de início e encerramento antes de tentar responder."
+		}
+	}
+
+	return {
+		badge: "Disponível para resposta",
+		title: "Responda à pesquisa",
+		description: survey.acceptAnonymousAnswers
+			? "A etapa de identidade e o envio final serão conectados nas próximas histórias do fluxo público."
+			: "Esta pesquisa exige identificação e terá essa etapa conectada nas próximas histórias do fluxo público."
+	}
+}
+
 export const PublicSurveyDetailView = ({ survey }: PublicSurveyDetailViewProps) => {
+	const accessStateCopy = getAccessStateCopy(survey)
+	const canSubmit = survey.accessState === "accessible"
+
 	return (
 		<div className="mx-auto flex min-h-svh w-full max-w-4xl flex-col gap-6 px-6 py-10">
 			<Card>
@@ -36,6 +66,7 @@ export const PublicSurveyDetailView = ({ survey }: PublicSurveyDetailViewProps) 
 						<Badge variant="secondary">{survey.status}</Badge>
 						<Badge variant="outline">{survey.visibility}</Badge>
 						<Badge variant={survey.acceptAnonymousAnswers ? "default" : "secondary"}>{survey.acceptAnonymousAnswers ? "Aceita respostas anônimas" : "Exige identificação"}</Badge>
+						<Badge variant={canSubmit ? "default" : "secondary"}>{accessStateCopy.badge}</Badge>
 					</div>
 					<div className="space-y-2">
 						<CardTitle className="text-3xl">{survey.title}</CardTitle>
@@ -55,35 +86,23 @@ export const PublicSurveyDetailView = ({ survey }: PublicSurveyDetailViewProps) 
 				</CardContent>
 			</Card>
 
-			<div className="space-y-4">
-				{survey.questions.map((question) => (
-					<Card key={question.id}>
-						<CardHeader className="gap-2">
-							<div className="flex flex-wrap items-center gap-2">
-								<Badge variant="outline">Pergunta {question.position}</Badge>
-								<Badge variant="secondary">{question.type}</Badge>
-								{question.required ? <Badge>Obrigatória</Badge> : <Badge variant="secondary">Opcional</Badge>}
-							</div>
-							<CardTitle className="text-xl">{question.title}</CardTitle>
-							{question.description ? <CardDescription>{question.description}</CardDescription> : null}
-						</CardHeader>
-
-						<CardContent className="space-y-3">
-							{question.options.length > 0 ? (
-								<ul className="space-y-2">
-									{question.options.map((option) => (
-										<li key={option.id} className="rounded-md border bg-muted/20 px-3 py-2 text-sm">
-											<span className="font-medium">{option.position}.</span> {option.label}
-										</li>
-									))}
-								</ul>
-							) : (
-								<p className="text-sm text-muted-foreground">Resposta aberta.</p>
-							)}
-						</CardContent>
-					</Card>
-				))}
-			</div>
+			<Card>
+				<CardHeader>
+					<CardTitle>{accessStateCopy.title}</CardTitle>
+					<CardDescription className="text-base">{accessStateCopy.description}</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<SurveyRenderer
+						questions={survey.questions}
+						onSubmit={async () => {}}
+						submitLabel={canSubmit ? "Continuar para envio" : "Envio indisponível"}
+						disabled={!canSubmit}
+						disabledMessage={
+							canSubmit ? "Esta shell já renderiza todos os tipos de pergunta; a submissão será conectada na próxima story." : "A pesquisa está visível para consulta, mas este estado bloqueia novas respostas."
+						}
+					/>
+				</CardContent>
+			</Card>
 		</div>
 	)
 }
