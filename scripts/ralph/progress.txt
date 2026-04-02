@@ -16,10 +16,23 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey server actions should map Supabase rows into camelCase DTOs from `src/modules/surveys/shared/types/dto.ts` so UI-facing contracts stay stable even when database columns remain snake_case.
 - Public survey listing should apply publication plus active date-window filtering in the backend and expose a narrowed DTO so `/surveys` does not need extra availability filtering or raw survey metadata.
 - Dashboard survey listing should gate on active membership and expose a dedicated DTO mapper instead of reusing the broader survey summary contract.
+- Dashboard survey detail loaders for member response pages should authenticate first, resolve the tenant by host, require active membership, and then rely on tenant-scoped RLS reads instead of admin bypasses so only answerable surveys stay visible.
 - Once a survey has responses, update flows must not reuse the delete-and-reinsert question sync path; compare the incoming structure against persisted questions/options and reject structural changes before touching historical rows.
 - Survey status transitions should be enforced in the use-case layer with explicit `invalid_publication_state` responses, allowing only `draft -> published` and `published -> closed`.
 - Public survey detail loaders that must distinguish `draft`, `closed`, `unavailable`, and `cross-tenant` states should inspect survey metadata through an admin repo first, then load public questions only after the tenant and availability checks pass.
 
+---
+
+## 2026-04-02 15:50 UTC - US-016
+- Added a dashboard survey detail loader slice that authenticates the current user, resolves the current tenant from the request host, enforces active membership, and returns an ordered `SurveyDetailDTO`.
+- Kept the member detail read on regular tenant-scoped survey/question services so public and private surveys remain constrained by the existing dashboard RLS contract instead of using an admin bypass.
+- Files changed: `src/modules/surveys/shared/validations/load-dashboard-survey-detail.schema.ts`, `src/modules/surveys/server/slices/load-dashboard-survey-detail/actions/load-dashboard-survey-detail.action.ts`, `src/modules/surveys/server/slices/load-dashboard-survey-detail/use-cases/load-dashboard-survey-detail.use-case.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification was not run because this story adds a backend loader slice but no browser-rendered route yet.
+- **Learnings for future iterations:**
+  - Dashboard member loaders should reuse the same auth and tenant resolution steps as the dashboard guard, but still keep their own explicit `not_member` and `survey_not_found` contract for page-level handling.
+  - For answer flows, loading the survey through regular RLS-backed repos is preferable to admin reads because unpublished or unavailable surveys should naturally collapse to "not readable" for non-manager members.
+  - Reusing `SurveyDetailDTO` avoids introducing a second member-detail contract when the dashboard page needs full ordered questions plus tenant-safe survey metadata.
 ---
 
 ## 2026-04-02 15:45 UTC - US-015
