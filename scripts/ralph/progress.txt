@@ -3,6 +3,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 ---
 
 ## Codebase Patterns
+- Surveys module documentation should describe the actual implemented contract and accepted residual risks, not a speculative checklist that can drift from the code.
 - Survey module unit tests should mock service and repo boundaries directly, with fixtures typed against the real service return contracts so `test:surveys` stays compatible with the main TypeScript project.
 - Submission-path survey tests should mock `getRequestHost` and responder fingerprint helpers explicitly, because tenant resolution and duplicate protection depend on those boundaries even when the rest of the flow is unit-tested.
 - Survey management authorization should preserve the existing OWNER bypass and use `hasMembershipPermissionService` with `PERMISSIONS.SURVEYS_MANAGE` for non-owner members.
@@ -255,9 +256,21 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Files changed: `scripts/ralph/progress.txt`.
 - Result: `typecheck` passed again, but `fix:biome` and `lint:biome` still fail on unrelated baseline files (`src/app/lp/page.tsx`, `src/shared/components/ui/calendar.tsx`, `src/shared/components/ui/field.tsx`, `src/shared/components/ui/input-group.tsx`, `src/shared/components/vortex.tsx`, `src/modules/organizations/insights/people-map/shared/ui/world-people-map-maplibre.tsx`), so `US-001` remains uncommitted and `passes` stays `false`.
 - **Learnings for future iterations:**
-  - Ralph should treat `US-001` as functionally implemented but blocked by repository-wide Biome debt until those unrelated files are cleaned up.
-  - Running `npm run fix:biome` does not clear the current blockers because several diagnostics require manual refactors, not safe auto-fixes.
-  - With a dirty shared worktree, unrelated modified files should not be folded into the story commit just to satisfy the gate.
+- Ralph should treat `US-001` as functionally implemented but blocked by repository-wide Biome debt until those unrelated files are cleaned up.
+- Running `npm run fix:biome` does not clear the current blockers because several diagnostics require manual refactors, not safe auto-fixes.
+- With a dirty shared worktree, unrelated modified files should not be folded into the story commit just to satisfy the gate.
+---
+
+## 2026-04-02 17:32 UTC - US-034
+- Rewrote `src/modules/surveys/README.md` to document the final surveys contract: tenant and visibility rules, management authorization, public identified versus anonymous responses, duplicate protection, results masking, and the accepted fingerprint residual risk.
+- Replaced the outdated generic QA checklist with a module-specific automated and manual QA checklist aligned with the behaviors currently implemented in the codebase.
+- Files changed: `src/modules/surveys/README.md`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Browser automation tooling is still unavailable in this Codex session, so manual browser verification remains required for UI-facing survey flows.
+- **Learnings for future iterations:**
+  - The surveys README should stay synchronized with the implemented access and anonymity contracts, or later Ralph iterations will start from stale QA assumptions.
+  - Accepted residual risks, such as fingerprint-based duplicate detection limits, should be documented explicitly in module docs so future changes do not accidentally tighten or loosen the privacy contract without notice.
+  - A final documentation pass is most reliable after the backend and UI contracts are stable, because the module now spans public, member, and manager flows with different visibility rules.
 ---
 
 ## 2026-04-01 21:02 UTC - US-001
