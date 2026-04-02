@@ -4,6 +4,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 
 ## Codebase Patterns
 - Survey module unit tests should mock service and repo boundaries directly, with fixtures typed against the real service return contracts so `test:surveys` stays compatible with the main TypeScript project.
+- Submission-path survey tests should mock `getRequestHost` and responder fingerprint helpers explicitly, because tenant resolution and duplicate protection depend on those boundaries even when the rest of the flow is unit-tested.
 - Survey management authorization should preserve the existing OWNER bypass and use `hasMembershipPermissionService` with `PERMISSIONS.SURVEYS_MANAGE` for non-owner members.
 - The mandatory Ralph quality gate is blocked by Biome errors, but Biome warnings can remain without failing `fix:biome` or `lint:biome`.
 - Survey question and option ordering should be normalized from UI array order and persisted as base-1 positions (`index + 1`) to stay aligned with the database constraints.
@@ -35,6 +36,18 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey UI surfaces should reuse the shared status and visibility badge components so localized labels and badge variants stay consistent between public, dashboard, management, and results screens.
 - Surveys automated coverage should run through `npm run test:surveys`, with test files colocated under `src/modules/surveys/**` and discovered by `vitest.surveys.config.ts` so CI and local execution stay aligned.
 
+---
+
+## 2026-04-02 17:30 UTC - US-033
+- Added automated submission tests for identified public responses, anonymous public responses, private member submissions, duplicate blocking, and cross-survey question rejection in `submitSurveyResponseUseCase`.
+- Added RLS-sensitive access-path coverage for public cross-tenant detail access and dashboard member detail access with inactive membership.
+- Files changed: `src/modules/surveys/server/slices/submit-survey-response/use-cases/submit-survey-response.use-case.spec.ts`, `src/modules/surveys/server/slices/load-public-survey-detail/use-cases/load-public-survey-detail.use-case.spec.ts`, `src/modules/surveys/server/slices/load-dashboard-survey-detail/use-cases/load-dashboard-survey-detail.use-case.spec.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run test:surveys && npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Manual browser verification was not required because this story adds automated backend tests only.
+- **Learnings for future iterations:**
+  - Submission use-case tests should cover both tenant resolution and responder identity mode, because anonymous vs identified behavior changes persistence inputs even when the answer payload stays the same.
+  - RLS-sensitive survey loaders are best tested at the use-case layer, where tenant and membership failures can be asserted without relying on a live database policy environment.
+  - Typed mock payloads for organization and membership services need to match the full contract, or repository-wide `typecheck` will catch gaps that Vitest alone does not.
 ---
 
 ## 2026-04-02 17:24 UTC - US-032
