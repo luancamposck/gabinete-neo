@@ -3,6 +3,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 ---
 
 ## Codebase Patterns
+- Survey module unit tests should mock service and repo boundaries directly, with fixtures typed against the real service return contracts so `test:surveys` stays compatible with the main TypeScript project.
 - Survey management authorization should preserve the existing OWNER bypass and use `hasMembershipPermissionService` with `PERMISSIONS.SURVEYS_MANAGE` for non-owner members.
 - The mandatory Ralph quality gate is blocked by Biome errors, but Biome warnings can remain without failing `fix:biome` or `lint:biome`.
 - Survey question and option ordering should be normalized from UI array order and persisted as base-1 positions (`index + 1`) to stay aligned with the database constraints.
@@ -34,6 +35,18 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey UI surfaces should reuse the shared status and visibility badge components so localized labels and badge variants stay consistent between public, dashboard, management, and results screens.
 - Surveys automated coverage should run through `npm run test:surveys`, with test files colocated under `src/modules/surveys/**` and discovered by `vitest.surveys.config.ts` so CI and local execution stay aligned.
 
+---
+
+## 2026-04-02 17:24 UTC - US-032
+- Added automated surveys unit tests covering manager permission gates, atomic create flow wiring, publish and close business rules, structural lock after the first response, and results authorization.
+- Added aggregation-focused service coverage for choice, ranking, and textarea survey results, including percentage math, average rank calculation, descending qualitative answer ordering, and anonymity-safe respondent snapshots.
+- Files changed: `src/modules/surveys/server/slices/create-survey/use-cases/create-survey.use-case.spec.ts`, `src/modules/surveys/server/slices/publish-survey/use-cases/publish-survey.use-case.spec.ts`, `src/modules/surveys/server/slices/close-survey/use-cases/close-survey.use-case.spec.ts`, `src/modules/surveys/server/slices/update-survey/use-cases/update-survey.use-case.spec.ts`, `src/modules/surveys/server/slices/load-survey-results/use-cases/load-survey-results.use-case.spec.ts`, `src/modules/surveys/server/services/load-survey-results.service.spec.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run test:surveys && npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Biome still reports the pre-existing non-blocking `document.cookie` warning in `src/shared/components/ui/sidebar.tsx`. Manual browser verification was not required because this story only adds automated backend tests.
+- **Learnings for future iterations:**
+  - Survey use-cases are easiest to cover with unit tests at the service boundary, because each slice already centralizes authorization and business branching without needing a live Supabase client.
+  - Typed mock helpers should mirror the real service return signatures, otherwise repository-wide `typecheck` will fail even when Vitest itself passes.
+  - Aggregation behavior belongs in `loadSurveyResultsService`, so ranking math and qualitative result ordering should be asserted there instead of overloading authorization-focused use-case tests.
 ---
 
 ## 2026-04-02 16:44 UTC - US-027
