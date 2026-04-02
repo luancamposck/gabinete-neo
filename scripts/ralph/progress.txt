@@ -6,6 +6,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Survey management authorization should preserve the existing OWNER bypass and use `hasMembershipPermissionService` with `PERMISSIONS.SURVEYS_MANAGE` for non-owner members.
 - The mandatory Ralph quality gate is blocked by Biome errors, but Biome warnings can remain without failing `fix:biome` or `lint:biome`.
 - Survey question and option ordering should be normalized from UI array order and persisted as base-1 positions (`index + 1`) to stay aligned with the database constraints.
+- Survey create flows that persist parent and child survey records together should use a single database RPC so the use-case stays orchestration-only and the write is truly atomic.
 - Public survey submission must treat unauthenticated and anonymous as separate concerns: fingerprint dedupe applies to both, but `is_anonymous` should only be `true` when the respondent explicitly chooses anonymity.
 - Cross-table survey integrity that cannot be expressed with a plain foreign key should be enforced with a dedicated Postgres trigger, while letting existing FKs keep ownership of missing-parent errors.
 - Survey read RLS should anchor child-table visibility (`survey_questions`, `survey_question_options`) to the parent survey chain instead of duplicating availability and membership predicates in every table policy.
@@ -16,6 +17,18 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Public survey listing should apply publication plus active date-window filtering in the backend and expose a narrowed DTO so `/surveys` does not need extra availability filtering or raw survey metadata.
 - Dashboard survey listing should gate on active membership and expose a dedicated DTO mapper instead of reusing the broader survey summary contract.
 
+---
+
+## 2026-04-02 15:31 UTC - US-012
+- Implemented an atomic survey creation RPC that inserts the survey, its questions, and their options inside one database transaction while normalizing positions from payload order to base-1.
+- Replaced the multi-step `create-survey` persistence flow with a single service/repo RPC call and added pre-persistence date-range validation in the action schema.
+- Files changed: `supabase/migrations/20260402110000_create_survey_with_questions_rpc.sql`, `src/modules/surveys/server/repos/create-survey-with-questions.repo.ts`, `src/modules/surveys/server/services/create-survey-with-questions.service.ts`, `src/modules/surveys/server/slices/create-survey/use-cases/create-survey.use-case.ts`, `src/modules/surveys/shared/validations/create-survey.schema.ts`, `src/shared/types/supabase.d.ts`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run fix:biome && npm run lint:biome && npm run typecheck`.
+- Result: all required gates passed. Manual browser verification is still required because browser tooling was unavailable and this story affects the create-survey workflow contract.
+- **Learnings for future iterations:**
+  - The existing survey create flow was only pseudo-atomic; if child inserts can fail, the module should prefer one Postgres function over app-layer rollback attempts.
+  - When adding RPCs manually, `src/shared/types/supabase.d.ts` must reflect nullable arguments exactly or the repo layer will fail typecheck even when the SQL signature is correct.
+  - Base-1 ordering is safest when derived from `jsonb_array_elements` iteration order inside the RPC instead of trusting client-provided `position` fields.
 ---
 
 ## 2026-04-01 21:18 UTC - US-004

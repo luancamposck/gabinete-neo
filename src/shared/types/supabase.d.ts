@@ -882,6 +882,20 @@ export type Database = {
 				}
 				Returns: boolean
 			}
+			create_survey_with_questions: {
+				Args: {
+					p_accept_anonymous_answers?: boolean
+					p_created_by_user_id: string
+					p_description?: string | null
+					p_ends_at?: string | null
+					p_organization_id: string
+					p_questions?: Json
+					p_starts_at?: string | null
+					p_title: string
+					p_visibility?: Database["public"]["Enums"]["survey_visibility"]
+				}
+				Returns: Database["public"]["Tables"]["surveys"]["Row"]
+			}
 			can_submit_survey_response: {
 				Args: {
 					p_survey_id: string

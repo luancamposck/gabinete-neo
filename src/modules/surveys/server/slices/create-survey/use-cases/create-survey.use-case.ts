@@ -3,13 +3,10 @@ import { hasMembershipPermissionService } from "@/modules/auth/server/services/h
 import { PERMISSIONS } from "@/modules/auth/shared/permissions"
 import { getMembershipByOrgAndUserIdWithRoleService } from "@/modules/organizations/memberships/server/services/get-membership-by-org-and-user-id-with-role.service"
 import { getOrganizationByIdService } from "@/modules/organizations/server/services/get-organization-by-id.service"
-import { createSurveyService } from "@/modules/surveys/server/services/create-survey.service"
-import { insertSurveyQuestionOptionsService } from "@/modules/surveys/server/services/insert-survey-question-options.service"
-import { insertSurveyQuestionsService } from "@/modules/surveys/server/services/insert-survey-questions.service"
-import type { SurveyQuestionInsert, SurveyQuestionOptionInsert, SurveyRow } from "@/modules/surveys/shared/types/db"
+import { createSurveyWithQuestionsService } from "@/modules/surveys/server/services/create-survey-with-questions.service"
+import type { SurveyRow } from "@/modules/surveys/shared/types/db"
 import type { SurveyQuestionSchemaData } from "@/modules/surveys/shared/validations/survey-question.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
-import type { Json } from "@/shared/types/supabase"
 
 type CreateSurveyUseCaseParams = {
 	organizationId: string
@@ -115,12 +112,11 @@ export async function createSurveyUseCase(params: CreateSurveyUseCaseParams): Op
 		// 3) Criar survey e persistir estrutura de questões/opções
 		//
 		// Possibilidades:
-		// - erro técnico ao criar survey => infra_error
-		// - survey criada sem questões => sucesso direto
-		// - survey criada com questões/opções => persistir estrutura
-		//   (falha em qualquer etapa => infra_error)
+		// - erro técnico na persistência atômica => infra_error
+		// - survey criada com ou sem questões/opções => sucesso
+		// - qualquer falha intermediária deve abortar toda a transação
 		// ============================================================
-		const createRes = await createSurveyService({
+		const createRes = await createSurveyWithQuestionsService({
 			organizationId: params.organizationId,
 			createdByUserId: authRes.data.user.id,
 			title: params.title,
@@ -128,47 +124,11 @@ export async function createSurveyUseCase(params: CreateSurveyUseCaseParams): Op
 			visibility: params.visibility,
 			acceptAnonymousAnswers: params.acceptAnonymousAnswers,
 			startsAt: params.startsAt,
-			endsAt: params.endsAt
+			endsAt: params.endsAt,
+			questions: params.questions
 		})
 		if (createRes.success === false) {
 			return FALLBACK_INFRA_ERROR
-		}
-
-		if (params.questions.length > 0) {
-			const questionsToInsert: SurveyQuestionInsert[] = params.questions.map((question, index) => ({
-				survey_id: createRes.data.survey.id,
-				title: question.title,
-				description: question.description ?? null,
-				type: question.type,
-				required: question.required,
-				position: index + 1,
-				config_json: (question.configJson ?? {}) as Json
-			}))
-
-			const questionsRes = await insertSurveyQuestionsService(questionsToInsert)
-			if (questionsRes.success === false) {
-				return FALLBACK_INFRA_ERROR
-			}
-
-			const optionsToInsert: SurveyQuestionOptionInsert[] = []
-			for (const [questionIndex, savedQuestion] of questionsRes.data.questions.entries()) {
-				const source = params.questions[questionIndex]
-				for (const [optionIndex, option] of source.options.entries()) {
-					optionsToInsert.push({
-						question_id: savedQuestion.id,
-						label: option.label,
-						value: option.value,
-						position: optionIndex + 1
-					})
-				}
-			}
-
-			if (optionsToInsert.length > 0) {
-				const optionsRes = await insertSurveyQuestionOptionsService(optionsToInsert)
-				if (optionsRes.success === false) {
-					return FALLBACK_INFRA_ERROR
-				}
-			}
 		}
 
 		return {
