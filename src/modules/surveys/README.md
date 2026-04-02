@@ -1,5 +1,12 @@
 # Surveys module notes
 
+## Automated test entry point
+
+- Run `npm run test:surveys` to execute the automated suite scoped to `src/modules/surveys`.
+- Run `npm run test:surveys:watch` during local development.
+- Add new automated coverage under `src/modules/surveys/**` using `*.test.ts`, `*.test.tsx`, `*.spec.ts`, or `*.spec.tsx`.
+- The surveys Vitest config lives at `vitest.surveys.config.ts`, so CI and local execution use the same entry point without extra path flags.
+
 ## Hybrid anti-duplicate strategy (responses)
 
 This module enforces a hybrid strategy to prevent duplicate survey submissions:

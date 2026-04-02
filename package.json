@@ -8,6 +8,8 @@
     "start": "next start",
     "lint:biome": "biome check src",
     "fix:biome": "biome check --write src",
+    "test:surveys": "vitest run --config vitest.surveys.config.ts",
+    "test:surveys:watch": "vitest --config vitest.surveys.config.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "ui:add": "npx shadcn@latest add",
     "db:push": "npx supabase db push",
@@ -66,7 +68,8 @@
     "supabase": "^2.53.6",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.8",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.2"
   },
   "overrides": {
     "@types/react": "19.2.7",

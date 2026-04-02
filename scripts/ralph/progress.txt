@@ -32,6 +32,7 @@ Started: Wed Apr  1 13:31:06 PDT 2026
 - Member-facing dashboard survey pages should derive response availability from survey status plus date window, then hide the submit CTA while still rendering the shared question renderer for draft, closed, or out-of-window surveys.
 - Dashboard results pages for managers can reuse `getManageSurveyContextAction` to resolve the current tenant and management authorization first, then load aggregates through `loadSurveyResultsAction` with the resolved `organizationId`.
 - Survey UI surfaces should reuse the shared status and visibility badge components so localized labels and badge variants stay consistent between public, dashboard, management, and results screens.
+- Surveys automated coverage should run through `npm run test:surveys`, with test files colocated under `src/modules/surveys/**` and discovered by `vitest.surveys.config.ts` so CI and local execution stay aligned.
 
 ---
 
@@ -442,4 +443,16 @@ Started: Wed Apr  1 13:31:06 PDT 2026
   - Dashboard member response flows should reuse the shared question renderer but keep identity UX separate from the public form, because authenticated members submit identified answers through their account instead of manual contact fields.
   - Hiding the submit CTA at the page layer is still necessary even when the submit action enforces access rules, because dashboard users need a clear read-only state for draft, closed, or scheduled surveys.
   - A small shared access-state helper is enough for member surfaces when visibility is already enforced by the loader; the dashboard page only needs status and window checks to decide whether submission should be interactive.
+---
+
+## 2026-04-02 17:01 UTC - US-031
+- Added a dedicated surveys automated test entry point with `npm run test:surveys` and `npm run test:surveys:watch`, backed by `vitest.surveys.config.ts`.
+- Documented the surveys test workflow in `src/modules/surveys/README.md`, including where future `*.test.ts` and `*.spec.ts` files should live for CI and local discovery.
+- Files changed: `package.json`, `package-lock.json`, `vitest.surveys.config.ts`, `src/modules/surveys/README.md`, `scripts/ralph/prd.json`, `scripts/ralph/progress.txt`.
+- Quality gates run: `npm run test:surveys`, `npm run fix:biome`, `npm run lint:biome`, and `npm run typecheck`.
+- Result: all required gates passed. `npm run test:surveys` currently exits successfully with `passWithNoTests` until the next Ralph iterations add the first surveys automated specs. Manual browser verification was not required because this story only adds test infrastructure and documentation.
+- **Learnings for future iterations:**
+  - Keeping survey test discovery in a dedicated Vitest config avoids leaking future survey specs into unrelated modules while still giving CI a single stable command.
+  - Colocating survey tests under `src/modules/surveys/**` keeps the feature-first structure intact and removes the need for ad-hoc path flags in local or CI execution.
+  - `passWithNoTests` is useful for the scaffolding story, but future stories that add real survey specs should keep using the same command so the exit path naturally flips from smoke-check to real regression coverage.
 ---
