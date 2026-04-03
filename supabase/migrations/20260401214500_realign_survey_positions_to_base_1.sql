@@ -10,7 +10,7 @@ with ranked_questions as (
     id,
     row_number() over (
       partition by survey_id
-      order by position asc, created_at asc, id asc
+      order by position asc, id asc
     ) as normalized_position
   from public.survey_questions
 )

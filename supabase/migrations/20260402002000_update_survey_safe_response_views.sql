@@ -6,7 +6,10 @@
 --   - Permitir projeção segura de respondentes públicos identificados
 -- =====================================================================
 
-create or replace view public.survey_responses_safe as
+drop view if exists public.survey_response_items_safe;
+drop view if exists public.survey_responses_safe;
+
+create view public.survey_responses_safe as
 select
   sr.id,
   sr.survey_id,
@@ -32,7 +35,7 @@ select
   sr.responder_fingerprint_hash
 from public.survey_responses sr;
 
-create or replace view public.survey_response_items_safe as
+create view public.survey_response_items_safe as
 select
   sri.id,
   sri.response_id,
