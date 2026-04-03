@@ -36,8 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
-# codex (local config with absolute paths)
-.codex
+# codex (commit the shared project config, keep everything else local)
+.codex/*
+!.codex/
+!.codex/config.toml
 
 # typescript
 *.tsbuildinfo

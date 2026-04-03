@@ -1,0 +1,19 @@
+[features]
+rmcp_client = true
+
+[mcp_servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "."]
+startup_timeout_sec = 30
+
+[mcp_servers.supabase]
+url = "https://mcp.supabase.com/mcp?project_ref=csivzqansvingomnafom&read_only=true&features=database%2Cdevelopment%2Cfunctions%2Cstorage%2Cdocs"
+startup_timeout_sec = 30
+
+[mcp_servers.supabase.tools.execute_sql]
+approval_mode = "approve"
+
+[mcp_servers.shadcn]
+command = "npx"
+args = ["shadcn@latest", "mcp"]
+startup_timeout_sec = 30
