@@ -5,7 +5,7 @@ Ralph é um agente autônomo que implementa user stories a partir de um PRD no f
 ## Como iniciar um novo Ralph loop
 
 1. **Criar o PRD** — escreva o arquivo `.md` em `tasks/` descrevendo a feature (ou use o comando `/prd` para gerar)
-2. **Converter para `prd.json`** — peça ao Claude para converter o PRD para o formato Ralph, substituindo o `prd.json` neste diretório. Certifique-se que:
+2. **Converter para `prd.json`** — peça ao Claude ou ao Codex para converter o PRD para o formato Ralph, substituindo o `prd.json` neste diretório. Certifique-se que:
    - Todas as stories tenham `passes: false`
    - O `branchName` seja único para a nova feature
 3. **Resetar o `progress.txt`** — limpe o log anterior, mantendo apenas o cabeçalho:
@@ -15,7 +15,10 @@ Ralph é um agente autônomo que implementa user stories a partir de um PRD no f
    PRD: <nome do PRD>
    ---
    ```
-4. **Iniciar o loop** — execute o Ralph (via `ralph.sh` ou o comando `/loop` com o agente)
+4. **Iniciar o loop** — execute o Ralph com o runner desejado:
+   - `scripts/ralph/ralph.sh --tool claude`
+   - `scripts/ralph/ralph.sh --tool codex`
+   - `scripts/ralph/ralph.sh --tool amp`
 
 > O Ralph cria a branch automaticamente se ela não existir, baseado no `branchName` do `prd.json`.
 
@@ -45,7 +48,10 @@ Ralph é um agente autônomo que implementa user stories a partir de um PRD no f
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `CLAUDE.md` | Instruções do agente Ralph |
+| `shared-contract.md` | Contrato compartilhado do loop Ralph |
+| `claude.prompt.md` | Addendum específico do Claude |
+| `codex.prompt.md` | Addendum específico do Codex |
+| `amp.prompt.md` | Addendum específico do Amp |
 | `prd.json` | PRD atual no formato JSON |
 | `progress.txt` | Log de progresso do loop atual |
 | `ralph.sh` | Script de execução do Ralph |

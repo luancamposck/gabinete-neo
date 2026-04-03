@@ -1,0 +1,493 @@
+{
+  "project": "gabinete-neo",
+  "branchName": "ralph/surveys-module",
+  "description": "Build a multi-tenant surveys module with public/private listings, anonymous or identified responses, secure results, and dashboard management.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Add surveys.manage permission key",
+      "description": "As an organization owner or authorized member, I want survey management to depend on a dedicated permission so that survey access is not coupled to generic org admin settings.",
+      "acceptanceCriteria": [
+        "Create a migration that inserts `surveys.manage` into `public.permissions`.",
+        "Update `src/modules/auth/shared/permissions.ts` and `src/modules/auth/shared/permission-presenter.ts` with the new key.",
+        "Survey management flows can reference `surveys.manage` without TypeScript errors.",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Align survey positions to base-1 ordering",
+      "description": "As a developer, I need survey question and option ordering to use one consistent base-1 contract so that validation, persistence, and database constraints do not conflict.",
+      "acceptanceCriteria": [
+        "Add a corrective migration that enforces base-1 positions for `survey_questions.position` and `survey_question_options.position`.",
+        "Update survey creation and edit persistence code to write question and option order using base-1 positions.",
+        "Ordering constraints remain valid for unique position per survey and per question.",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Add public respondent identity fields",
+      "description": "As a public respondent, I want to submit identified public survey responses with my contact details so that the organization can recognize non-anonymous public submissions.",
+      "acceptanceCriteria": [
+        "Add nullable `respondent_name`, `respondent_email`, and `respondent_phone` columns to `public.survey_responses`.",
+        "Identified public responses can persist these fields while anonymous responses keep all three fields null.",
+        "Run `npm run db:gen-types` after the schema change.",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Enforce response item and survey integrity",
+      "description": "As a developer, I need the database to reject answer items that point to questions from another survey so that tampered payloads cannot mix survey data.",
+      "acceptanceCriteria": [
+        "Add a database constraint or trigger that rejects `survey_response_items.question_id` when the question belongs to a different survey than the parent response.",
+        "Cross-survey answer payloads fail before data is committed.",
+        "Run `npm run db:gen-types` if the schema or views change.",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Enable RLS read policies for surveys and questions",
+      "description": "As a developer, I need read access to surveys and question data to follow tenant, visibility, and membership rules at the database layer.",
+      "acceptanceCriteria": [
+        "Enable RLS on `surveys`, `survey_questions`, and `survey_question_options`.",
+        "Public published available surveys are readable on the public surface while private surveys require active membership.",
+        "Owners and members with `surveys.manage` can read management data for their tenant.",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Enable RLS write policies for survey responses",
+      "description": "As a developer, I need response writes to respect publication state and membership rules at the database layer so unauthorized users cannot submit private survey answers.",
+      "acceptanceCriteria": [
+        "Enable RLS on `survey_responses` and `survey_response_items`.",
+        "Allow response inserts only for published available surveys, with private survey writes restricted to active members.",
+        "Unauthorized users cannot insert private survey responses.",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Update safe views for anonymous and identified responses",
+      "description": "As a developer, I need safe result projections that hide anonymous identity fields while still allowing authorized dashboard views of identified public respondents.",
+      "acceptanceCriteria": [
+        "Update `survey_responses_safe` and `survey_response_items_safe` so anonymous responses null out user and manual identity fields.",
+        "Identified public responses can expose `respondent_name`, `respondent_email`, and `respondent_phone` only through the safe projection.",
+        "Regenerate types if view definitions change.",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Regenerate Supabase types and survey DB aliases",
+      "description": "As a developer, I want the generated database types and survey aliases updated so the module compiles against the final schema and safe views.",
+      "acceptanceCriteria": [
+        "Regenerate `src/shared/types/supabase.d.ts`.",
+        "Update `src/modules/surveys/shared/types/db.ts` to reflect the final schema and safe views.",
+        "All survey schema imports compile against the regenerated types.",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Add survey DTO contracts",
+      "description": "As a developer, I want DTOs for list, detail, public respondent identity, and results so that server actions do not return raw Supabase rows to the UI.",
+      "acceptanceCriteria": [
+        "Expand `src/modules/surveys/shared/types/dto.ts` with DTOs for public list, dashboard list, survey detail, public respondent identity, and results.",
+        "Survey actions return camelCase DTOs instead of raw Supabase rows.",
+        "Client UI imports DTOs only, not `server/` types.",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Refactor public surveys listing backend",
+      "description": "As a public visitor, I want the public surveys list backend to return only available tenant surveys so that `/surveys` shows the correct items without extra filtering in the UI.",
+      "acceptanceCriteria": [
+        "Refactor `list-public-surveys` to return DTOs with `title`, `description`, `status`, `startsAt`, `endsAt`, `visibility`, and `acceptAnonymousAnswers`.",
+        "Return only public, published, currently available surveys for the current tenant.",
+        "The public list action does not require authentication.",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Refactor dashboard surveys listing backend",
+      "description": "As an organization member, I want the dashboard surveys list backend to return only tenant surveys I am allowed to see so that `/dashboard/surveys` can render without duplicating access logic.",
+      "acceptanceCriteria": [
+        "Refactor `list-dashboard-surveys` to require authentication and active membership.",
+        "Return public and private surveys for the current tenant with status, visibility, and date metadata.",
+        "Do not expose respondent or results data in the dashboard list DTO.",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Make create-survey persistence atomic",
+      "description": "As a survey manager, I want creating a survey with questions and options to succeed or fail as one operation so that drafts are never left partially persisted.",
+      "acceptanceCriteria": [
+        "Refactor `create-survey` to authorize `OWNER` or `surveys.manage`.",
+        "Validate `title`, `description`, `visibility`, `acceptAnonymousAnswers`, `startsAt`, `endsAt`, and question structure before persistence.",
+        "Persist survey, questions, and options atomically using base-1 order.",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Block structural edits after first response",
+      "description": "As a survey manager, I want the system to lock question and option structure after the first response so that historical answers are never destroyed by later edits.",
+      "acceptanceCriteria": [
+        "Refactor `update-survey` to block structural question and option edits after the first response exists.",
+        "Return an explicit business code such as `survey_locked_after_response` when the survey is locked.",
+        "Permit allowed metadata-only edits after responses without deleting historical response items.",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Finalize publish and close survey rules",
+      "description": "As a survey manager, I want publish and close actions to enforce the correct business rules so that surveys only become answerable when valid and stop accepting answers when closed.",
+      "acceptanceCriteria": [
+        "Refactor `publish-survey` so publication requires at least one valid question.",
+        "Refactor `close-survey` so closing changes status to `closed` and backend response rules treat the survey as unavailable.",
+        "Keep explicit business codes for not found, not allowed, and invalid publication state.",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Add public survey detail loader",
+      "description": "As a public visitor, I want the survey detail backend to return only the data needed to answer a public survey so that the public page can render safely and predictably.",
+      "acceptanceCriteria": [
+        "Add a public survey detail loader slice for `src/app/surveys/[surveyId]/page.tsx`.",
+        "Resolve the tenant from the current host and return ordered questions and options plus anonymity and availability metadata.",
+        "Return business errors for draft, closed, unavailable, or cross-tenant surveys.",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Add dashboard survey detail loader",
+      "description": "As an organization member, I want the dashboard detail backend to load public or private surveys I am allowed to answer so that the member response page can stay thin.",
+      "acceptanceCriteria": [
+        "Add a dashboard survey detail loader slice for member access.",
+        "Allow active members to load the current tenant's public and private surveys from the dashboard.",
+        "Return explicit membership or authorization errors for non-members or inactive memberships.",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Validate response access and payload rules",
+      "description": "As a respondent, I want invalid or unauthorized submissions rejected before persistence so that survey answers always match the target survey and access rules.",
+      "acceptanceCriteria": [
+        "Validate submission access rules before persistence: tenant, status `published`, public or private visibility, and `startsAt` or `endsAt` availability.",
+        "Reject answers whose `questionId` does not belong to the loaded survey.",
+        "Require `respondent_name`, `respondent_email`, and `respondent_phone` for unauthenticated identified public responses.",
+        "Typecheck passes"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Persist responses atomically with dedupe and public snapshot",
+      "description": "As a respondent, I want my response saved exactly once with the correct identity mode so that duplicate answers are blocked and identified public submissions keep their contact snapshot.",
+      "acceptanceCriteria": [
+        "Persist survey responses and response items atomically.",
+        "Use authenticated dedupe on `(survey_id, respondent_user_id)` and anonymous or public dedupe on `(survey_id, responder_fingerprint_hash)`.",
+        "Persist public respondent snapshot fields only for identified unauthenticated responses and leave them null for anonymous responses.",
+        "Typecheck passes"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Build results backend for choice and ranking questions",
+      "description": "As a survey manager, I want aggregated results for objective and ranking questions so that the dashboard can summarize the main outcomes without client-side counting.",
+      "acceptanceCriteria": [
+        "Add a results backend slice that authorizes `OWNER` or `surveys.manage`.",
+        "Return counts and percentages for `single_choice` and `checkbox` questions.",
+        "Return an aggregate ordering metric for `ranking` questions.",
+        "Typecheck passes"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Build textarea and respondent metadata results backend",
+      "description": "As a survey manager, I want textarea responses and allowed respondent metadata available in the results backend so that qualitative answers can be reviewed without violating anonymity.",
+      "acceptanceCriteria": [
+        "Extend results backend to return `textarea` responses with `submittedAt` and identity only when the response is not anonymous.",
+        "Hide `respondent_user_id`, `respondent_name`, `respondent_email`, and `respondent_phone` for anonymous responses.",
+        "Keep results DTOs independent from raw view rows.",
+        "Typecheck passes"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Create public surveys listing page",
+      "description": "As a public visitor, I want a public surveys page that shows the surveys I can answer in this tenant so that I can discover open questionnaires without logging in.",
+      "acceptanceCriteria": [
+        "Create `src/app/surveys/page.tsx` as a server component that calls the public list action.",
+        "Render survey cards with title, short description, status, end date, anonymity info, and response CTA.",
+        "Render a clear empty state when no public surveys are available.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 21,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Create public survey detail page shell",
+      "description": "As a public visitor, I want the public survey detail page to load survey data server-side and render all supported question types so that I can answer the survey with the right context.",
+      "acceptanceCriteria": [
+        "Create `src/app/surveys/[surveyId]/page.tsx` as a server component that calls the public detail action.",
+        "Render the shared survey question renderer for all four question types.",
+        "Show `startsAt`, `endsAt`, and unavailable or closed states before any submission happens.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 22,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-023",
+      "title": "Add public respondent identity and anonymity UX",
+      "description": "As an unauthenticated public respondent, I want clear controls for identified versus anonymous response mode so that I know when my name, email, and phone will be collected.",
+      "acceptanceCriteria": [
+        "Add unauthenticated public respondent fields for name, email, and phone.",
+        "When anonymous mode is selected, hide or disable the identity fields.",
+        "When anonymous mode is not allowed, require the identity fields before submit.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 23,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-024",
+      "title": "Create dashboard surveys listing page",
+      "description": "As an organization member, I want a dashboard surveys index that shows the surveys relevant to my tenant so that I can answer or manage them from one place.",
+      "acceptanceCriteria": [
+        "Create `src/app/dashboard/surveys/page.tsx` as the dashboard list surface.",
+        "Render public and private surveys with status, visibility, dates, and permission-based admin CTAs.",
+        "Render a clear empty state when the tenant has no surveys yet.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 24,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-025",
+      "title": "Refactor the shared survey builder component",
+      "description": "As a survey manager, I want a reusable survey builder that supports the full V1 contract so that create and edit pages do not duplicate complex question form logic.",
+      "acceptanceCriteria": [
+        "Refactor `src/modules/surveys/shared/ui/survey-builder.tsx` to support `title`, `description`, `visibility`, `acceptAnonymousAnswers`, `startsAt`, and `endsAt`.",
+        "Support add, remove, and reorder for questions and options using base-1 order.",
+        "Render a locked state for structural fields when the survey can no longer change questions.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 25,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-026",
+      "title": "Create dashboard new survey page",
+      "description": "As a survey manager, I want a dedicated dashboard page for creating a new survey so that I can build a draft from the UI without touching the database manually.",
+      "acceptanceCriteria": [
+        "Create `src/app/dashboard/surveys/new/page.tsx` and wire it to the create survey action.",
+        "Restrict access to `OWNER` or `surveys.manage`.",
+        "Allow creating a draft and show success feedback or redirect after save.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 26,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-027",
+      "title": "Create dashboard edit and manage survey page",
+      "description": "As a survey manager, I want a dashboard page for editing metadata and managing publication state so that I can update, publish, and close surveys from one screen.",
+      "acceptanceCriteria": [
+        "Create `src/app/dashboard/surveys/[surveyId]/edit/page.tsx` and wire it to update, publish, and close actions.",
+        "Disable structural editing when the survey is locked after responses.",
+        "Show publish and close controls that reflect current status and user permission.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 27,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-028",
+      "title": "Create dashboard member response page",
+      "description": "As an organization member, I want to answer public or private surveys from the dashboard using the same renderer as the public surface so that the experience stays consistent.",
+      "acceptanceCriteria": [
+        "Create `src/app/dashboard/surveys/[surveyId]/page.tsx` for member response flows.",
+        "Allow active members to answer public and private surveys with the shared renderer and the same validation rules as the public surface.",
+        "Hide the submit CTA for draft or closed surveys.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 28,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-029",
+      "title": "Create dashboard results page",
+      "description": "As a survey manager, I want a dashboard results page that visualizes survey answers so that I can inspect quantitative and qualitative responses in one place.",
+      "acceptanceCriteria": [
+        "Create `src/app/dashboard/surveys/[surveyId]/results/page.tsx`.",
+        "Render summary cards and per-question result blocks, including textarea entries and identified respondent metadata when allowed.",
+        "Render a clear empty state when the survey has no responses.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 29,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-030",
+      "title": "Wire dashboard navigation and localized survey badges",
+      "description": "As a user, I want surveys to be discoverable in the dashboard and to use consistent status and visibility labels so that I can recognize survey state at a glance.",
+      "acceptanceCriteria": [
+        "Add a `Surveys` entry to `src/modules/app-shell/shared/navigation/nav-main.ts` pointing to `/dashboard/surveys`.",
+        "Refactor `src/modules/surveys/shared/ui/survey-status-badge.tsx` and add a visibility badge if needed for consistent labels across surfaces.",
+        "Use the shared badges across public and dashboard survey pages.",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 30,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-031",
+      "title": "Add surveys test command scaffolding",
+      "description": "As a developer, I want a stable test entry point for the surveys module so that Ralph iterations can verify automated checks instead of relying only on manual inspection.",
+      "acceptanceCriteria": [
+        "Add package scripts or documented commands for running the new surveys automated tests in this repo.",
+        "The chosen test command can run from CI or local execution without manual path hacks.",
+        "Document the test entry point in the touched Ralph or surveys workflow file.",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 31,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-032",
+      "title": "Add automated tests for management and results flows",
+      "description": "As a developer, I want automated coverage for survey management and results behavior so that permission, publication, locking, and aggregation regressions are caught quickly.",
+      "acceptanceCriteria": [
+        "Add automated tests for survey management permissions, create/publish/close flows, structural lock after first response, and results authorization or aggregates.",
+        "Keep the new tests runnable through the repository test command introduced for surveys.",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 32,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-033",
+      "title": "Add automated tests for submission, anonymity, and RLS-sensitive paths",
+      "description": "As a developer, I want automated coverage for submission rules, anonymity behavior, duplicate blocking, and RLS-sensitive access so that the most fragile survey paths stay protected.",
+      "acceptanceCriteria": [
+        "Add automated tests for public and private submission rules, duplicate blocking, anonymous versus identified public responses, and cross-survey question rejection.",
+        "Add automated checks for the RLS-sensitive access paths introduced for surveys.",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 33,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-034",
+      "title": "Update surveys README QA checklist",
+      "description": "As a developer, I want the surveys module README to describe the final QA checklist and implemented rules so that future iterations do not drift from the actual behavior.",
+      "acceptanceCriteria": [
+        "Update `src/modules/surveys/README.md` with the final QA checklist and the actual implemented rules.",
+        "Document public identified responses, anonymous response behavior, and the accepted fingerprint residual risk.",
+        "Typecheck passes"
+      ],
+      "priority": 34,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
