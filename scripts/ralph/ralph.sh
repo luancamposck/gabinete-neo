@@ -1,11 +1,8 @@
 #!/bin/bash
 # Ralph Wiggum - Long-running AI agent loop
-# Usage: ./ralph.sh [--tool amp|claude] [max_iterations]
+# Usage: ./ralph.sh [--tool amp|claude|codex] [max_iterations]
 
 set -e
-
-# Ensure npm global binaries are in PATH (needed in devcontainers)
-export PATH="${PATH}:/usr/local/share/npm-global/bin"
 
 # Parse arguments
 TOOL="amp"  # Default to amp for backwards compatibility
@@ -32,11 +29,14 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate tool choice
-if [[ "$TOOL" != "amp" && "$TOOL" != "claude" ]]; then
-  echo "Error: Invalid tool '$TOOL'. Must be 'amp' or 'claude'."
+if [[ "$TOOL" != "amp" && "$TOOL" != "claude" && "$TOOL" != "codex" ]]; then
+  echo "Error: Invalid tool '$TOOL'. Must be 'amp', 'claude', or 'codex'."
   exit 1
 fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)"
+
 PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 ARCHIVE_DIR="$SCRIPT_DIR/archive"
@@ -84,7 +84,7 @@ fi
 
 echo "Starting Ralph - Tool: $TOOL - Max iterations: $MAX_ITERATIONS"
 
-for i in $(seq 1 $MAX_ITERATIONS); do
+for i in $(seq 1 "$MAX_ITERATIONS"); do
   echo ""
   echo "==============================================================="
   echo "  Ralph Iteration $i of $MAX_ITERATIONS ($TOOL)"
@@ -93,12 +93,36 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Run the selected tool with the ralph prompt
   if [[ "$TOOL" == "amp" ]]; then
     OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+
+  elif [[ "$TOOL" == "codex" ]]; then
+    CODEX_LOG_DIR="$SCRIPT_DIR/logs"
+    CODEX_LOG="$CODEX_LOG_DIR/codex-iteration-$i.log"
+
+    mkdir -p "$CODEX_LOG_DIR"
+
+    echo "Running Codex iteration quietly... log: $CODEX_LOG"
+
+    set +e
+    OUTPUT=$(codex exec \
+      --dangerously-bypass-approvals-and-sandbox \
+      -C "$PROJECT_ROOT" \
+      "$(cat "$SCRIPT_DIR/AGENTS.md")" 2>&1)
+    CODEX_STATUS=$?
+    set -e
+
+    echo "$OUTPUT" > "$CODEX_LOG"
+
+    if [ "$CODEX_STATUS" -ne 0 ]; then
+      echo "Codex failed with status $CODEX_STATUS. Last log lines:"
+      tail -n 80 "$CODEX_LOG"
+    fi
+
   else
     # Claude Code: use --dangerously-skip-permissions for autonomous operation, --print for output
     OUTPUT=$(claude --dangerously-skip-permissions --print < "$SCRIPT_DIR/CLAUDE.md" 2>&1 | tee /dev/stderr) || true
+
   fi
 
-  # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     echo ""
     echo "Ralph completed all tasks!"

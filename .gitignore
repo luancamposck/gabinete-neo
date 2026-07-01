@@ -46,4 +46,5 @@ next-env.d.ts
 # Ralph state files
 scripts/ralph/.last-branch
 scripts/ralph/progress.txt
+scripts/ralph/logs/
 .claude/settings.local.json

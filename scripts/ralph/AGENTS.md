@@ -105,3 +105,21 @@ If there are still stories with `passes: false`, end your response normally (ano
 * Commit frequently
 * Keep CI green
 * Read the Codebase Patterns section in progress.txt before starting
+
+## Commit Requirements
+
+A story is only complete after the commit succeeds.
+
+Required order:
+1. Implement the story.
+2. Run the required checks.
+3. Update `prd.json` and set only the completed story to `passes: true`.
+4. Append progress to `progress.txt`.
+5. Run `git status --short`.
+6. Run `git add -A`.
+7. Run `git commit -m "feat: [Story ID] - [Story Title]"`.
+8. Confirm the commit exists with `git log --oneline -1`.
+
+Never set `passes: true` and leave the repository uncommitted.
+Never continue to another story with uncommitted changes.
+If `git commit` fails, revert that story's `passes` value to `false` before stopping.
