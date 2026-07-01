@@ -10,7 +10,10 @@ Este arquivo serve como mapa rapido para entender entrypoints, arquivos principa
 
 Este modulo concentra o cadastro de motoristas, armazenamento privado de documentos de frota, candidaturas de motorista e revisao de candidaturas.
 
-No estado atual, existe o backend do cadastro como motorista: action, use-case, steps, repos e services para Storage privado de documentos e registro via RPC transacional. Listagem e review serao adicionados em slices posteriores.
+Dois slices compoem o backend:
+
+- `register-as-driver`: signup publico de motorista (action -> use-case -> steps -> services/repos), com Storage privado de documentos e registro via RPC transacional.
+- `review-driver-applications`: fluxo autenticado e protegido por permissao para listar, aprovar e rejeitar candidaturas.
 
 ---
 
@@ -87,11 +90,15 @@ No estado atual, existe o backend do cadastro como motorista: action, use-case, 
 |---|---|
 | `@/modules/accounts/onboarding/server/slices/register-and-join/steps/*` | Reuso de resolucao de org/ref, signup/signin, criacao de usuario publico e referral |
 | `@/modules/auth/server/services/delete-auth-user.service` | Rollback de auth user quando usuario novo falha apos upload |
+| `@/modules/auth/server/services/get-current-auth-user.service` | Guard de autenticacao dos use-cases de review |
+| `@/modules/auth/server/services/has-membership-permission.service` | Guard de permissao `fleet.applications.manage` nos use-cases de review |
 | `@/modules/emails/server/services/send-welcome-email.service` | Welcome email best-effort quando a RPC informa `joinedNow` |
-| `@/modules/fleet/shared/constants/vehicle-types` | Tipo `VehicleType` aceito pela RPC de cadastro |
+| `@/modules/fleet/shared/constants/vehicle-types` | Tipo `VehicleType` aceito pela RPC de cadastro e pelo DTO de listagem |
 | `@/modules/fleet/shared/types/inputs` | Contrato de entrada do use-case de signup como motorista |
 | `@/modules/fleet/shared/validations/register-as-driver.schema` | Validacao server-side da action de signup como motorista |
 | `@/modules/organizations/server/services/get-organization-by-id.service` | Nome da organizacao para welcome email best-effort |
+| `@/modules/organizations/server/services/get-organization-id-by-app-domain.service` | Resolucao do tenant por host nos use-cases de review |
+| `@/shared/http/get-request-host` | Host da request para resolver o tenant nos use-cases de review |
 | `@/shared/types/operation-response.types` | Contrato de retorno dos services |
 | `@/shared/types/supabase` | Tipos gerados para tabelas e RPCs do Supabase |
 
@@ -115,6 +122,23 @@ No estado atual, existe o backend do cadastro como motorista: action, use-case, 
 | `uploadDriverDocumentsService` | `deleteDriverDocumentAdminRepo` | Cleanup em falha parcial ou exception apos upload |
 | `createDriverDocumentSignedUrlService` | `createSignedDocumentUrlAdminRepo` | Encapsula erro de Storage em `OperationResponse` |
 | `registerDriverApplicationService` | `registerDriverApplicationAdminRepo` | Mapeia `plate_taken`, `application_pending_exists` e `infra_error` |
+| `getPendingDriverApplicationsAction` | `getPendingDriverApplicationsUseCase` | Repassa `OperationResponse` com codigos unauthenticated/org_not_found/not_allowed/infra_error |
+| `approveDriverApplicationAction` | `reviewDriverApplicationUseCase` | Chama com `action: "approve"` e `revalidatePath('/dashboard/config/fleet')` em sucesso |
+| `rejectDriverApplicationAction` | `reviewDriverApplicationUseCase` | Chama com `action: "reject"` e `revalidatePath('/dashboard/config/fleet')` em sucesso |
+| `getPendingDriverApplicationsUseCase` | `getCurrentAuthUserService` | Guard de autenticacao |
+| `getPendingDriverApplicationsUseCase` | `getOrganizationIdByAppDomainService` | Resolve o tenant por host |
+| `getPendingDriverApplicationsUseCase` | `hasMembershipPermissionService` | Exige `fleet.applications.manage` |
+| `getPendingDriverApplicationsUseCase` | `listPendingDriverApplicationsService` | Lista candidaturas pendentes da org |
+| `getPendingDriverApplicationsUseCase` | `createDriverDocumentSignedUrlService` | Gera signed URLs CRLV/CNH (best-effort, null em falha) |
+| `reviewDriverApplicationUseCase` | `getCurrentAuthUserService` | Guard de autenticacao |
+| `reviewDriverApplicationUseCase` | `getOrganizationIdByAppDomainService` | Resolve o tenant por host |
+| `reviewDriverApplicationUseCase` | `hasMembershipPermissionService` | Exige `fleet.applications.manage` |
+| `reviewDriverApplicationUseCase` | `getDriverApplicationByIdRepo` | Carrega a candidatura para guard de escopo/idempotencia |
+| `reviewDriverApplicationUseCase` | `approveDriverApplicationService` | Aprova via RPC quando `action === "approve"` |
+| `reviewDriverApplicationUseCase` | `rejectDriverApplicationService` | Rejeita via update quando `action === "reject"` |
+| `listPendingDriverApplicationsService` | `listPendingDriverApplicationsRepo` | Mapeia erro para `infra_error` |
+| `approveDriverApplicationService` | `approveDriverApplicationAdminRepo` | Mapeia `not_found`, `already_reviewed` e `infra_error` |
+| `rejectDriverApplicationService` | `rejectDriverApplicationAdminRepo` | Sem linha afetada => `already_reviewed`; erro => `infra_error` |
 
 ---
 
@@ -151,6 +175,21 @@ No estado atual, existe o backend do cadastro como motorista: action, use-case, 
 3. Mapeia `plate_taken`, `application_pending_exists` e `infra_error` para `OperationResponse`.
 4. Em sucesso, retorna `{ applicationId, joinedNow }`.
 
+### Fluxo: Listagem de candidaturas pendentes
+
+1. Use-case autentica (`unauthenticated`), resolve o tenant por host (`org_not_found`) e exige a permissao `fleet.applications.manage` (`not_allowed`).
+2. Lista candidaturas com status `pending` da org com dados do candidato/veiculo.
+3. Gera signed URLs (TTL 300s) para CRLV/CNH em best-effort (null em falha, sem bloquear a lista).
+4. Retorna um DTO camelCase sem paths crus dos documentos.
+
+### Fluxo: Aprovar/Rejeitar candidatura
+
+1. Use-case reusa o preludio auth -> org -> permissao da listagem.
+2. Carrega a candidatura; inexistente ou de outra org => `not_found` (nao vaza existencia cross-org); status != `pending` => `already_reviewed`.
+3. `approve`: RPC `approve_driver_application` insere em `drivers` e marca `approved` (retorna `driverId`).
+4. `reject`: update com guard `status = pending`; **nao altera a membership** do usuario (permanece membro).
+5. As actions chamam `revalidatePath('/dashboard/config/fleet')` em sucesso.
+
 ---
 
 ## Comportamentos importantes
@@ -167,16 +206,24 @@ Todos os repos de documentos usam `createAdminClient()` e o bucket privado `flee
 
 `registerDriverApplicationService` nao acessa tabelas diretamente. Toda a consistencia de membership + `driver_application` depende da RPC `register_driver_application`, que deve retornar `application_id`, `joined_now` e `error_code`.
 
+### Guard de permissao e escopo cross-org
+
+Os use-cases de review sempre seguem auth -> resolucao de tenant por host -> `hasMembershipPermissionService('fleet.applications.manage')`. Candidatura inexistente e candidatura de outra org sao ambas tratadas como `not_found` para nao vazar existencia de recursos entre organizacoes.
+
+### Idempotencia da revisao
+
+Aprovar/rejeitar so atua sobre candidaturas com status `pending`. O `reject` usa `update ... .eq('status','pending')` e trata "nenhuma linha afetada" como `already_reviewed`, evitando race entre revisores. Rejeitar nao remove a membership do candidato.
+
 ---
 
 ## Nao usados / Atencao
 
 | Item | Motivo | Recomendacao |
 |---|---|---|
-| Slices de `fleet` | Ainda nao existem | Atualizar este indice quando actions/use-cases/steps forem criados |
+| — | — | Sem pendencias no momento; manter este indice em dia ao evoluir os slices `register-as-driver` e `review-driver-applications` |
 
 ---
 
 ## Notas de manutencao
 
-Atualize este arquivo quando mudar bucket/path de documentos, TTL de signed URL, validacao de documentos, repos/services de Storage ou fluxos de compensacao do modulo `fleet`.
+Atualize este arquivo quando mudar bucket/path de documentos, TTL de signed URL, validacao de documentos, repos/services de Storage, fluxos de compensacao do signup, guards de permissao/escopo ou o fluxo de aprovar/rejeitar candidaturas do modulo `fleet`.

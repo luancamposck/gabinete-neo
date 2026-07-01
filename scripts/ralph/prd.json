@@ -252,8 +252,8 @@
         "Typecheck passes"
       ],
       "priority": 16,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Both indexes already existed from earlier stories; refreshed fleet/server/BACKEND_INDEX.md to cover the review-driver-applications slice (deps, call matrix, listing + approve/reject flows, permission/scope + idempotency behaviors) and completed the fleet dependency block in the root BACKEND_INDEX.md (auth/org/emails/http + register/approve RPCs)."
     }
   ]
 }

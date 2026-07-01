@@ -84,8 +84,15 @@ emails
   -> emails/shared
 
 fleet
+  -> accounts/onboarding
+  -> auth
+  -> emails
   -> lib/supabase/admin
+  -> organizations
+  -> shared/http
   -> Supabase Storage: fleet-documents
+  -> Supabase RPC: register_driver_application
+  -> Supabase RPC: approve_driver_application
 
 organizations
   -> auth
