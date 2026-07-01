@@ -8,6 +8,146 @@ export type Database = {
 	}
 	public: {
 		Tables: {
+			driver_applications: {
+				Row: {
+					cnh_document_path: string
+					created_at: string
+					crlv_document_path: string
+					id: string
+					organization_id: string
+					plate: string
+					reviewed_at: string | null
+					reviewed_by_user_id: string | null
+					status: string
+					updated_at: string
+					user_id: string
+					vehicle_color: string | null
+					vehicle_model: string | null
+					vehicle_type: string
+					vehicle_year: number | null
+				}
+				Insert: {
+					cnh_document_path: string
+					created_at?: string
+					crlv_document_path: string
+					id?: string
+					organization_id: string
+					plate: string
+					reviewed_at?: string | null
+					reviewed_by_user_id?: string | null
+					status?: string
+					updated_at?: string
+					user_id: string
+					vehicle_color?: string | null
+					vehicle_model?: string | null
+					vehicle_type: string
+					vehicle_year?: number | null
+				}
+				Update: {
+					cnh_document_path?: string
+					created_at?: string
+					crlv_document_path?: string
+					id?: string
+					organization_id?: string
+					plate?: string
+					reviewed_at?: string | null
+					reviewed_by_user_id?: string | null
+					status?: string
+					updated_at?: string
+					user_id?: string
+					vehicle_color?: string | null
+					vehicle_model?: string | null
+					vehicle_type?: string
+					vehicle_year?: number | null
+				}
+				Relationships: [
+					{
+						foreignKeyName: "driver_applications_organization_id_fkey"
+						columns: ["organization_id"]
+						isOneToOne: false
+						referencedRelation: "organizations"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "driver_applications_reviewed_by_user_id_fkey"
+						columns: ["reviewed_by_user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "driver_applications_user_id_fkey"
+						columns: ["user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					}
+				]
+			}
+			drivers: {
+				Row: {
+					created_at: string
+					driver_application_id: string
+					id: string
+					is_active: boolean
+					organization_id: string
+					plate: string
+					user_id: string
+					vehicle_color: string | null
+					vehicle_model: string | null
+					vehicle_type: string
+					vehicle_year: number | null
+				}
+				Insert: {
+					created_at?: string
+					driver_application_id: string
+					id?: string
+					is_active?: boolean
+					organization_id: string
+					plate: string
+					user_id: string
+					vehicle_color?: string | null
+					vehicle_model?: string | null
+					vehicle_type: string
+					vehicle_year?: number | null
+				}
+				Update: {
+					created_at?: string
+					driver_application_id?: string
+					id?: string
+					is_active?: boolean
+					organization_id?: string
+					plate?: string
+					user_id?: string
+					vehicle_color?: string | null
+					vehicle_model?: string | null
+					vehicle_type?: string
+					vehicle_year?: number | null
+				}
+				Relationships: [
+					{
+						foreignKeyName: "drivers_driver_application_id_fkey"
+						columns: ["driver_application_id"]
+						isOneToOne: false
+						referencedRelation: "driver_applications"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "drivers_organization_id_fkey"
+						columns: ["organization_id"]
+						isOneToOne: false
+						referencedRelation: "organizations"
+						referencedColumns: ["id"]
+					},
+					{
+						foreignKeyName: "drivers_user_id_fkey"
+						columns: ["user_id"]
+						isOneToOne: false
+						referencedRelation: "users"
+						referencedColumns: ["id"]
+					}
+				]
+			}
 			mailing_list: {
 				Row: {
 					city: string
