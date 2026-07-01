@@ -1,0 +1,259 @@
+{
+  "project": "gabinete-neo",
+  "branchName": "ralph/frota-neo",
+  "description": "Frota NEO - Signup público de motorista em /fleet/signup que reusa o register-and-join, faz upload de CRLV/CNH em bucket privado e cria membership imediata + candidatura (driver_application) de forma atômica via RPC; mais um fluxo autenticado, protegido por permission, para aprovar/rejeitar candidaturas.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Migration: tabelas driver_applications e drivers",
+      "description": "As a developer, I need persistir candidaturas e motoristas para suportar o fluxo de frota.",
+      "acceptanceCriteria": [
+        "Criar migration com tabela `driver_applications`: id uuid pk, organization_id uuid FK→organizations(id) on delete cascade, user_id uuid FK→public.users(id), plate text not null, vehicle_type text not null, vehicle_model text null, vehicle_year int null, vehicle_color text null, crlv_document_path text not null, cnh_document_path text not null, status text not null default 'pending', reviewed_by_user_id uuid null FK→public.users(id), reviewed_at timestamptz null, created_at timestamptz not null default now(), updated_at timestamptz not null default now()",
+        "Criar tabela `drivers`: id uuid pk, organization_id uuid FK→organizations(id) on delete cascade, user_id uuid FK→public.users(id), driver_application_id uuid FK→driver_applications(id), plate text not null, vehicle_type text not null, vehicle_model text null, vehicle_year int null, vehicle_color text null, is_active boolean not null default true, created_at timestamptz not null default now()",
+        "CHECK status in ('pending','approved','rejected') e CHECK vehicle_type in ('car','motorcycle','van','truck') em ambas as tabelas quando aplicável",
+        "Índice único parcial em driver_applications (organization_id, plate) WHERE status in ('pending','approved') (placa única por org, permitindo reenvio após rejected)",
+        "Índices em (organization_id, status) e nas FKs",
+        "Migration aplica com `npm run db:reset` sem erro",
+        "Regenerar tipos com `npm run db:gen-types`",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Migration + catálogo: permission fleet.applications.manage",
+      "description": "As an organization admin, I need uma permission dedicada para aprovar/gerir candidaturas de frota.",
+      "acceptanceCriteria": [
+        "Migration insere permission key 'fleet.applications.manage' em public.permissions com `on conflict (key) do update set description = excluded.description`",
+        "Migration concede a permission aos roles de sistema OWNER e ADMIN em todas as organizações via insert em role_permissions com `on conflict do nothing`",
+        "Adicionar `FLEET_APPLICATIONS_MANAGE: \"fleet.applications.manage\"` ao objeto PERMISSIONS em src/modules/auth/shared/permissions.ts (sem isso, listMembershipPermissionsService descarta a key)",
+        "Migration aplica com `npm run db:reset` sem erro",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Migration: RPC transacional register_driver_application",
+      "description": "As a developer, I need criar membership + driver_application numa única transação para garantir atomicidade.",
+      "acceptanceCriteria": [
+        "Migration cria função plpgsql public.register_driver_application(p_organization_id uuid, p_user_id uuid, p_plate text, p_vehicle_type text, p_vehicle_model text, p_vehicle_year int, p_vehicle_color text, p_crlv_path text, p_cnh_path text, p_invited_by_user_id uuid) como security definer com search_path fixado",
+        "No corpo (transação única): busca role MEMBER ativo da org; se usuário não é membro ativo, insere organization_memberships (role MEMBER + invited_by_user_id) e marca joined_now = true",
+        "Valida placa: se já existir driver_application com status pending/approved para a mesma org+placa, retorna error_code 'plate_taken'; se o próprio usuário já tem candidatura pending, retorna 'application_pending_exists'",
+        "Insere driver_application com status 'pending' referenciando os paths dos documentos",
+        "Retorna application_id uuid, joined_now boolean e error_code text",
+        "Concede execute ao role de serviço; migration aplica com `npm run db:reset` sem erro; `npm run db:gen-types`",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Migration: RPC transacional approve_driver_application",
+      "description": "As a developer, I need aprovar candidatura criando o registro de motorista atomicamente.",
+      "acceptanceCriteria": [
+        "Migration cria função plpgsql public.approve_driver_application(p_application_id uuid, p_reviewer_user_id uuid) como security definer com search_path fixado",
+        "Verifica a candidatura: inexistente → error_code 'not_found'; status diferente de pending → 'already_reviewed'",
+        "No corpo (transação única): insere linha em drivers a partir da driver_application e atualiza a driver_application para status 'approved', reviewed_by_user_id = p_reviewer_user_id, reviewed_at = now()",
+        "Retorna driver_id uuid e error_code text",
+        "Concede execute ao role de serviço; migration aplica com `npm run db:reset` sem erro; `npm run db:gen-types`",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Migration: bucket privado fleet-documents",
+      "description": "As a candidate, I need enviar CRLV e CNH em armazenamento privado, sem exposição pública.",
+      "acceptanceCriteria": [
+        "Migration cria bucket 'fleet-documents' em storage.buckets com public = false (`on conflict do nothing`)",
+        "Policies de storage restringem leitura/escrita apenas ao service role (sem acesso anon/public)",
+        "Migration aplica com `npm run db:reset` sem erro",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Repos e services de Storage privado de documentos",
+      "description": "As a developer, I need encapsular upload, signed URL e remoção dos documentos de frota.",
+      "acceptanceCriteria": [
+        "Criar src/modules/fleet/server/repos/upload-driver-document.admin.repo.ts (admin client, upload em 'fleet-documents' com path `fleet/{organizationId}/{userId}/{uuid}.{ext}`, upsert:false)",
+        "Criar create-signed-document-url.admin.repo.ts (admin client, createSignedUrl com expiração 300s)",
+        "Criar delete-driver-document.admin.repo.ts (remove um ou mais paths)",
+        "Criar service upload-driver-documents.service.ts que valida e faz upload de CRLV e CNH, retorna { crlvPath, cnhPath } e limpa arquivos já enviados em falha parcial",
+        "Criar service create-driver-document-signed-url.service.ts que retorna a signed URL (TTL 300s)",
+        "Services retornam OperationResponse",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Constantes e schemas de validação do signup de frota",
+      "description": "As a developer, I need validar placa, tipo de veículo e documentos do cadastro de motorista.",
+      "acceptanceCriteria": [
+        "Criar src/modules/fleet/shared/constants/vehicle-types.ts com a lista fixa ['car','motorcycle','van','truck']",
+        "Criar vehicle.schema.ts: placa aceitando Mercosul (ABC1D23) e formato antigo (ABC1234), normalizada para uppercase sem separadores; vehicleType restrito ao enum; validação de arquivo de documento (MIME imagem/PDF e tamanho máximo)",
+        "Criar register-as-driver.schema.ts (client e server) estendendo os campos do registerAndJoinSchema + plate, vehicleType, vehicleModel?, vehicleYear?, vehicleColor? (placa, tipo, CRLV e CNH obrigatórios; modelo/ano/cor opcionais)",
+        "Criar shared/types/inputs.ts e shared/types/db.ts do módulo fleet",
+        "Tests: placa Mercosul e antiga são aceitas; placa inválida é rejeitada",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Service e repo que envolvem a RPC de cadastro",
+      "description": "As a developer, I need um service que chama register_driver_application e traduz seus códigos de erro.",
+      "acceptanceCriteria": [
+        "Criar register-driver-application.admin.repo.ts chamando supabase.rpc('register_driver_application', {...}) com admin client",
+        "Criar register-driver-application.service.ts que mapeia o error_code da RPC para OperationResponse (plate_taken, application_pending_exists, infra_error) e retorna { applicationId, joinedNow } em sucesso",
+        "Tests: mapeamento de cada error_code para o code/mensagem esperados",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Steps de upload de documentos e criação de candidatura",
+      "description": "As a developer, I need steps reutilizáveis para o use-case de cadastro de motorista.",
+      "acceptanceCriteria": [
+        "Criar src/modules/fleet/server/slices/register-as-driver/steps/upload-driver-documents.step.ts que usa uploadDriverDocumentsService e retorna crlvPath/cnhPath; em falha limpa arquivos já enviados",
+        "Criar create-driver-application.step.ts que chama registerDriverApplicationService com os paths e o inviterUserId",
+        "Ambos os steps retornam OperationResponse",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Use-case e action de cadastro como motorista",
+      "description": "As a candidate, I want me cadastrar e entrar na organização gerando uma candidatura de motorista atômica.",
+      "acceptanceCriteria": [
+        "Criar registerAndJoinAsDriverUseCase reusando steps de accounts/onboarding (resolveOrganizationIdByHostStep, resolveInviterByRefStep, signUpOrSignInStep, createPublicUserAndProfileStep para usuário novo, recordReferralStep) + steps de frota (upload → aplicação via RPC)",
+        "Compensação: falha após upload remove os arquivos; se o usuário era novo (mode 'new'), chama deleteAuthUserService",
+        "Best-effort: sendWelcomeEmailService quando joined_now; recordReferralStep quando ref válido + joined_now (não bloqueiam)",
+        "Mensagens centralizadas em MSG_*, prefixLog '[registerAndJoinAsDriverUseCase]:', etapas comentadas e numeradas; mensagem neutra quando email já existe",
+        "Criar registerAndJoinAsDriverAction(formData: FormData) que extrai campos + arquivos crlv/cnh, valida o schema server, normaliza snake→camel e retorna OperationResponse<{ organizationId, userId, applicationId }, code>",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Página pública /fleet/signup e formulário",
+      "description": "As a candidate, I want uma página em /fleet/signup para me cadastrar como motorista.",
+      "acceptanceCriteria": [
+        "Criar src/app/fleet/signup/page.tsx como Server Component (resolve host, force-dynamic) compondo o form client",
+        "Criar src/modules/fleet/shared/ui/register-as-driver-form.tsx ('use client') com os campos base + seção de veículo + inputs de arquivo CRLV e CNH; envia FormData para a action",
+        "O formulário propaga o parâmetro ?ref= da URL para a action",
+        "Exibe feedback de sucesso e de erro ao usuário",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Backend da listagem de candidaturas pendentes",
+      "description": "As an authorized member, I want ver as candidaturas de motorista pendentes para revisá-las.",
+      "acceptanceCriteria": [
+        "Criar list-pending-driver-applications.repo.ts (SSR client) e service, listando candidaturas status pending da org com dados do candidato e do veículo",
+        "Criar get-pending-driver-applications.use-case.ts: autentica, resolve org por host, exige hasMembershipPermissionService('fleet.applications.manage'), lista pendentes e gera signed URLs (TTL 300s) para CRLV/CNH; retorna DTO sem paths crus",
+        "Criar get-pending-driver-applications.action.ts",
+        "Códigos: unauthenticated | org_not_found | not_allowed | infra_error",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Página /dashboard/config/fleet com a listagem",
+      "description": "As an authorized member, I want visualizar as candidaturas pendentes e seus documentos.",
+      "acceptanceCriteria": [
+        "Criar src/app/dashboard/config/fleet/page.tsx (Server Component) tratando os códigos (unauthenticated → redirect('/'), org_not_found → redirect('/tenant-not-found'), not_allowed → notFound())",
+        "Criar src/modules/fleet/shared/ui/driver-applications-list.tsx exibindo as candidaturas pendentes com dados do veículo e links dos documentos via signed URL",
+        "Estado vazio quando não há candidaturas pendentes",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Backend de aprovar e rejeitar candidatura",
+      "description": "As an authorized member, I want aprovar ou rejeitar uma candidatura para controlar quem atua como motorista.",
+      "acceptanceCriteria": [
+        "Criar approve-driver-application.service.ts chamando a RPC approve_driver_application e mapeando error_code (not_found, already_reviewed, infra_error)",
+        "Criar reject-driver-application.service.ts que atualiza status para 'rejected' com reviewed_by_user_id/reviewed_at",
+        "Criar review-driver-application.use-case.ts: autentica, resolve org, exige a permission, carrega a candidatura (mesma org e status pending), aplica aprovar/rejeitar com guard de idempotência",
+        "Criar approve-driver-application.action.ts e reject-driver-application.action.ts recebendo { applicationId } e chamando revalidatePath('/dashboard/config/fleet') após sucesso",
+        "Rejeição não altera a membership do usuário (permanece membro)",
+        "Códigos: unauthenticated | org_not_found | not_allowed | not_found | already_reviewed | infra_error",
+        "Tests: candidatura já revisada não pode ser reprocessada; candidatura de outra org é negada",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "UI de aprovar/rejeitar na listagem",
+      "description": "As an authorized member, I want botões para aprovar ou rejeitar cada candidatura.",
+      "acceptanceCriteria": [
+        "Adicionar botões Aprovar e Rejeitar em cada item de driver-applications-list, com confirmação antes de rejeitar",
+        "Ao aprovar/rejeitar com sucesso, a lista é revalidada e o item sai de pendentes",
+        "Feedback de sucesso/erro ao usuário",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Documentação: BACKEND_INDEX do módulo fleet",
+      "description": "As a developer, I need mapear o backend do novo módulo para manutenção.",
+      "acceptanceCriteria": [
+        "Criar src/modules/fleet/server/BACKEND_INDEX.md com entrypoints, use-cases, steps, services, repos, call matrix, fluxos e comportamentos de compensação",
+        "Atualizar o BACKEND_INDEX.md raiz incluindo o módulo fleet na tabela de módulos e no bloco de dependências",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
