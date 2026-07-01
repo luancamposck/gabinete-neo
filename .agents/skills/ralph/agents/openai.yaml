@@ -1,0 +1,7 @@
+interface:
+  display_name: "Ralph"
+  short_description: "Convert PRDs for Ralph execution"
+  default_prompt: "Use $ralph to convert this PRD into Ralph's prd.json format."
+
+policy:
+  allow_implicit_invocation: true

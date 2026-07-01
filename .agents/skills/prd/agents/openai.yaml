@@ -1,0 +1,7 @@
+interface:
+  display_name: "PRD"
+  short_description: "Create implementation-ready PRDs"
+  default_prompt: "Use $prd to create an implementation-ready product requirements document."
+
+policy:
+  allow_implicit_invocation: true

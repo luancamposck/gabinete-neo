@@ -1,0 +1,7 @@
+interface:
+  display_name: "Feature Intake"
+  short_description: "Turn vague feature ideas into briefs"
+  default_prompt: "Use $feature-intake to turn a rough feature idea into a clear feature brief."
+
+policy:
+  allow_implicit_invocation: true
