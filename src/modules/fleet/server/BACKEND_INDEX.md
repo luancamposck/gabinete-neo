@@ -10,13 +10,22 @@ Este arquivo serve como mapa rapido para entender entrypoints, arquivos principa
 
 Este modulo concentra o cadastro de motoristas, armazenamento privado de documentos de frota, candidaturas de motorista e revisao de candidaturas.
 
-No estado atual, existem repos e services para Storage privado de documentos e para registrar candidaturas via RPC transacional. Os fluxos de signup, listagem e review serao adicionados em slices posteriores.
+No estado atual, existem steps, repos e services para Storage privado de documentos e para registrar candidaturas via RPC transacional. Use-cases, actions, listagem e review serao adicionados em slices posteriores.
 
 ---
 
 ## Entrypoints
 
 Nenhum entrypoint publico foi criado ainda.
+
+---
+
+## Steps locais
+
+| Step | Caminho | Responsabilidade |
+|---|---|---|
+| `uploadDriverDocumentsStep` | `./slices/register-as-driver/steps/upload-driver-documents.step.ts` | Usa o service de upload para enviar CRLV/CNH e retornar os paths privados |
+| `createDriverApplicationStep` | `./slices/register-as-driver/steps/create-driver-application.step.ts` | Usa o service da RPC para criar membership/candidatura a partir dos paths enviados |
 
 ---
 
@@ -63,6 +72,8 @@ Nenhum entrypoint publico foi criado ainda.
 
 | Origem | Chama | Observacoes |
 |---|---|---|
+| `uploadDriverDocumentsStep` | `uploadDriverDocumentsService` | Encapsula o upload de CRLV/CNH para o futuro use-case |
+| `createDriverApplicationStep` | `registerDriverApplicationService` | Encapsula a chamada da RPC para o futuro use-case |
 | `uploadDriverDocumentsService` | `uploadDriverDocumentAdminRepo` | Faz upload separado de CRLV e CNH |
 | `uploadDriverDocumentsService` | `deleteDriverDocumentAdminRepo` | Cleanup em falha parcial ou exception apos upload |
 | `createDriverDocumentSignedUrlService` | `createSignedDocumentUrlAdminRepo` | Encapsula erro de Storage em `OperationResponse` |
