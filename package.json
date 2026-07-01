@@ -10,8 +10,13 @@
     "fix:biome": "biome check --write src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "ui:add": "npx shadcn@latest add",
-    "db:push": "npx supabase db push",
-    "db:gen-types": "npx supabase gen types typescript --project-id csivzqansvingomnafom --schema public > src/shared/types/supabase.d.ts"
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status",
+    "db:migration:new": "supabase migration new",
+    "db:migration:up": "supabase migration up",
+    "db:reset": "supabase db reset",
+    "db:gen-types": "supabase gen types typescript --local > src/shared/types/supabase.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

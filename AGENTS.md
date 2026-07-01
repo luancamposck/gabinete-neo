@@ -14,8 +14,14 @@ Este arquivo define regras e padrões para agentes (Codex/Claude/etc.) trabalhar
 - Lint (check): `npm run lint:biome`
 - Lint + fix: `npm run fix:biome`
 - Typecheck: `npm run typecheck`
-- DB push (Supabase): `npm run db:push`
-- Gerar tipos Supabase: `npm run db:gen-types`
+- Adicionar componente shadcn/ui: `npm run ui:add`
+- Supabase start: `npm run supabase:start`
+- Supabase stop: `npm run supabase:stop`
+- Supabase status: `npm run supabase:status`
+- Nova migration Supabase: `npm run db:migration:new`
+- Aplicar migrations locais Supabase: `npm run db:migration:up`
+- Resetar DB local Supabase: `npm run db:reset`
+- Gerar tipos Supabase locais: `npm run db:gen-types`
 
 Antes de finalizar uma tarefa (ou abrir PR), rode:
 `npm run fix:biome && npm run lint:biome && npm run typecheck`
