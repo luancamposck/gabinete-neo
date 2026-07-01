@@ -29,6 +29,7 @@ Use este arquivo como ponto de partida para localizar o índice local do módulo
 | `app-shell` | `src/modules/app-shell/server` | `src/modules/app-shell/server/BACKEND_INDEX.md` | `ok` | Contexto server-side da sidebar/app shell |
 | `auth` | `src/modules/auth/server` | `src/modules/auth/server/BACKEND_INDEX.md` | `ok` | Auth, sessão, guard e permissões |
 | `emails` | `src/modules/emails/server` | `src/modules/emails/server/BACKEND_INDEX.md` | `ok` | Envio de e-mails via Resend |
+| `fleet` | `src/modules/fleet/server` | `src/modules/fleet/server/BACKEND_INDEX.md` | `ok` | Documentos privados, candidaturas e motoristas |
 | `organizations` | `src/modules/organizations/server` | `src/modules/organizations/server/BACKEND_INDEX.md` | `ok` | Organização atual, settings e imagem OG |
 | `organizations/insights/people-map` | `src/modules/organizations/insights/people-map/server` | `src/modules/organizations/insights/people-map/server/BACKEND_INDEX.md` | `ok` | Pins e métricas do mapa de pessoas |
 | `organizations/memberships` | `src/modules/organizations/memberships/server` | `src/modules/organizations/memberships/server/BACKEND_INDEX.md` | `ok` | Memberships, roles e permissões |
@@ -81,6 +82,10 @@ auth
 emails
   -> lib/resend
   -> emails/shared
+
+fleet
+  -> lib/supabase/admin
+  -> Supabase Storage: fleet-documents
 
 organizations
   -> auth
