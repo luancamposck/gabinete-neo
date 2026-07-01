@@ -10,13 +10,23 @@ Este arquivo serve como mapa rapido para entender entrypoints, arquivos principa
 
 Este modulo concentra o cadastro de motoristas, armazenamento privado de documentos de frota, candidaturas de motorista e revisao de candidaturas.
 
-No estado atual, existem steps, repos e services para Storage privado de documentos e para registrar candidaturas via RPC transacional. Use-cases, actions, listagem e review serao adicionados em slices posteriores.
+No estado atual, existe o backend do cadastro como motorista: action, use-case, steps, repos e services para Storage privado de documentos e registro via RPC transacional. Listagem e review serao adicionados em slices posteriores.
 
 ---
 
 ## Entrypoints
 
-Nenhum entrypoint publico foi criado ainda.
+| Entrypoint | Caminho | Responsabilidade |
+|---|---|---|
+| `registerAndJoinAsDriverAction` | `./slices/register-as-driver/actions/register-and-join-as-driver.action.ts` | Valida `FormData` do signup de motorista e chama o use-case |
+
+---
+
+## Use-cases locais
+
+| Use-case | Caminho | Responsabilidade |
+|---|---|---|
+| `registerAndJoinAsDriverUseCase` | `./slices/register-as-driver/use-cases/register-and-join-as-driver.use-case.ts` | Reusa steps de onboarding, faz upload de documentos, chama a RPC e compensa falhas |
 
 ---
 
@@ -34,6 +44,7 @@ Nenhum entrypoint publico foi criado ainda.
 | Service | Caminho | Responsabilidade |
 |---|---|---|
 | `uploadDriverDocumentsService` | `./services/upload-driver-documents.service.ts` | Valida CRLV/CNH, envia os dois arquivos para o bucket privado e remove arquivos ja enviados em falha parcial |
+| `deleteDriverDocumentsService` | `./services/delete-driver-documents.service.ts` | Remove documentos privados em compensacoes apos upload |
 | `createDriverDocumentSignedUrlService` | `./services/create-driver-document-signed-url.service.ts` | Gera signed URL de curta duracao para documento privado |
 | `registerDriverApplicationService` | `./services/register-driver-application.service.ts` | Chama a RPC de cadastro de motorista e traduz `error_code` para `OperationResponse` |
 
@@ -62,7 +73,13 @@ Nenhum entrypoint publico foi criado ainda.
 
 | Import | Uso |
 |---|---|
+| `@/modules/accounts/onboarding/server/slices/register-and-join/steps/*` | Reuso de resolucao de org/ref, signup/signin, criacao de usuario publico e referral |
+| `@/modules/auth/server/services/delete-auth-user.service` | Rollback de auth user quando usuario novo falha apos upload |
+| `@/modules/emails/server/services/send-welcome-email.service` | Welcome email best-effort quando a RPC informa `joinedNow` |
 | `@/modules/fleet/shared/constants/vehicle-types` | Tipo `VehicleType` aceito pela RPC de cadastro |
+| `@/modules/fleet/shared/types/inputs` | Contrato de entrada do use-case de signup como motorista |
+| `@/modules/fleet/shared/validations/register-as-driver.schema` | Validacao server-side da action de signup como motorista |
+| `@/modules/organizations/server/services/get-organization-by-id.service` | Nome da organizacao para welcome email best-effort |
 | `@/shared/types/operation-response.types` | Contrato de retorno dos services |
 | `@/shared/types/supabase` | Tipos gerados para tabelas e RPCs do Supabase |
 
@@ -72,9 +89,17 @@ Nenhum entrypoint publico foi criado ainda.
 
 | Origem | Chama | Observacoes |
 |---|---|---|
+| `registerAndJoinAsDriverAction` | `registerAndJoinAsDriverUseCase` | Valida `FormData` e normaliza campos snake_case para camelCase |
+| `registerAndJoinAsDriverUseCase` | steps de onboarding | Reusa org/ref, signup/signin, criacao de usuario publico e referral |
+| `registerAndJoinAsDriverUseCase` | `uploadDriverDocumentsStep` | Upload dos documentos depois de garantir usuario |
+| `registerAndJoinAsDriverUseCase` | `createDriverApplicationStep` | Cria membership/candidatura via RPC |
+| `registerAndJoinAsDriverUseCase` | `deleteDriverDocumentsService` | Cleanup quando falha depois do upload |
+| `registerAndJoinAsDriverUseCase` | `deleteAuthUserService` | Rollback quando usuario novo falha depois do upload |
+| `registerAndJoinAsDriverUseCase` | `sendWelcomeEmailService` | Best-effort quando `joinedNow` |
 | `uploadDriverDocumentsStep` | `uploadDriverDocumentsService` | Encapsula o upload de CRLV/CNH para o futuro use-case |
 | `createDriverApplicationStep` | `registerDriverApplicationService` | Encapsula a chamada da RPC para o futuro use-case |
 | `uploadDriverDocumentsService` | `uploadDriverDocumentAdminRepo` | Faz upload separado de CRLV e CNH |
+| `deleteDriverDocumentsService` | `deleteDriverDocumentAdminRepo` | Remove documentos por path |
 | `uploadDriverDocumentsService` | `deleteDriverDocumentAdminRepo` | Cleanup em falha parcial ou exception apos upload |
 | `createDriverDocumentSignedUrlService` | `createSignedDocumentUrlAdminRepo` | Encapsula erro de Storage em `OperationResponse` |
 | `registerDriverApplicationService` | `registerDriverApplicationAdminRepo` | Mapeia `plate_taken`, `application_pending_exists` e `infra_error` |
@@ -82,6 +107,16 @@ Nenhum entrypoint publico foi criado ainda.
 ---
 
 ## Fluxos
+
+### Fluxo: Signup como motorista
+
+1. Action extrai `FormData`, aceita nomes camelCase e snake_case para campos de veiculo, valida o schema server e monta DTO camelCase.
+2. Use-case resolve organizacao por host e ref best-effort.
+3. Reusa signup/signin e cria `public.users`/`user_profiles` somente para usuario novo.
+4. Faz upload de CRLV/CNH no bucket privado.
+5. Chama a RPC `register_driver_application` para membership + candidatura.
+6. Em falha depois do upload, remove documentos; se usuario era novo, remove auth user.
+7. Em sucesso, dispara welcome email e referral em best-effort quando `joinedNow`.
 
 ### Fluxo: Upload de documentos
 
