@@ -707,6 +707,25 @@ export type Database = {
 				Args: { p_organization_id: string; p_user_id: string }
 				Returns: string[]
 			}
+			register_driver_application: {
+				Args: {
+					p_cnh_path: string
+					p_crlv_path: string
+					p_invited_by_user_id: string
+					p_organization_id: string
+					p_plate: string
+					p_user_id: string
+					p_vehicle_color: string
+					p_vehicle_model: string
+					p_vehicle_type: string
+					p_vehicle_year: number
+				}
+				Returns: {
+					application_id: string
+					error_code: string
+					joined_now: boolean
+				}
+			}
 		}
 		Enums: {
 			organization_task_status: "NOT_STARTED" | "IN_PROGRESS" | "CANCELLED" | "COMPLETED"
