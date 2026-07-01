@@ -11,18 +11,62 @@ Create detailed Product Requirements Documents that are clear, actionable, and s
 
 ## The Job
 
-1. Receive a feature description from the user
-2. Ask 3-5 essential clarifying questions (with lettered options)
-3. Generate a structured PRD based on answers
-4. Save to `tasks/[DDMMYY]-prd-[feature-name].md`
+1. Receive a feature description from the user, or read the existing feature folder context
+2. Summarize inferred decisions/trade-offs from existing context before asking questions
+3. Ask up to 3-5 essential clarifying questions only when needed (with lettered options)
+4. Generate a structured PRD based on available context and user answers
+5. Save to `tasks/[YYMMDD]-[feature-name]/03-prd.md`
 
-**Important:** Do NOT start implementing. Just create the PRD.
+**Important:** Do NOT start implementing. Do NOT write a Technical Plan. Just create or update the PRD.
 
 ---
 
-## Step 1: Clarifying Questions
+## Folder & Output File
 
-Ask only critical questions where the initial prompt is ambiguous. Focus on:
+If a feature folder already exists at `tasks/[YYMMDD]-[feature-name]/` (created by `feature-intake` and/or `backend-context-scan`), **reuse that folder** — same date, same `feature-name`. Do not invent or infer a new slug. Read `01-brief.md` and `02-context-scan.md` from it, if present, as input context before asking clarifying questions (skip questions already answered there).
+
+If no folder exists yet (standalone use of this skill), create one following the same pattern: `YYMMDD` = current date, `feature-name` in kebab-case, short and clear.
+
+Save to:
+
+```txt
+tasks/[YYMMDD]-[feature-name]/03-prd.md
+```
+
+If `03-prd.md` already exists, update it instead of creating a duplicate.
+
+---
+
+## Step 1: Assumptions & Clarifying Questions
+
+Before asking clarifying questions, summarize decisions and trade-offs already inferred from:
+
+- the current prompt
+- `01-brief.md`
+- `02-context-scan.md`
+
+Present inferred decisions as assumptions to be confirmed, not as new questions.
+
+Example:
+
+```markdown
+## Inferred Decisions
+
+Based on the existing context, I will assume:
+
+- The feature is backend-first, but may include UI if the requirement asks for it.
+- Existing module patterns should be reused instead of creating a new architecture.
+- The current rollback/best-effort behavior should be preserved where applicable.
+- Existing decisions from `01-brief.md` and `02-context-scan.md` should not be re-opened unless they conflict.
+
+Please correct any assumption that is wrong.
+```
+
+Ask only critical questions where the initial prompt, `01-brief.md`, and `02-context-scan.md` are ambiguous. Skip anything already covered by existing context. Do not ask the user to reconfirm decisions already stated in the feature folder or current prompt.
+
+If the context is sufficient to write a useful PRD, do not ask questions just to satisfy a fixed number.
+
+Focus on:
 
 - **Problem/Goal:** What problem does this solve?
 - **Core Functionality:** What are the key actions?
@@ -31,7 +75,7 @@ Ask only critical questions where the initial prompt is ambiguous. Focus on:
 
 ### Format Questions Like This:
 
-```
+```markdown
 1. What is the primary goal of this feature?
    A. Improve user onboarding experience
    B. Increase user retention
@@ -107,7 +151,10 @@ What this feature will NOT include. Critical for managing scope.
 ### 7. Technical Considerations (Optional)
 - Known constraints or dependencies
 - Integration points with existing systems
-- Performance requirements
+- Performance, security, auth, permissions, or data consistency considerations
+- Relevant findings from `02-context-scan.md`, if present (modules involved, existing patterns, critical behaviors, risks)
+
+Do not define file-by-file implementation here. That belongs to Technical Plan.
 
 ### 8. Success Metrics
 How will success be measured?
@@ -128,14 +175,6 @@ The PRD reader may be a junior developer or AI agent. Therefore:
 - Provide enough detail to understand purpose and core logic
 - Number requirements for easy reference
 - Use concrete examples where helpful
-
----
-
-## Output
-
-- **Format:** Markdown (`.md`)
-- **Location:** `tasks/`
-- **Filename:** `[DDMMYY]-prd-[feature-name].md` (kebab-case feature name)
 
 ---
 
@@ -232,9 +271,14 @@ Add priority levels to tasks so users can focus on what matters most. Tasks can 
 
 Before saving the PRD:
 
-- [ ] Asked clarifying questions with lettered options
+- [ ] Reused existing feature folder (if any), instead of inferring a new slug
+- [ ] Read `01-brief.md` / `02-context-scan.md`, if present, before asking questions
+- [ ] Explicitly summarized inferred decisions/trade-offs from existing context
+- [ ] Asked clarifying questions with lettered options, or skipped because existing context was sufficient
+- [ ] Did not ask again about decisions already answered in `01-brief.md` or `02-context-scan.md`
 - [ ] Incorporated user's answers
 - [ ] User stories are small and specific
 - [ ] Functional requirements are numbered and unambiguous
 - [ ] Non-goals section defines clear boundaries
-- [ ] Saved to `tasks/[DDMMYY]-prd-[feature-name].md`
+- [ ] Technical considerations do not include file-by-file implementation details
+- [ ] Saved to `tasks/[YYMMDD]-[feature-name]/03-prd.md`

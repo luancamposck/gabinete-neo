@@ -5,24 +5,13 @@ description: "Turn an abstract or loosely defined feature idea into a clear feat
 
 # Feature Intake
 
-Turn an abstract or loosely defined feature idea into a clear, practical feature brief saved to a file.
-
-This skill should be used at the beginning of new feature planning, before any implementation work.
+Turn an abstract or loosely defined feature idea into a clear, practical feature brief saved to a file. Use at the beginning of new feature planning, before any implementation work.
 
 ---
 
 ## Goal
 
-Receive an initial feature idea from the user and turn it into a feature brief that makes clear:
-
-* what problem will be solved;
-* who will use the feature;
-* what the main flow is;
-* what is included in the initial scope;
-* what is out of scope;
-* what integrations, data, or dependencies may exist;
-* what criteria indicate that the feature is well-defined;
-* what risks or open questions need to be considered.
+Turn an initial feature idea into a brief that makes clear: the problem being solved, who uses it, the main flow, what is in/out of the initial scope, integrations/data/dependencies, criteria for "well-defined," and open risks/questions.
 
 ---
 
@@ -33,122 +22,44 @@ Receive an initial feature idea from the user and turn it into a feature brief t
 * Do not modify files outside the feature folder.
 * Do not create additional documents besides the brief.
 * Do not assume important decisions without asking.
-* Ask questions only when they are necessary to better define the scope.
+* Ask questions only when necessary to define scope, not generic ones.
 * Keep the brief direct, practical, and useful for later planning.
 
 ---
 
-## Folder Structure
+## Folder & Output File
 
-Always create or reuse a folder inside `tasks/` using this pattern:
-
-```txt
-tasks/[YYMMDD]-[feature-name]/
-```
-
-Rules:
-
-* `YYMMDD` represents the current date.
-* `[feature-name]` must be in kebab-case.
-* The folder name must represent the feature in a short and clear way.
-
-Example:
-
-```txt
-tasks/260630-connect-whatsapp/
-```
-
----
-
-## Output File
-
-Always save the brief to this file:
+Create or reuse:
 
 ```txt
 tasks/[YYMMDD]-[feature-name]/01-brief.md
 ```
 
-Example:
+- `YYMMDD` = current date. `[feature-name]` = kebab-case, short and clear.
+- Do not repeat the feature name in the filename because the folder already identifies it. Always use `01-brief.md`, never `01-brief-connect-whatsapp.md`.
+- If `01-brief.md` already exists, update it instead of duplicating it.
 
-```txt
-tasks/260630-connect-whatsapp/01-brief.md
-```
-
-Do not include the feature name in the file name, because the parent folder already identifies the feature.
-
-Use:
-
-```txt
-01-brief.md
-```
-
-Avoid:
-
-```txt
-01-brief-connect-whatsapp.md
-```
-
-If `01-brief.md` already exists, update the file instead of creating duplicates.
+Example: `tasks/260630-connect-whatsapp/01-brief.md`
 
 ---
 
 ## When to Use
 
-Use this skill when the user brings an abstract or loosely defined idea.
-
-Examples:
-
-* "I want to add WhatsApp connection."
-* "I need to create a billing area."
-* "I want to improve onboarding."
-* "Let's create notifications."
-* "I have an idea for a dashboard, but it is still vague."
-* "Before planning, help me organize this feature."
-
----
+Use for abstract or loosely defined ideas: "I want to add WhatsApp connection," "I need a billing area," "I have an idea for a dashboard, but it's still vague."
 
 ## When Not to Use
 
-Do not use this skill when:
-
-* the user asks for direct implementation;
-* the change is small and objective;
-* the scope is already completely defined;
-* the user only asks for a code change;
-* the user asks for bug analysis;
-* the user asks for review of existing code.
+Do not use for direct implementation requests, small/objective changes, fully defined scopes, bug analysis, or code review requests.
 
 ---
 
 ## Step 1: Understand the Initial Idea
 
-Start by restating the user's idea in a short paragraph.
-
-Then identify what is still undefined.
-
-Focus on the points that truly affect scope:
-
-* problem to solve;
-* target user;
-* main flow;
-* required data;
-* external integrations;
-* permissions or authentication;
-* limits of the first version;
-* technical or product risks;
-* success criteria.
-
-Do not turn the idea into a detailed technical solution before understanding the goal.
-
----
+Restate the user's idea in a short paragraph, then identify what is still undefined. Focus only on what affects scope: problem, target user, main flow, required data, external integrations, permissions/auth, limits of v1, risks, and success criteria. Do not jump to a detailed technical solution before the goal is clear.
 
 ## Step 2: Ask Essential Questions
 
-Ask 3 to 7 questions, only when necessary.
-
-Prefer questions with lettered options so the user can answer quickly.
-
-Recommended format:
+Ask 3-7 questions, only when necessary, with lettered options so the user can answer quickly:
 
 ```markdown
 1. What is the main goal of this feature?
@@ -173,86 +84,56 @@ Recommended format:
    E. Discovery/technical validation only
 ```
 
-Questions must remove real ambiguity. Avoid generic or unnecessary questions.
-
----
+Questions must remove real ambiguity. Skip anything generic.
 
 ## Step 3: Generate the Brief
-
-After gathering the necessary information, generate the brief using this format:
 
 ```markdown
 # Feature Brief: [Feature Name]
 
 ## 1. Summary
-Explain the feature in 2-4 sentences.
+2-4 sentences.
 
 ## 2. Problem
-Describe the problem this feature solves and why it matters.
+What problem this solves and why it matters.
 
 ## 3. Target Users
-List who will use the feature.
 
 ## 4. Main Flow
-Describe the main flow in clear steps.
+Clear steps.
 
 ## 5. In Scope
-List what should be part of the first version.
+What is part of v1.
 
 ## 6. Out of Scope
-List what explicitly should not be part of the first version.
+What is explicitly not part of v1.
 
 ## 7. Data and Integrations
-List relevant data, APIs, authentication, permissions, external services, or other dependencies.
+APIs, auth, permissions, external services, and other dependencies.
 
 ## 8. Success Criteria
-List concrete signs that the feature is well-defined and ready to move forward.
+Concrete signs that the feature is well-defined and ready to move forward.
 
 ## 9. Risks and Open Questions
-List risks, doubts, dependencies, or decisions that still need attention.
 
 ## 10. Recommended Next Step
-Indicate the most appropriate next step to move forward safely.
 ```
 
 ---
 
 ## Quality Rules
 
-A good brief must be:
+A good brief is clear, specific, small enough to avoid uncontrolled scope, honest about doubts/risks, explicit about what is out of scope, understandable to someone new to the idea, and focused on product/flow, not premature implementation.
 
-* clear;
-* specific;
-* small enough to avoid uncontrolled scope;
-* honest about doubts and risks;
-* explicit about what is out of scope;
-* useful for someone who does not yet know the idea;
-* focused on the product and flow, not premature implementation.
-
-Avoid vague phrases like:
-
-* "improve the experience";
-* "make it easier";
-* "work correctly";
-* "handle edge cases";
-* "create something modern";
-* "make a beautiful screen".
-
-Replace them with concrete and verifiable behavior.
+Avoid vague phrases ("improve the experience," "make it easier," "work correctly," "handle edge cases," "make it modern/beautiful"). Replace them with concrete, verifiable behavior.
 
 ---
 
 ## Final Behavior
 
-When finished:
-
-1. Create or update the feature folder at `tasks/[YYMMDD]-[feature-name]/`.
+1. Create/update `tasks/[YYMMDD]-[feature-name]/`.
 2. Save the brief to `01-brief.md`.
-3. Tell the user the saved path.
-4. Provide a short summary of the brief.
-5. Recommend the next step.
-
-Final response format:
+3. Tell the user the saved path, a short summary, and the recommended next step:
 
 ```txt
 Brief saved to: tasks/[YYMMDD]-[feature-name]/01-brief.md

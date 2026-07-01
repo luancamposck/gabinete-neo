@@ -1,6 +1,6 @@
 ---
 name: ralph
-description: "Convert PRDs to prd.json format for the Ralph autonomous agent system. Use when you have an existing PRD and need to convert it to Ralph's JSON format. Triggers on: convert this prd, turn this into ralph format, create prd.json from this, ralph json."
+description: "Convert PRDs and Technical Plans to prd.json format for the Ralph autonomous agent system. Use when you have an existing 03-prd.md and optionally 04-technical-plan.md, and need to create or update Ralph's prd.json. Triggers on: convert this prd, turn this into ralph format, create prd.json from this, ralph json, ralph breakdown."
 ---
 
 # Ralph PRD Converter
@@ -11,7 +11,55 @@ Converts existing PRDs to the prd.json format that Ralph uses for autonomous exe
 
 ## The Job
 
-Take a PRD (markdown file or text) and convert it to `scripts/ralph/prd.json`.
+Take a PRD and convert it to `prd.json` in your Ralph directory.
+
+If the feature folder exists, read:
+
+- `tasks/[YYMMDD]-[feature-name]/03-prd.md`
+- `tasks/[YYMMDD]-[feature-name]/04-technical-plan.md`, if present
+
+Use `03-prd.md` as the product source of truth.
+
+Use `04-technical-plan.md` to guide story splitting, dependency order, file awareness, database sequencing, contracts, side effects, documentation updates, and risk-aware acceptance criteria.
+
+Do not implement code.
+
+---
+
+## Feature Folder Inputs
+
+If a feature folder exists at:
+
+```txt
+tasks/[YYMMDD]-[feature-name]/
+```
+
+reuse it. Do not invent a new slug.
+
+Preferred inputs:
+
+```txt
+tasks/[YYMMDD]-[feature-name]/03-prd.md
+tasks/[YYMMDD]-[feature-name]/04-technical-plan.md
+```
+
+Optional supporting inputs:
+
+```txt
+tasks/[YYMMDD]-[feature-name]/01-brief.md
+tasks/[YYMMDD]-[feature-name]/02-context-scan.md
+```
+
+If `04-technical-plan.md` is missing, convert the PRD using the existing rules and note that technical sequencing was inferred from the PRD only.
+
+---
+
+## Output Location
+
+```txt
+scripts/ralph/prd.json
+scripts/ralph/progress.txt
+```
 
 ---
 
@@ -123,6 +171,9 @@ Frontend stories are NOT complete until visually verified. Ralph will use the de
 4. **All stories**: `passes: false` and empty `notes`
 5. **branchName**: Derive from feature name, kebab-case, prefixed with `ralph/`
 6. **Always add**: "Typecheck passes" to every story's acceptance criteria
+7. **Use Technical Plan when present**: `04-technical-plan.md` should guide story splitting and ordering, but must not add product scope beyond the PRD.
+8. **Preserve PRD intent**: Do not remove user stories or acceptance criteria from the PRD unless they are duplicated or need to be split into smaller Ralph-sized stories.
+9. **Add documentation stories when needed**: If the Technical Plan says `BACKEND_INDEX.md` or related docs must be updated, include a final story for documentation cleanup.
 
 ---
 
@@ -249,6 +300,9 @@ Add ability to mark tasks with different statuses.
 Before writing prd.json, verify:
 
 - [ ] **Previous run archived** (if prd.json exists with different branchName, archive it first)
+- [ ] Read `04-technical-plan.md` if present
+- [ ] Used Technical Plan only for sequencing/splitting, not for adding product scope
+- [ ] Included documentation update story if required by Technical Plan
 - [ ] Each story is completable in one iteration (small enough)
 - [ ] Stories are ordered by dependency (schema to backend to UI)
 - [ ] Every story has "Typecheck passes" as criterion

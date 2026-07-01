@@ -1,0 +1,7 @@
+interface:
+  display_name: "Technical Plan"
+  short_description: "Plan implementation from feature docs"
+  default_prompt: "Use $technical-plan to create a technical implementation plan from the feature brief, context scan, and PRD."
+
+policy:
+  allow_implicit_invocation: true
