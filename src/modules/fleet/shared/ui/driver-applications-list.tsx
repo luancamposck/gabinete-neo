@@ -1,5 +1,6 @@
 import type { PendingDriverApplicationDTO } from "@/modules/fleet/server/slices/review-driver-applications/use-cases/get-pending-driver-applications.use-case"
 import { VEHICLE_TYPE_LABELS } from "@/modules/fleet/shared/constants/vehicle-types"
+import { DriverApplicationActions } from "@/modules/fleet/shared/ui/driver-application-actions"
 import { Badge } from "@/shared/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 
@@ -85,6 +86,8 @@ export const DriverApplicationsList = ({ applications }: DriverApplicationsListP
 									<span className="text-muted-foreground">CNH indisponível</span>
 								)}
 							</div>
+
+							<DriverApplicationActions applicationId={application.applicationId} candidateName={application.candidate?.name ?? "este candidato"} />
 						</CardContent>
 					</Card>
 				</li>
