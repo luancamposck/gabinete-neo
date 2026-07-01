@@ -718,18 +718,18 @@ export type Database = {
 				Args: {
 					p_cnh_path: string
 					p_crlv_path: string
-					p_invited_by_user_id: string
+					p_invited_by_user_id: string | null
 					p_organization_id: string
 					p_plate: string
 					p_user_id: string
-					p_vehicle_color: string
-					p_vehicle_model: string
+					p_vehicle_color: string | null
+					p_vehicle_model: string | null
 					p_vehicle_type: string
-					p_vehicle_year: number
+					p_vehicle_year: number | null
 				}
 				Returns: {
-					application_id: string
-					error_code: string
+					application_id: string | null
+					error_code: string | null
 					joined_now: boolean
 				}
 			}

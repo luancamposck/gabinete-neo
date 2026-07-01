@@ -115,7 +115,7 @@
       ],
       "priority": 7,
       "passes": true,
-      "notes": ""
+      "notes": "Automated tests were intentionally not written per user request; scoped Biome check and typecheck were used for validation."
     },
     {
       "id": "US-008",
@@ -129,8 +129,8 @@
         "Tests pass"
       ],
       "priority": 8,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Automated tests for error_code mapping were intentionally not written per user request; repo/service implementation was validated with scoped Biome check and typecheck."
     },
     {
       "id": "US-009",
