@@ -694,6 +694,13 @@ export type Database = {
 			[_ in never]: never
 		}
 		Functions: {
+			approve_driver_application: {
+				Args: { p_application_id: string; p_reviewer_user_id: string }
+				Returns: {
+					driver_id: string
+					error_code: string
+				}
+			}
 			generate_invite_code: { Args: { len?: number }; Returns: string }
 			has_membership_permission: {
 				Args: {
