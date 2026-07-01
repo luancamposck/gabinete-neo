@@ -19,6 +19,9 @@ No estado atual, existe o backend do cadastro como motorista: action, use-case, 
 | Entrypoint | Caminho | Responsabilidade |
 |---|---|---|
 | `registerAndJoinAsDriverAction` | `./slices/register-as-driver/actions/register-and-join-as-driver.action.ts` | Valida `FormData` do signup de motorista e chama o use-case |
+| `getPendingDriverApplicationsAction` | `./slices/review-driver-applications/actions/get-pending-driver-applications.action.ts` | Lista candidaturas pendentes da org autenticada |
+| `approveDriverApplicationAction` | `./slices/review-driver-applications/actions/approve-driver-application.action.ts` | Aprova uma candidatura e revalida a pagina de frota |
+| `rejectDriverApplicationAction` | `./slices/review-driver-applications/actions/reject-driver-application.action.ts` | Rejeita uma candidatura e revalida a pagina de frota |
 
 ---
 
@@ -27,6 +30,8 @@ No estado atual, existe o backend do cadastro como motorista: action, use-case, 
 | Use-case | Caminho | Responsabilidade |
 |---|---|---|
 | `registerAndJoinAsDriverUseCase` | `./slices/register-as-driver/use-cases/register-and-join-as-driver.use-case.ts` | Reusa steps de onboarding, faz upload de documentos, chama a RPC e compensa falhas |
+| `getPendingDriverApplicationsUseCase` | `./slices/review-driver-applications/use-cases/get-pending-driver-applications.use-case.ts` | Guard auth/org/permissao, lista pendentes e gera signed URLs |
+| `reviewDriverApplicationUseCase` | `./slices/review-driver-applications/use-cases/review-driver-application.use-case.ts` | Guard auth/org/permissao, carrega candidatura da org e aprova/rejeita com idempotencia |
 
 ---
 
@@ -47,6 +52,9 @@ No estado atual, existe o backend do cadastro como motorista: action, use-case, 
 | `deleteDriverDocumentsService` | `./services/delete-driver-documents.service.ts` | Remove documentos privados em compensacoes apos upload |
 | `createDriverDocumentSignedUrlService` | `./services/create-driver-document-signed-url.service.ts` | Gera signed URL de curta duracao para documento privado |
 | `registerDriverApplicationService` | `./services/register-driver-application.service.ts` | Chama a RPC de cadastro de motorista e traduz `error_code` para `OperationResponse` |
+| `listPendingDriverApplicationsService` | `./services/list-pending-driver-applications.service.ts` | Lista candidaturas pendentes da org com dados do candidato/veiculo |
+| `approveDriverApplicationService` | `./services/approve-driver-application.service.ts` | Chama a RPC `approve_driver_application` e traduz `error_code` (not_found/already_reviewed/infra_error) |
+| `rejectDriverApplicationService` | `./services/reject-driver-application.service.ts` | Atualiza status para `rejected` com guard de idempotencia (status pending) |
 
 ---
 
@@ -58,6 +66,10 @@ No estado atual, existe o backend do cadastro como motorista: action, use-case, 
 | `createSignedDocumentUrlAdminRepo` | `./repos/create-signed-document-url.admin.repo.ts` | Gera signed URL no bucket privado com TTL padrao de 300s |
 | `deleteDriverDocumentAdminRepo` | `./repos/delete-driver-document.admin.repo.ts` | Remove um ou mais paths do bucket `fleet-documents` |
 | `registerDriverApplicationAdminRepo` | `./repos/register-driver-application.admin.repo.ts` | Chama `register_driver_application` com admin client para membership + candidatura atomicas |
+| `listPendingDriverApplicationsRepo` | `./repos/list-pending-driver-applications.repo.ts` | Le candidaturas pendentes da org (SSR) com embed do candidato |
+| `getDriverApplicationByIdRepo` | `./repos/get-driver-application-by-id.repo.ts` | Le id/org/user/status de uma candidatura (SSR) para o guard de review |
+| `approveDriverApplicationAdminRepo` | `./repos/approve-driver-application.admin.repo.ts` | Chama `approve_driver_application` com admin client (insere driver + status approved) |
+| `rejectDriverApplicationAdminRepo` | `./repos/reject-driver-application.admin.repo.ts` | Atualiza status para `rejected` com filtro `status = pending` (admin client) |
 
 ---
 
