@@ -5,8 +5,8 @@ Ralph é um agente autônomo que implementa user stories a partir de um PRD no f
 ## Como iniciar um novo Ralph loop
 
 1. **Criar o PRD** — escreva o arquivo `.md` em `tasks/` descrevendo a feature (ou use o comando `/prd` para gerar)
-2. **Converter para `prd.json`** — peça ao Claude para converter o PRD para o formato Ralph, substituindo o `prd.json` neste diretório. Certifique-se que:
-   - Todas as stories tenham `passes: false`
+2. **Converter para `prd.json`** — converta o PRD para o formato Ralph e substitua `scripts/ralph/prd.json`. Certifique-se que:
+   - Todas as user stories tenham `passes: false`
    - O `branchName` seja único para a nova feature
 3. **Resetar o `progress.txt`** — limpe o log anterior, mantendo apenas o cabeçalho:
    ```
@@ -23,19 +23,22 @@ Ralph é um agente autônomo que implementa user stories a partir de um PRD no f
 
 ```json
 {
-  "name": "Nome da Feature",
-  "branchName": "feat/nome-da-feature",
-  "stories": [
+  "project": "vexnew-pro",
+  "branchName": "ralph/nome-da-feature",
+  "description": "Resumo curto da feature a partir do título/introdução do PRD",
+  "userStories": [
     {
       "id": "US-001",
       "title": "Título da story",
-      "priority": 1,
-      "passes": false,
       "description": "Descrição da user story",
       "acceptanceCriteria": [
         "Critério 1",
-        "Critério 2"
-      ]
+        "Critério 2",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
     }
   ]
 }
