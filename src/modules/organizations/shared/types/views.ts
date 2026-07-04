@@ -3,11 +3,9 @@ import type { OrganizationRow, OrganizationUpdate } from "@/modules/organization
 export type OrganizationWithMembershipView = {
 	app_domain: string
 	created_at: string
-	created_by_user_id: string | null
 	id: string
 	is_active: boolean
 	name: string
-	slug: string
 	description: string | null
 	updated_at: string
 

@@ -35,14 +35,12 @@ export async function getOrganizationAdminSettingsAction(): OperationResponse<Ge
 			organization: {
 				id: organization.id,
 				name: organization.name,
-				slug: organization.slug,
 				description: organization.description,
 				appDomain: organization.app_domain,
 				imageUrl,
 				isActive: organization.is_active,
 				createdAt: organization.created_at,
-				updatedAt: organization.updated_at,
-				createdByUserId: organization.created_by_user_id
+				updatedAt: organization.updated_at
 			}
 		}
 	}

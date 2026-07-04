@@ -9,12 +9,10 @@ export const editOrganizationFieldsSchema = z.object({
 
 const organizationBaseSchema = z.object({
 	id: z.string().min(1),
-	slug: z.string().min(1),
 	appDomain: z.string().min(1),
 	isActive: z.boolean(),
 	createdAt: z.string().min(1),
-	updatedAt: z.string().min(1),
-	createdByUserId: z.string().nullable()
+	updatedAt: z.string().min(1)
 })
 
 export const editOrganizationActionSchema = z.object({

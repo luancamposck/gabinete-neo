@@ -1,4 +1,4 @@
-import { Building2, CalendarClock, Hash, Lock, Mail, MapPin, Phone, User2 } from "lucide-react"
+import { Building2, CalendarClock, Globe2, Lock, Mail, MapPin, Phone, User2 } from "lucide-react"
 import { redirect } from "next/navigation"
 import { cn } from "@/lib/utils/cn"
 import { getMyAccountDataAction } from "@/modules/accounts/server/slices/my-account/actions/get-my-account-data.action"
@@ -221,12 +221,10 @@ const MyAccountPage = async () => {
 							<div className="space-y-1">
 								<div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Nome da constelação</div>
 								<div className="text-sm font-medium">{organization.name}</div>
-								{organization.slug && (
-									<div className="mt-1 inline-flex items-center gap-2 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-										<Hash className="h-3 w-3" />
-										<span>{organization.slug}</span>
-									</div>
-								)}
+								<div className="mt-1 inline-flex items-center gap-2 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+									<Globe2 className="h-3 w-3" />
+									<span>{organization.appDomain}</span>
+								</div>
 							</div>
 
 							<div className="space-y-1">

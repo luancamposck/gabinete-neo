@@ -47,7 +47,6 @@ export async function getMyAccountDataAction(): GetMyAccountDataActiones {
 		id: organizationWithMembership.id,
 		appDomain: organizationWithMembership.app_domain,
 		name: organizationWithMembership.name,
-		slug: organizationWithMembership.slug,
 
 		createdAt: organizationWithMembership.created_at,
 		isActive: organizationWithMembership.is_active,

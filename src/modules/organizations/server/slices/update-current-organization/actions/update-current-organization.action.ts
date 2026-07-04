@@ -28,12 +28,10 @@ export async function updateCurrentOrganizationAction(formData: unknown): Operat
 			id: organization.id,
 			name: organization.name,
 			description: normalizedDescription.length > 0 ? normalizedDescription : null,
-			slug: organization.slug,
 			app_domain: organization.appDomain,
 			is_active: organization.isActive,
 			created_at: organization.createdAt,
-			updated_at: organization.updatedAt,
-			created_by_user_id: organization.createdByUserId
+			updated_at: organization.updatedAt
 		}
 	})
 
