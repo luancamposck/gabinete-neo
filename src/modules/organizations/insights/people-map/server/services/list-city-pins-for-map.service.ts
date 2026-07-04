@@ -2,8 +2,8 @@ import { BRAZILIAN_CITY_COORDINATES, normalizeCityStateKey } from "@/modules/org
 import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 import { countOrganizationMembersRepo } from "../repos/count-organization-members.repo"
-import { listMembersWithCityByOrganizationIdRepo } from "../repos/list-members-with-city-by-organization-id.repo"
-import { listUnmappedMembersByOrganizationIdRepo } from "../repos/list-unmapped-members-by-organization-id.repo"
+import { listMembersWithCityByOrganizationIdAdminRepo } from "../repos/list-members-with-city-by-organization-id.admin.repo"
+import { listUnmappedMembersByOrganizationIdAdminRepo } from "../repos/list-unmapped-members-by-organization-id.admin.repo"
 
 const MSG_SUCCESS = "Pins carregados com sucesso."
 const MSG_INFRA_ERROR = "Não foi possível carregar o mapa. Tente novamente mais tarde."
@@ -29,9 +29,9 @@ type ServiceData = {
 export async function listCityPinsForMapService({ organizationId }: { organizationId: string }): OperationResponse<ServiceData, "infra_error"> {
 	try {
 		const [membersResult, countResult, unmappedResult] = await Promise.all([
-			listMembersWithCityByOrganizationIdRepo({ organizationId }),
+			listMembersWithCityByOrganizationIdAdminRepo({ organizationId }),
 			countOrganizationMembersRepo({ organizationId }),
-			listUnmappedMembersByOrganizationIdRepo({ organizationId })
+			listUnmappedMembersByOrganizationIdAdminRepo({ organizationId })
 		])
 
 		if (membersResult.error || countResult.error || unmappedResult.error) {

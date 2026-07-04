@@ -1,6 +1,6 @@
-// @/modules/organizations/memberships/server/repos/list-organization-members-with-profile-and-role-by-organization-id.repo.ts
+// @/modules/organizations/memberships/server/repos/list-organization-members-with-profile-and-role-by-organization-id.admin.repo.ts
 
-import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import type { Database } from "@/shared/types/supabase"
 
 type MembershipRow = Database["public"]["Tables"]["organization_memberships"]["Row"]
@@ -16,10 +16,10 @@ export type OrganizationMemberWithUserProfileAndRole = MembershipRow & {
 	invited_by_user: { name: string } | null
 }
 
-export async function listOrganizationMembersWithProfileAndRoleByOrganizationIdRepo({ organizationId }: { organizationId: string }) {
-	const supabase = await createClient()
+export async function listOrganizationMembersWithProfileAndRoleByOrganizationIdAdminRepo({ organizationId }: { organizationId: string }) {
+	const supabaseAdmin = createAdminClient()
 
-	return supabase
+	return supabaseAdmin
 		.from("organization_memberships")
 		.select(
 			`

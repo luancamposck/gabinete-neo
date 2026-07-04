@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 
-export async function listMembersWithCityByOrganizationIdRepo({ organizationId }: { organizationId: string }) {
-	const supabase = await createClient()
+export async function listMembersWithCityByOrganizationIdAdminRepo({ organizationId }: { organizationId: string }) {
+	const supabaseAdmin = createAdminClient()
 
-	return supabase
+	return supabaseAdmin
 		.from("organization_memberships")
 		.select(
 			`
