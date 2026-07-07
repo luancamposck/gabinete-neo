@@ -32,12 +32,9 @@ Antes de finalizar uma tarefa (ou abrir PR), rode:
 
 - Fluxo padrão (casos simples): `Action -> Service -> Repo`
 - Fluxo para casos complexos/orquestração: `Action -> Use-case -> Service(s) -> Repo(s)`
-
-### Quando usar Use-case
-Use apenas quando:
-- precisa orquestrar múltiplos passos/fluxos
-- existe branching (validações + side effects + auditoria)
-- precisa coordenar consistência entre múltiplas operações
+- Use Use-case apenas quando há orquestração de múltiplos passos, branching (validações + side effects + auditoria) ou necessidade de consistência entre múltiplas operações.
+- Cada camada só chama a camada permitida (Action -> Service/Use-case, Use-case -> Service(s), Service -> Repo(s), Repo -> Supabase); Service não chama Service, e Action/Use-case não acessam Repo/Supabase diretamente.
+- Para a tabela completa de responsabilidades por camada (o que cada uma pode/não pode fazer) e o detalhe de cada camada, ver `docs/standards/backend-layers.md`.
 
 ---
 
@@ -51,19 +48,29 @@ Use apenas quando:
   - se precisar de supabaseAdmin:
     - `src/modules/<module-name>/server/repos/<repo-name>.admin.repo.ts`
 - Actions (Server Actions):
-  - `src/modules/<module-name>/server/slices/<slice-name>/actions/<action-name>.action.ts`
+  - `src/modules/<module-name>/server/actions/<action-name>.action.ts`
 - Use-cases:
-  - `src/modules/<module-name>/server/slices/<slice-name>/use-cases/<use-case-name>.use-case.ts`
+  - `src/modules/<module-name>/server/use-cases/<use-case-name>.use-case.ts`
 
-Exemplos reais:
-- `src/modules/auth/server/slices/sign-in/actions/sign-in.action.ts`
-- `src/modules/auth/server/slices/dashboard-guard/actions/require-dashboard-access.action.ts`
+Exemplo real:
+- `src/modules/auth/server/use-cases/create-user.use-case.ts`
 
 Estrutura base (server) por módulo:
 - `src/modules/<module-name>/server/repos/...`
 - `src/modules/<module-name>/server/services/...`
-- `src/modules/<module-name>/server/slices/<slice-name>/actions/...`
-- `src/modules/<module-name>/server/slices/<slice-name>/use-cases/...`
+- `src/modules/<module-name>/server/actions/...`
+- `src/modules/<module-name>/server/use-cases/...`
+
+### Legado (não usar em código novo)
+Módulos mais antigos ainda organizam actions e use-cases dentro de `slices/<slice-name>/`:
+- `src/modules/<module-name>/server/slices/<slice-name>/actions/<action-name>.action.ts`
+- `src/modules/<module-name>/server/slices/<slice-name>/use-cases/<use-case-name>.use-case.ts`
+
+Exemplos reais (legado):
+- `src/modules/auth/server/slices/sign-in/actions/sign-in.action.ts`
+- `src/modules/auth/server/slices/dashboard-guard/actions/require-dashboard-access.action.ts`
+
+Não criar novas `slices/` em código novo — usar o padrão flat acima. Não é necessário migrar código legado existente como parte de outras tarefas.
 
 Estrutura base (shared/ui) por módulo:
 - `src/modules/<module-name>/shared/ui/...`
@@ -73,100 +80,36 @@ Estrutura base (shared/ui) por módulo:
 
 ---
 
-## Regras de naming (obrigatório)
+## Regras de naming
 
-### Arquivos
-- Action: `kebab-case.action.ts`
-- Service: `kebab-case.service.ts`
-- Repo: `kebab-case.repo.ts`
-- Admin repo: `kebab-case.admin.repo.ts`
-- Use-case: `kebab-case.use-case.ts`
-
-### Funções (padrão recomendado)
-- `signInAction`, `signInService`, `signInRepo`
-- `requireDashboardAccessAction`, `requireDashboardAccessUseCase`, etc.
+- Arquivos devem seguir os sufixos `.action.ts`, `.service.ts`, `.repo.ts`, `.use-case.ts`.
+- Funções devem usar o sufixo da camada: `Action`, `Service`, `Repo`, `UseCase`.
+- Repos usam verbos de persistência.
+- Services usam verbos de negócio.
+- Para a tabela completa de verbos, ver `docs/standards/naming.md`.
 
 ---
 
-## Regras de acoplamento (quem pode chamar quem)
+## Contratos de retorno
 
-### Permitido
-- **Action** -> Service **OU** Use-case
-- **Use-case** -> Service(s)
-- **Service** -> Repo(s)
-- **Repo** -> Supabase (somente acesso a dados)
-
-### Proibido
-- Service chamar Service (evitar dependências circulares e acoplamento)
-- Action chamar Repo direto
-- Use-case acessar Supabase direto (sempre via Repo)
-- Repo conter regra de negócio / validação / orquestração
-
-> Se precisar reutilizar lógica entre services, extraia para um helper puro em `src/shared/` (sem dependência de infra).
-
----
-
-## Responsabilidade por camada
-
-### Action (Server Action)
-- Valida input do usuário com **Zod** antes de chamar a próxima camada.
-- Chama `Service` (fluxo simples) ou `Use-case` (fluxo complexo).
-- Retorna DTO específico para o cliente (não retornar entidades cruas do Supabase).
-- Normaliza campos quando necessário (`snake_case` -> `camelCase`) de forma consistente.
-- Deve retornar tipo explícito `OperationResponse` (em `src/shared/types/operation-response.types.ts`).
-
-### Use-case
-- Usado apenas em fluxos complexos/orquestração.
-- Consome um ou mais Services.
-- Retorna `OperationResponse`.
-
-#### Padrão de mensagens e comentários em Use-case
-- Todo use-case deve centralizar mensagens em constantes `MSG_*` no topo do arquivo.
-- Não retornar strings inline dentro do fluxo; prefira `MSG_SUCCESS`, `MSG_UNAUTHENTICATED`, `MSG_NOT_ALLOWED`, `MSG_NOT_FOUND`, `MSG_INFRA_ERROR`, etc.
-- Se o use-case expõe `infra_error`, definir também:
-  - `const FALLBACK_INFRA_ERROR = { success: false, message: MSG_INFRA_ERROR, code: "infra_error" } as const`
-- Todo use-case deve ter `prefixLog` no formato `"[nomeDoUseCase]:"` para logs técnicos.
-- O corpo do use-case deve ser dividido em etapas comentadas e numeradas, neste formato:
-
-```ts
-// ============================================================
-// 0) Descrever a etapa
-//
-// Possibilidades:
-// - cenário 1
-// - cenário 2
-// ============================================================
-```
-
-- Cada bloco comentado deve explicar a intenção da etapa e os resultados esperados (`success`, códigos de erro, rollback, fallback, etc.).
-- O objetivo é que qualquer pessoa entenda rapidamente o fluxo do use-case sem precisar inferir a orquestração apenas lendo os `if`s.
-- Quando a mensagem final pertence ao contrato do use-case, preferir uma constante local `MSG_SUCCESS` em vez de reaproveitar diretamente a mensagem retornada por service.
-
-### Service
-- Centraliza regra de negócio.
-- Consome Repo(s).
-- Trata erros de forma consistente (mapear para `OperationResponse` com codes/mensagens padronizados).
-- Retorna `OperationResponse`.
-
-### Repo
-- Extremamente fino.
-- Apenas executa operações no Supabase e retorna o resultado tipado.
-- Sem regra de negócio, validação de input ou orquestração.
+- Services e Use-cases retornam `AppResultAsync<T, E>` (sem `message`); Actions/Route Handlers/Presenters retornam `OperationResponse<T, E>` (com `message`).
+- `code` é contrato interno estável; `message` é apresentação para usuário.
+- `MSG_*` fica só na borda pública; Services, Use-cases e Repos não declaram `MSG_*` nem retornam `message`.
+- Actions traduzem `code` interno para `message`.
+- Tipos globais ficam em `src/shared/types/`.
+- Para tipos completos, tabela por camada e exemplo, ver `docs/standards/result-contracts.md`.
 
 ---
 
 ## Supabase (clientes e regras)
 
-Temos 3 clientes em `src/lib/supabase/{admin,middleware,server}.ts`:
-
-- `server.ts` e `middleware.ts` usam `createServerClient` (SSR).
-- `admin.ts` usa `createClient` (`@supabase/supabase-js`) com credenciais de admin.
-
-Regras:
+- Clientes Supabase ficam em `src/lib/supabase/{admin,middleware,server}.ts`.
 - **Nunca** usar `supabaseAdmin` em código client.
 - Repos que precisam de admin devem ser separados em `*.admin.repo.ts`.
-- Preferir o cliente `server`/SSR para operações do usuário autenticado.
-- Sempre manter tipagem usando os types gerados (script `npm run db:gen-types`).
+- RLS é obrigatória para tabelas novas multi-tenant.
+- Toda tabela multi-tenant deve ter `organization_id`, salvo exceção explicitamente documentada.
+- Mudanças de schema devem considerar no mesmo ciclo: constraints, indexes, RLS, policies, triggers necessários e types gerados.
+- Para regras completas de database, migrations, RLS, clientes Supabase e naming SQL, ver `docs/standards/database-and-rls.md`.
 
 ---
 
