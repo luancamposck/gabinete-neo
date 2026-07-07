@@ -1,0 +1,27 @@
+  -- =====================================================================
+-- Migration: create_permissions_rls_policies
+-- Objetivo:
+--   - Habilitar Row Level Security em public.permissions.
+--   - Permitir leitura do catálogo de permissões por usuários autenticados.
+--
+-- Premissas:
+--   - public.permissions já existe.
+--   - Permissions são controladas exclusivamente por migrations.
+--   - Não há policies de INSERT/UPDATE/DELETE para usuários da aplicação.
+-- =====================================================================
+
+
+-- ---------------------------------------------------------------------
+-- 1) Habilitar RLS
+-- ---------------------------------------------------------------------
+alter table public.permissions enable row level security;
+
+
+-- ---------------------------------------------------------------------
+-- 2) Policy: SELECT do catálogo de permissions
+-- ---------------------------------------------------------------------
+create policy permissions_select_all
+on public.permissions
+for select
+to authenticated
+using (true);
