@@ -52,10 +52,10 @@ export async function getMyAccountDataAction(): GetMyAccountDataActiones {
 		isActive: organizationWithMembership.is_active,
 
 		membership: {
-			createdAt: organizationWithMembership.organization_memberships.created_at,
-			invitedByUserId: organizationWithMembership.organization_memberships.invited_by_user_id,
+			createdAt: organizationWithMembership.memberships.created_at,
+			invitedByUserId: organizationWithMembership.memberships.invited_by_user_id,
 			role: "MEMBRO",
-			isActive: organizationWithMembership.organization_memberships.is_active
+			isActive: organizationWithMembership.memberships.is_active
 		}
 	}
 

@@ -6,5 +6,5 @@ import type { MembershipInsert } from "@/modules/organizations/memberships/share
 export async function insertOrganizationMembershipAdminRepo(insertParams: MembershipInsert) {
 	const supabaseAdmin = createAdminClient()
 
-	return supabaseAdmin.from("organization_memberships").insert(insertParams).select("organization_id, user_id").single()
+	return supabaseAdmin.from("memberships").insert(insertParams).select("organization_id, user_id").single()
 }

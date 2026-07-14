@@ -8,9 +8,9 @@ export async function findOrganizationWithMemberhipRepo(params: { organizationId
 		.from("organizations")
 		.select(`
     *,
-    organization_memberships!inner(*)
+    memberships!inner(*)
   `)
 		.eq("id", organizationId)
-		.eq("organization_memberships.user_id", userId)
+		.eq("memberships.user_id", userId)
 		.maybeSingle()
 }

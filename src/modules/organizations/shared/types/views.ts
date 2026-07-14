@@ -9,7 +9,7 @@ export type OrganizationWithMembershipView = {
 	description: string | null
 	updated_at: string
 
-	organization_memberships: {
+	memberships: {
 		created_at: string
 		invited_by_user_id: string | null
 		is_active: boolean

@@ -11,13 +11,13 @@ export async function getMembershipByOrgAndUserIdWithRoleAdminRepo({ organizatio
 	const supabaseAdmin = createAdminClient()
 
 	return supabaseAdmin
-		.from("organization_memberships")
+		.from("memberships")
 		.select(
 			`
 			organization_id,
 			user_id,
 			is_active,
-			role:roles!organization_memberships_role_id_fkey (
+			role:roles!memberships_role_id_fkey (
 				name
 			)
 		`

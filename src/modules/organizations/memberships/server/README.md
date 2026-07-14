@@ -44,7 +44,7 @@ Este diretorio contem a camada server-side do modulo **organizations/memberships
 
 | Entry point | Chama | Observacoes |
 |---|---|---|
-| `createOrganizationMembershipService` | `insertOrganizationMembershipAdminRepo` | insere em `organization_memberships` |
+| `createOrganizationMembershipService` | `insertOrganizationMembershipAdminRepo` | insere em `memberships` |
 | `isUserMemberOfOrganizationService` | `findMembershipByOrgAndUserAdminRepo` | retorna isMember/isActive |
 | `registerAndJoinUseCase` | `createOrganizationMembershipService` | modulo accounts/onboarding |
 | `registerAndJoinUseCase` | `isUserMemberOfOrganizationService` | valida ref |

@@ -4,10 +4,10 @@ export async function listUnmappedMembersByOrganizationIdAdminRepo({ organizatio
 	const supabaseAdmin = createAdminClient()
 
 	return supabaseAdmin
-		.from("organization_memberships")
+		.from("memberships")
 		.select(
 			`
-			user:users!organization_memberships_user_id_fkey (
+			user:users!memberships_user_id_fkey (
 				id,
 				name,
 				profile:user_profiles(

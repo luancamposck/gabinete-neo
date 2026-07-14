@@ -36,10 +36,10 @@ export async function getOrganizationWithMemberhipService(params: GetUserWithPro
 			}
 		}
 
-		const membership = data.organization_memberships[0]
+		const membership = data.memberships[0]
 		const organizationWithMembership = {
 			...data,
-			organization_memberships: membership
+			memberships: membership
 		}
 
 		return {

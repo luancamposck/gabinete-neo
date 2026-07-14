@@ -91,7 +91,7 @@ create policy example_records_by_membership_select
   using (
     exists (
       select 1
-      from public.organization_memberships om
+      from public.memberships om
       where om.organization_id = example_records.organization_id
         and om.user_id = auth.uid()
         and om.is_active = true

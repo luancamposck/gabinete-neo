@@ -12,5 +12,5 @@ type UpdateMembershipByOrgAndUserIdAdminRepoParams = {
 export async function updateMembershipByOrgAndUserIdAdminRepo({ organizationId, userId, patch }: UpdateMembershipByOrgAndUserIdAdminRepoParams) {
 	const supabaseAdmin = createAdminClient()
 
-	return supabaseAdmin.from("organization_memberships").update(patch).eq("organization_id", organizationId).eq("user_id", userId).select("organization_id, user_id").maybeSingle()
+	return supabaseAdmin.from("memberships").update(patch).eq("organization_id", organizationId).eq("user_id", userId).select("organization_id, user_id").maybeSingle()
 }
