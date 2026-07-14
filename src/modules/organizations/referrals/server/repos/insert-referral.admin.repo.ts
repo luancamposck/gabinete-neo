@@ -5,5 +5,5 @@ import type { OrganizationReferralInsert } from "@/modules/organizations/referra
 export async function insertOrganizationReferralAdminRepo(insertParams: OrganizationReferralInsert) {
 	const supabaseAdmin = createAdminClient()
 
-	return supabaseAdmin.from("organization_referrals").insert(insertParams).select("id").single()
+	return supabaseAdmin.from("referrals").insert(insertParams).select("id").single()
 }

@@ -53,7 +53,7 @@ Este submódulo concentra indicações/referrals da organização: geração do 
 
 | Service | Caminho | Responsabilidade |
 |---|---|---|
-| `createOrganizationReferralService` | `./services/create-referral.service.ts` | Insere referral em `organization_referrals` |
+| `createOrganizationReferralService` | `./services/create-referral.service.ts` | Insere referral em `referrals` |
 | `listReferralsWithInviterByOrganizationIdService` | `./services/list-referrals-with-inviter-by-organization-id.service.ts` | Lista referrals com nomes/emails de inviter e invited |
 
 ---
@@ -145,7 +145,7 @@ Este submódulo concentra indicações/referrals da organização: geração do 
 ### Fluxo: Create Referral
 
 1. `createOrganizationReferralService` recebe organização, inviter, invited e relacionamento opcional.
-2. `insertOrganizationReferralAdminRepo` insere em `organization_referrals`.
+2. `insertOrganizationReferralAdminRepo` insere em `referrals`.
 3. Retorna `referralId`.
 
 ---

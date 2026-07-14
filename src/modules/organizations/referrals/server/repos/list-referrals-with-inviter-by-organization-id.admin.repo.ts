@@ -16,15 +16,15 @@ export async function listReferralsWithInviterByOrganizationIdAdminRepo(params: 
 	const supabaseAdmin = createAdminClient()
 
 	return supabaseAdmin
-		.from("organization_referrals")
+		.from("referrals")
 		.select(
 			`
 				*,
-				inviter_user:users!organization_referrals_inviter_user_id_fkey (
+				inviter_user:users!referrals_inviter_user_id_fkey (
 					name,
 					email
 				),
-				invited_user:users!organization_referrals_invited_user_id_fkey (
+				invited_user:users!referrals_invited_user_id_fkey (
 					name,
 					email
 				)
