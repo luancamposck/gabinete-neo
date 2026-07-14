@@ -6,7 +6,7 @@
 --       public.list_membership_permissions(uuid, uuid) -> text[]
 --
 -- Premissas:
---   - public.organization_memberships já existe.
+--   - public.memberships já existe.
 --   - public.roles já existe.
 --   - public.role_permissions já existe (permission_key é o contrato
 --     estável, sem indireção por permissions.id).
@@ -29,7 +29,7 @@ stable
 as $$
   select exists (
     select 1
-    from public.organization_memberships om
+    from public.memberships om
     join public.roles r
       on r.id = om.role_id
      and r.organization_id = om.organization_id
@@ -61,7 +61,7 @@ as $$
     array_agg(distinct rp.permission_key order by rp.permission_key),
     array[]::text[]
   )
-  from public.organization_memberships om
+  from public.memberships om
   join public.roles r
     on r.id = om.role_id
    and r.organization_id = om.organization_id

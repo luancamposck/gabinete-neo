@@ -1,10 +1,10 @@
 -- =====================================================================
--- Migration: create_organization_memberships_rls_policies
+-- Migration: create_memberships_rls_policies
 -- Objetivo:
---   - Habilitar Row Level Security em public.organization_memberships.
+--   - Habilitar Row Level Security em public.memberships.
 --
 -- Premissas:
---   - public.organization_memberships já existe.
+--   - public.memberships já existe.
 --   - Todo acesso da aplicação passa pelo server (Server Actions/Route
 --     Handlers), que usa o client admin (service_role) e faz a checagem
 --     de autorização na camada de aplicação.
@@ -17,4 +17,4 @@
 -- ---------------------------------------------------------------------
 -- 1) Habilitar RLS
 -- ---------------------------------------------------------------------
-alter table public.organization_memberships enable row level security;
+alter table public.memberships enable row level security;
