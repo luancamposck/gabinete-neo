@@ -19,6 +19,10 @@ create table public.organizations (
   -- Nome exibido para a organização
   name text not null,
 
+  -- Identificador único e amigável da organização, reservado para uso
+  -- futuro (ex.: URLs públicas); ainda não utilizado pela aplicação
+  slug text not null,
+
   -- Domínio usado para resolver o tenant atual
   app_domain text not null,
 
@@ -39,6 +43,9 @@ create table public.organizations (
 
   -- Garante que cada organização tenha um único registro
   constraint organizations_pkey primary key (id),
+
+  -- Reserva unicidade do slug para uso futuro (ex.: URLs públicas)
+  constraint organizations_slug_key unique (slug),
 
   -- Evita colisão de tenancy por domínio
   constraint organizations_app_domain_unique unique (app_domain),
@@ -64,6 +71,9 @@ comment on column public.organizations.id is
 
 comment on column public.organizations.name is
   'Nome exibido para a organização.';
+
+comment on column public.organizations.slug is
+  'Identificador único e amigável da organização, reservado para uso futuro (ex.: URLs públicas). Ainda não utilizado pela aplicação.';
 
 comment on column public.organizations.app_domain is
   'Domínio usado para resolver a organização atual.';

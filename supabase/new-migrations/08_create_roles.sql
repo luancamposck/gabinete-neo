@@ -45,10 +45,6 @@ create table public.roles (
     on update cascade
     on delete cascade,
 
-  -- Impede duas roles com o mesmo nome dentro da mesma organização
-  constraint roles_organization_name_key
-    unique (organization_id, name),
-
   -- Mantém nomes mínimos e evita string vazia
   constraint roles_name_check
     check (char_length(trim(name)) between 2 and 40),
@@ -92,6 +88,12 @@ comment on column public.roles.updated_at is
 -- ---------------------------------------------------------------------
 create index if not exists roles_organization_id_idx
   on public.roles using btree (organization_id);
+
+-- Impede duas roles com o mesmo nome (case-insensitive) na mesma
+-- organização. Roles customizadas são permitidas pela aplicação, então a
+-- unicidade precisa ignorar caixa para evitar colisões como "Admin" x "ADMIN".
+create unique index if not exists roles_organization_id_lower_name_unique_idx
+  on public.roles using btree (organization_id, lower(name));
 
 create index if not exists roles_system_lookup_idx
   on public.roles using btree (organization_id, name, is_system, is_active);
