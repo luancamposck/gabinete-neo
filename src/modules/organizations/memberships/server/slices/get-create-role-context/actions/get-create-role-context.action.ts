@@ -4,7 +4,6 @@ import { getCreateRoleContextUseCase } from "@/modules/organizations/memberships
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type PermissionCatalogItem = {
-	id: string
 	key: string
 	description: string
 }

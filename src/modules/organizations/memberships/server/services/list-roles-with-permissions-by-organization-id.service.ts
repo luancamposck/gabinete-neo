@@ -3,7 +3,6 @@ import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RolePermission = {
-	id: string
 	key: string
 	description: string
 }

@@ -5,7 +5,6 @@ import { getOrganizationRolesContextUseCase } from "@/modules/organizations/memb
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RolePermission = {
-	id: string
 	key: string
 	description: string
 }

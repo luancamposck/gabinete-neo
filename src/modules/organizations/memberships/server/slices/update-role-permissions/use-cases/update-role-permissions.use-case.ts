@@ -229,8 +229,8 @@ export async function updateRolePermissionsUseCase(params: UpdateRolePermissions
 			return FALLBACK_INFRA_ERROR
 		}
 
-		const permissionIdByKey = new Map(permissionsRes.data.permissions.map((permission) => [permission.key, permission.id]))
-		const invalidPermissionKeys = normalizedPermissionKeys.filter((permissionKey) => !permissionIdByKey.has(permissionKey))
+		const validPermissionKeys = new Set(permissionsRes.data.permissions.map((permission) => permission.key))
+		const invalidPermissionKeys = normalizedPermissionKeys.filter((permissionKey) => !validPermissionKeys.has(permissionKey))
 
 		if (invalidPermissionKeys.length > 0) {
 			return {
@@ -240,7 +240,7 @@ export async function updateRolePermissionsUseCase(params: UpdateRolePermissions
 			}
 		}
 
-		const targetPermissionIds = normalizedPermissionKeys.map((permissionKey) => permissionIdByKey.get(permissionKey)).filter((permissionId): permissionId is string => Boolean(permissionId))
+		const targetPermissionKeys = normalizedPermissionKeys
 
 		// ============================================================
 		// 7) Sincronizar role_permissions por diff (insert -> delete)
@@ -251,7 +251,7 @@ export async function updateRolePermissionsUseCase(params: UpdateRolePermissions
 		// ============================================================
 		const syncRes = await syncRolePermissionsService({
 			roleId: selectedRole.id,
-			targetPermissionIds
+			targetPermissionKeys
 		})
 
 		if (syncRes.success === false) {

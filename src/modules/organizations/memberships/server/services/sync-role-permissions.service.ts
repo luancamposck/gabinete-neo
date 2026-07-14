@@ -1,12 +1,12 @@
 import { deleteRolePermissionsAdminRepo } from "@/modules/organizations/memberships/server/repos/delete-role-permissions.admin.repo"
 import { insertRolePermissionsAdminRepo } from "@/modules/organizations/memberships/server/repos/insert-role-permissions.admin.repo"
-import { listRolePermissionIdsByRoleIdAdminRepo } from "@/modules/organizations/memberships/server/repos/list-role-permission-ids-by-role-id.admin.repo"
+import { listRolePermissionKeysByRoleIdAdminRepo } from "@/modules/organizations/memberships/server/repos/list-role-permission-keys-by-role-id.admin.repo"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type Params = {
 	roleId: string
-	targetPermissionIds: string[]
+	targetPermissionKeys: string[]
 }
 
 type ErrorCodes = "infra_error"
@@ -17,7 +17,7 @@ const SUCCESS_MSG = "Permissões do cargo sincronizadas com sucesso."
 
 export async function syncRolePermissionsService(params: Params): OperationResponse<{ addedCount: number; removedCount: number }, ErrorCodes> {
 	try {
-		const currentRes = await listRolePermissionIdsByRoleIdAdminRepo({ roleId: params.roleId })
+		const currentRes = await listRolePermissionKeysByRoleIdAdminRepo({ roleId: params.roleId })
 
 		if (currentRes.error) {
 			console.error(`${prefixLog} list current failed: ${currentRes.error.message}`)
@@ -28,17 +28,17 @@ export async function syncRolePermissionsService(params: Params): OperationRespo
 			}
 		}
 
-		const currentPermissionIds = new Set((currentRes.data ?? []).map((item) => item.permission_id))
-		const targetPermissionIds = new Set(params.targetPermissionIds)
+		const currentPermissionKeys = new Set((currentRes.data ?? []).map((item) => item.permission_key))
+		const targetPermissionKeys = new Set(params.targetPermissionKeys)
 
-		const permissionIdsToAdd = [...targetPermissionIds].filter((permissionId) => !currentPermissionIds.has(permissionId))
-		const permissionIdsToRemove = [...currentPermissionIds].filter((permissionId) => !targetPermissionIds.has(permissionId))
+		const permissionKeysToAdd = [...targetPermissionKeys].filter((permissionKey) => !currentPermissionKeys.has(permissionKey))
+		const permissionKeysToRemove = [...currentPermissionKeys].filter((permissionKey) => !targetPermissionKeys.has(permissionKey))
 
 		// Inserimos antes de remover para reduzir risco de role ficar sem permissões em falha parcial.
-		if (permissionIdsToAdd.length > 0) {
+		if (permissionKeysToAdd.length > 0) {
 			const insertRes = await insertRolePermissionsAdminRepo({
 				roleId: params.roleId,
-				permissionIds: permissionIdsToAdd
+				permissionKeys: permissionKeysToAdd
 			})
 
 			if (insertRes.error) {
@@ -51,10 +51,10 @@ export async function syncRolePermissionsService(params: Params): OperationRespo
 			}
 		}
 
-		if (permissionIdsToRemove.length > 0) {
+		if (permissionKeysToRemove.length > 0) {
 			const deleteRes = await deleteRolePermissionsAdminRepo({
 				roleId: params.roleId,
-				permissionIds: permissionIdsToRemove
+				permissionKeys: permissionKeysToRemove
 			})
 
 			if (deleteRes.error) {
@@ -71,8 +71,8 @@ export async function syncRolePermissionsService(params: Params): OperationRespo
 			success: true,
 			message: SUCCESS_MSG,
 			data: {
-				addedCount: permissionIdsToAdd.length,
-				removedCount: permissionIdsToRemove.length
+				addedCount: permissionKeysToAdd.length,
+				removedCount: permissionKeysToRemove.length
 			}
 		}
 	} catch (error) {

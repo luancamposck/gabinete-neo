@@ -22,7 +22,6 @@ const defaultValues: CreateRoleSchemaClientData = {
 }
 
 type AvailablePermission = {
-	id: string
 	key: string
 	description: string
 }
@@ -43,7 +42,6 @@ export const CreateRoleForm = ({ availablePermissions }: CreateRoleFormProps) =>
 		() =>
 			availablePermissions
 				.map((permission) => ({
-					id: permission.id,
 					key: permission.key,
 					presentation: getPermissionPresentation(permission)
 				}))
@@ -170,7 +168,7 @@ export const CreateRoleForm = ({ availablePermissions }: CreateRoleFormProps) =>
 												const isChecked = field.value.includes(permission.key)
 
 												return (
-													<label key={permission.id} htmlFor={permissionInputId} className="flex cursor-pointer items-start gap-3 rounded-lg border bg-card px-3 py-3 transition-colors hover:bg-accent/40">
+													<label key={permission.key} htmlFor={permissionInputId} className="flex cursor-pointer items-start gap-3 rounded-lg border bg-card px-3 py-3 transition-colors hover:bg-accent/40">
 														<Checkbox
 															id={permissionInputId}
 															checked={isChecked}

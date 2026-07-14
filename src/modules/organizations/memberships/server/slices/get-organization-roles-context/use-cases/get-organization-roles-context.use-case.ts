@@ -12,7 +12,6 @@ import { getRequestHost } from "@/shared/http/get-request-host"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RolePermission = {
-	id: string
 	key: string
 	description: string
 }

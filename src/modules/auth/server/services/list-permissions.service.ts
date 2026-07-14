@@ -7,7 +7,6 @@ const GENERIC_ERROR = "Não foi possível listar permissões. Tente novamente ma
 const SUCCESS_MSG = "Permissões listadas com sucesso."
 
 type PermissionCatalogItem = {
-	id: string
 	key: string
 	description: string
 }
@@ -29,9 +28,8 @@ export async function listPermissionsService(): OperationResponse<{ permissions:
 
 		const permissions = Array.isArray(data)
 			? data
-					.filter((permission): permission is PermissionCatalogItem => Boolean(permission?.id && permission?.key && permission?.description))
+					.filter((permission): permission is PermissionCatalogItem => Boolean(permission?.key && permission?.description))
 					.map((permission) => ({
-						id: permission.id,
 						key: permission.key,
 						description: permission.description
 					}))

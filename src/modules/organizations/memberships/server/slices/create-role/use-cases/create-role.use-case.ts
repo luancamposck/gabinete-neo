@@ -174,8 +174,8 @@ export async function createRoleUseCase(params: CreateRoleUseCaseParams): Operat
 			return FALLBACK_INFRA_ERROR
 		}
 
-		const permissionIdByKey = new Map(permissionsCatalogRes.data.permissions.map((permission) => [permission.key, permission.id]))
-		const invalidPermissionKeys = filteredPermissionKeys.filter((permissionKey) => !permissionIdByKey.has(permissionKey))
+		const validPermissionKeys = new Set(permissionsCatalogRes.data.permissions.map((permission) => permission.key))
+		const invalidPermissionKeys = filteredPermissionKeys.filter((permissionKey) => !validPermissionKeys.has(permissionKey))
 
 		if (invalidPermissionKeys.length > 0) {
 			return {
@@ -185,7 +185,7 @@ export async function createRoleUseCase(params: CreateRoleUseCaseParams): Operat
 			}
 		}
 
-		const targetPermissionIds = filteredPermissionKeys.map((permissionKey) => permissionIdByKey.get(permissionKey)).filter((permissionId): permissionId is string => Boolean(permissionId))
+		const targetPermissionKeys = filteredPermissionKeys
 
 		// ============================================================
 		// 5) Criar cargo na organização atual
@@ -223,10 +223,10 @@ export async function createRoleUseCase(params: CreateRoleUseCaseParams): Operat
 		// - se não houver permissões, manter role sem vínculos
 		// - se houver falha na sincronização, executar rollback best-effort
 		// ============================================================
-		if (targetPermissionIds.length > 0) {
+		if (targetPermissionKeys.length > 0) {
 			const syncRes = await syncRolePermissionsService({
 				roleId: createdRole.id,
-				targetPermissionIds
+				targetPermissionKeys
 			})
 
 			if (syncRes.success === false) {
@@ -252,7 +252,7 @@ export async function createRoleUseCase(params: CreateRoleUseCaseParams): Operat
 			data: {
 				roleId: createdRole.id,
 				roleName: createdRole.name,
-				grantedPermissionsCount: targetPermissionIds.length
+				grantedPermissionsCount: targetPermissionKeys.length
 			}
 		}
 	} catch (error) {

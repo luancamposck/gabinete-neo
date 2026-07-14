@@ -15,13 +15,11 @@ import { ScrollArea } from "@/shared/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/shared/components/ui/sheet"
 
 type RolePermission = {
-	id: string
 	key: string
 	description: string
 }
 
 type AvailablePermission = {
-	id: string
 	key: string
 	description: string
 }
@@ -177,12 +175,12 @@ export const RolesCards = ({ roles, permissionsKeys, availablePermissions, isCur
 								<div className="flex flex-wrap gap-2 pr-3">
 									{role.permissions
 										.map((permission) => ({
-											id: permission.id,
+											key: permission.key,
 											label: getPermissionPresentation(permission).label
 										}))
 										.sort((a, b) => a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }))
 										.map((permission) => (
-											<Badge key={permission.id} variant="outline">
+											<Badge key={permission.key} variant="outline">
 												{permission.label}
 											</Badge>
 										))}
@@ -214,7 +212,7 @@ export const RolesCards = ({ roles, permissionsKeys, availablePermissions, isCur
 				<ScrollArea className="mt-6 h-[65vh] px-8">
 					<div className="space-y-3">
 						{selectedRolePermissionOptions.map(({ permission, presentation }) => (
-							<Label key={permission.id} className="flex items-start gap-3 rounded-lg border p-3">
+							<Label key={permission.key} className="flex items-start gap-3 rounded-lg border p-3">
 								<Checkbox
 									checked={draftPermissionKeys.has(permission.key)}
 									onCheckedChange={(checked) => togglePermission(permission.key, checked === true)}
