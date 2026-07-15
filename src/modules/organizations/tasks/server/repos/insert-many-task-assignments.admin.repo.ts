@@ -4,5 +4,5 @@ import type { OrganizationTaskAssignmentInsert } from "@/modules/organizations/t
 export async function insertManyTaskAssignmentsAdminRepo(params: { assignments: OrganizationTaskAssignmentInsert[] }) {
 	const supabaseAdmin = createAdminClient()
 
-	return supabaseAdmin.from("organization_task_assignments").insert(params.assignments).select("organization_id, task_id, user_id")
+	return supabaseAdmin.from("task_assignments").insert(params.assignments).select("organization_id, task_id, user_id")
 }

@@ -7,8 +7,6 @@ const GENERIC_ERROR = "Não foi possível atribuir usuários à tarefa. Tente no
 const NO_USERS_ERROR = "Nenhum usuário selecionado para atribuição."
 const prefixLog = "[addUsersToTaskService]:"
 
-const DEFAULT_ASSIGNMENT_ROLE: OrganizationTaskAssignmentInsert["role"] = "MEMBER"
-
 export async function addUsersToTaskService(params: AddUsersToTaskParams): OperationResponse<{ insertedCount: number }> {
 	const { organizationId, taskId, userIds } = params
 
@@ -24,8 +22,7 @@ export async function addUsersToTaskService(params: AddUsersToTaskParams): Opera
 	const assignments: OrganizationTaskAssignmentInsert[] = uniqueUserIds.map((userId) => ({
 		organization_id: organizationId,
 		task_id: taskId,
-		user_id: userId,
-		role: DEFAULT_ASSIGNMENT_ROLE
+		user_id: userId
 	}))
 
 	try {

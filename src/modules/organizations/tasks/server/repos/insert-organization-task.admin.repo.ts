@@ -4,5 +4,5 @@ import type { OrganizationTaskInsert } from "@/modules/organizations/tasks/share
 export async function insertOrganizationTaskAdminRepo(insertParams: OrganizationTaskInsert) {
 	const supabaseAdmin = createAdminClient()
 
-	return supabaseAdmin.from("organization_tasks").insert(insertParams).select("id").single()
+	return supabaseAdmin.from("tasks").insert(insertParams).select("id").single()
 }

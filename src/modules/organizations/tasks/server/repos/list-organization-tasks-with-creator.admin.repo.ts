@@ -19,7 +19,7 @@ export async function listOrganizationTasksWithCreatorAdminRepo(params: { organi
 	const supabaseAdmin = createAdminClient()
 
 	return supabaseAdmin
-		.from("organization_tasks")
+		.from("tasks")
 		.select(
 			`
 			id,
@@ -28,7 +28,7 @@ export async function listOrganizationTasksWithCreatorAdminRepo(params: { organi
 			status,
 			due_at,
 			created_at,
-			created_by:users!organization_tasks_created_by_user_id_fkey (
+			created_by:users!tasks_created_by_user_id_fkey (
 				id,
 				name,
 				email

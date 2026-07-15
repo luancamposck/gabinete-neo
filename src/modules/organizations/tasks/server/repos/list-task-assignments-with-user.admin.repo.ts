@@ -4,7 +4,6 @@ export type TaskAssignmentWithUser = {
 	organization_id: string
 	task_id: string
 	user_id: string
-	role: string
 	created_at: string
 	user: {
 		id: string
@@ -17,15 +16,14 @@ export async function listTaskAssignmentsWithUserAdminRepo(params: { taskId: str
 	const supabaseAdmin = createAdminClient()
 
 	return supabaseAdmin
-		.from("organization_task_assignments")
+		.from("task_assignments")
 		.select(
 			`
 			organization_id,
 			task_id,
 			user_id,
-			role,
 			created_at,
-			user:users!organization_task_assignments_user_fk (
+			user:users!task_assignments_user_id_fkey (
 				id,
 				name,
 				email

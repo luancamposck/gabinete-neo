@@ -60,7 +60,7 @@ Este submódulo concentra tarefas da organização: criação de tarefas, listag
 
 | Service | Caminho | Responsabilidade |
 |---|---|---|
-| `createOrganizationTaskService` | `./services/create-organization-task.service.ts` | Insere tarefa em `organization_tasks` |
+| `createOrganizationTaskService` | `./services/create-organization-task.service.ts` | Insere tarefa em `tasks` |
 | `listOrganizationTasksWithCreatorService` | `./services/list-organization-tasks-with-creator.service.ts` | Lista tasks com usuário criador |
 | `listTaskAssignmentsWithUserService` | `./services/list-task-assignments-with-user.service.ts` | Lista assignments de uma task com dados do usuário |
 | `addUsersToTaskService` | `./services/add-users-to-task.service.ts` | Deduplica usuários e insere assignments em massa |
@@ -71,7 +71,7 @@ Este submódulo concentra tarefas da organização: criação de tarefas, listag
 
 | Repo | Caminho | Responsabilidade |
 |---|---|---|
-| `insertOrganizationTaskAdminRepo` | `./repos/insert-organization-task.admin.repo.ts` | Insere em `organization_tasks` |
+| `insertOrganizationTaskAdminRepo` | `./repos/insert-organization-task.admin.repo.ts` | Insere em `tasks` |
 | `listOrganizationTasksWithCreatorAdminRepo` | `./repos/list-organization-tasks-with-creator.admin.repo.ts` | Lista tarefas com creator via join |
 | `listTaskAssignmentsWithUserAdminRepo` | `./repos/list-task-assignments-with-user.admin.repo.ts` | Lista assignments por task |
 | `insertManyTaskAssignmentsAdminRepo` | `./repos/insert-many-task-assignments.admin.repo.ts` | Insere varios assignments |
