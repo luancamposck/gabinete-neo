@@ -1,6 +1,6 @@
 // @/modules/organizations/server/services/get-organization-image-url.service.ts
 
-import { findOrganizationImagePathRepo } from "@/modules/organizations/server/repos/find-organization-image-path.repo"
+import { findOrganizationImagePathAdminRepo } from "@/modules/organizations/server/repos/find-organization-image-path.admin.repo"
 import { rethrowIfNextError } from "@/shared/infra/next/rethrow-if-next-error"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
@@ -12,7 +12,7 @@ type ErrorCodes = "org_not_found" | "infra_error"
 
 export async function getOrganizationImagePathService({ organizationId }: { organizationId: string }): OperationResponse<{ imagePath: string | null }, ErrorCodes> {
 	try {
-		const { data, error } = await findOrganizationImagePathRepo({ organizationId })
+		const { data, error } = await findOrganizationImagePathAdminRepo({ organizationId })
 
 		if (error) {
 			console.error(`${prefixLog} ${error.message}`)

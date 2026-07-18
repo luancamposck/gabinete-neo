@@ -1,4 +1,4 @@
-import { findOrganizationWithMemberhipRepo } from "@/modules/organizations/server/repos/find-organization-with-membership.repo"
+import { findOrganizationWithMemberhipAdminRepo } from "@/modules/organizations/server/repos/find-organization-with-membership.admin.repo"
 import type { OrganizationWithMembershipView } from "@/modules/organizations/shared/types/views"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
@@ -22,7 +22,7 @@ export async function getOrganizationWithMemberhipService(params: GetUserWithPro
 	const { organizationId, userId } = params
 
 	try {
-		const { data, error } = await findOrganizationWithMemberhipRepo({ userId, organizationId })
+		const { data, error } = await findOrganizationWithMemberhipAdminRepo({ userId, organizationId })
 		if (error) {
 			console.error(`${prefixLog} ${error.message}`)
 			return { success: false, message: GENERIC_ERROR }

@@ -1,7 +1,7 @@
-// @/modules/organizations/server/repos/update-organization.repo.ts
+// @/modules/organizations/server/repos/update-organization.admin.repo.ts
 // Repo genérico para atualizar dados da organização.
 
-import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import type { OrganizationUpdate } from "@/modules/organizations/shared/types/db"
 
 type UpdateOrganizationRepoParams = {
@@ -9,8 +9,8 @@ type UpdateOrganizationRepoParams = {
 	updates: OrganizationUpdate
 }
 
-export async function updateOrganizationRepo({ organizationId, updates }: UpdateOrganizationRepoParams) {
-	const supabase = await createClient()
+export async function updateOrganizationAdminRepo({ organizationId, updates }: UpdateOrganizationRepoParams) {
+	const supabase = createAdminClient()
 
 	return supabase.from("organizations").update(updates).eq("id", organizationId).select("*").single()
 }

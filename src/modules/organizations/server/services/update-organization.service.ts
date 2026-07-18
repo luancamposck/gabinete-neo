@@ -1,6 +1,6 @@
 // @/modules/organizations/server/services/update-organization.service.ts
 
-import { updateOrganizationRepo } from "@/modules/organizations/server/repos/update-organization.repo"
+import { updateOrganizationAdminRepo } from "@/modules/organizations/server/repos/update-organization.admin.repo"
 import type { OrganizationUpdateView, OrganizationView } from "@/modules/organizations/shared/types/views"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
@@ -17,7 +17,7 @@ type ErrorCodes = "infra_error"
 
 export async function updateOrganizationService(params: UpdateOrganizationParams): OperationResponse<{ organization: OrganizationView }, ErrorCodes> {
 	try {
-		const { data: organization, error } = await updateOrganizationRepo(params)
+		const { data: organization, error } = await updateOrganizationAdminRepo(params)
 
 		if (error) {
 			console.error(`${prefixLog} ${error.message}`)

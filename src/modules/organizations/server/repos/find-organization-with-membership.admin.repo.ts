@@ -1,8 +1,8 @@
-import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 
-export async function findOrganizationWithMemberhipRepo(params: { organizationId: string; userId: string }) {
+export async function findOrganizationWithMemberhipAdminRepo(params: { organizationId: string; userId: string }) {
 	const { organizationId, userId } = params
-	const supabase = await createClient()
+	const supabase = createAdminClient()
 
 	return supabase
 		.from("organizations")

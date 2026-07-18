@@ -1,7 +1,7 @@
 import { BRAZILIAN_CITY_COORDINATES, normalizeCityStateKey } from "@/modules/organizations/insights/people-map/shared/data/brazilian-city-coordinates"
 import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
-import { countOrganizationMembersRepo } from "../repos/count-organization-members.repo"
+import { countOrganizationMembersAdminRepo } from "../repos/count-organization-members.admin.repo"
 import { listMembersWithCityByOrganizationIdAdminRepo } from "../repos/list-members-with-city-by-organization-id.admin.repo"
 import { listUnmappedMembersByOrganizationIdAdminRepo } from "../repos/list-unmapped-members-by-organization-id.admin.repo"
 
@@ -30,7 +30,7 @@ export async function listCityPinsForMapService({ organizationId }: { organizati
 	try {
 		const [membersResult, countResult, unmappedResult] = await Promise.all([
 			listMembersWithCityByOrganizationIdAdminRepo({ organizationId }),
-			countOrganizationMembersRepo({ organizationId }),
+			countOrganizationMembersAdminRepo({ organizationId }),
 			listUnmappedMembersByOrganizationIdAdminRepo({ organizationId })
 		])
 
