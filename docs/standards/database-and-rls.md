@@ -12,7 +12,7 @@ src/lib/supabase/server.ts
 ```
 
 - `server.ts` e `middleware.ts` usam `createServerClient` para SSR/middleware.
-- `admin.ts` usa `createClient` com `SUPABASE_SERVICE_ROLE_KEY`.
+- `admin.ts` usa `createClient` com `SUPABASE_SECRET_KEY`.
 - Nunca usar `supabaseAdmin` em código client.
 - Repos que precisam do admin client devem ser separados em `*.admin.repo.ts`.
 - Preferir o cliente SSR para operações do usuário autenticado.
