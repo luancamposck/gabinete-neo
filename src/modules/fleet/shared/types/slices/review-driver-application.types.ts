@@ -1,6 +1,18 @@
+import type { Enums } from "@/shared/types/supabase"
+
 // ============= REPO =============
 
-// Repo contracts are added in US-003.
+export interface ApproveDriverApplicationAdminRepoData {
+	driver_id: string | null
+	error_code: string | null
+}
+
+export interface GetDriverApplicationByIdAdminRepoData {
+	id: string
+	organization_id: string
+	user_id: string
+	status: Enums<"driver_application_status">
+}
 
 // ============= SERVICE =============
 
