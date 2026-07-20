@@ -1,14 +1,14 @@
 // @/modules/fleet/server/services/approve-driver-application.service.ts
 
 import { approveDriverApplicationAdminRepo } from "@/modules/fleet/server/repos/approve-driver-application.admin.repo"
-import type { ApproveDriverApplicationServiceCodes, ApproveDriverApplicationServiceData } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
+import type { ApproveDriverApplicationServiceCodes, ApproveDriverApplicationServiceData, ApproveDriverApplicationServiceParams } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
 
 const prefixLog = "[approveDriverApplicationService]:"
 
 const FALLBACK_GENERIC_ERROR = { success: false, code: "generic_error" } as const
 
-export async function approveDriverApplicationService(params: { applicationId: string; reviewerUserId: string }): AppResultAsync<ApproveDriverApplicationServiceData, ApproveDriverApplicationServiceCodes> {
+export async function approveDriverApplicationService(params: ApproveDriverApplicationServiceParams): AppResultAsync<ApproveDriverApplicationServiceData, ApproveDriverApplicationServiceCodes> {
 	try {
 		const { data, error } = await approveDriverApplicationAdminRepo(params)
 

@@ -2,6 +2,15 @@ import type { Enums } from "@/shared/types/supabase"
 
 // ============= REPO =============
 
+export type ReviewDriverApplicationOperationParams = {
+	applicationId: string
+	reviewerUserId: string
+}
+
+export type ApproveDriverApplicationAdminRepoParams = ReviewDriverApplicationOperationParams
+
+export type RejectDriverApplicationAdminRepoParams = ReviewDriverApplicationOperationParams
+
 export interface ApproveDriverApplicationAdminRepoData {
 	driver_id: string | null
 	error_code: string | null
@@ -16,11 +25,15 @@ export interface GetDriverApplicationByIdAdminRepoData {
 
 // ============= SERVICE =============
 
+export type ApproveDriverApplicationServiceParams = ReviewDriverApplicationOperationParams
+
 export interface ApproveDriverApplicationServiceData {
 	driverId: string
 }
 
 export type ApproveDriverApplicationServiceCodes = "not_found" | "already_reviewed" | "generic_error"
+
+export type RejectDriverApplicationServiceParams = ReviewDriverApplicationOperationParams
 
 export interface RejectDriverApplicationServiceData {
 	applicationId: string
