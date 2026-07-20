@@ -13,7 +13,7 @@ Este modulo concentra o cadastro de motoristas, armazenamento privado de documen
 Dois slices compoem o backend:
 
 - `register-as-driver`: signup publico de motorista (action -> use-case -> steps -> services/repos), com Storage privado de documentos e registro via RPC transacional.
-- `review-driver-applications`: fluxo autenticado e protegido por permissao para listar, aprovar e rejeitar candidaturas.
+- `review-driver-application`: aprovar e rejeitar candidaturas, nos entrypoints flat.
 
 ---
 
@@ -23,8 +23,8 @@ Dois slices compoem o backend:
 |---|---|---|
 | `registerAndJoinAsDriverAction` | `./slices/register-as-driver/actions/register-and-join-as-driver.action.ts` | Valida `FormData` do signup de motorista e chama o use-case |
 | `getPendingDriverApplicationsAction` | `./slices/review-driver-applications/actions/get-pending-driver-applications.action.ts` | Lista candidaturas pendentes da org autenticada |
-| `approveDriverApplicationAction` | `./slices/review-driver-applications/actions/approve-driver-application.action.ts` | Aprova uma candidatura e revalida a pagina de frota |
-| `rejectDriverApplicationAction` | `./slices/review-driver-applications/actions/reject-driver-application.action.ts` | Rejeita uma candidatura e revalida a pagina de frota |
+| `approveDriverApplicationAction` | `./actions/approve-driver-application.action.ts` | Aprova uma candidatura e revalida a pagina de frota |
+| `rejectDriverApplicationAction` | `./actions/reject-driver-application.action.ts` | Rejeita uma candidatura e revalida a pagina de frota |
 
 ---
 
@@ -34,7 +34,7 @@ Dois slices compoem o backend:
 |---|---|---|
 | `registerAndJoinAsDriverUseCase` | `./slices/register-as-driver/use-cases/register-and-join-as-driver.use-case.ts` | Reusa steps de onboarding, faz upload de documentos, chama a RPC e compensa falhas |
 | `getPendingDriverApplicationsUseCase` | `./slices/review-driver-applications/use-cases/get-pending-driver-applications.use-case.ts` | Guard auth/org/permissao, lista pendentes e gera signed URLs |
-| `reviewDriverApplicationUseCase` | `./slices/review-driver-applications/use-cases/review-driver-application.use-case.ts` | Guard auth/org/permissao, carrega candidatura da org e aprova/rejeita com idempotencia |
+| `reviewDriverApplicationUseCase` | `./use-cases/review-driver-application.use-case.ts` | Guard auth/org/permissao, carrega candidatura da org e aprova/rejeita com idempotencia |
 
 ---
 
@@ -58,6 +58,7 @@ Dois slices compoem o backend:
 | `listPendingDriverApplicationsService` | `./services/list-pending-driver-applications.service.ts` | Lista candidaturas pendentes da org com dados do candidato/veiculo |
 | `approveDriverApplicationService` | `./services/approve-driver-application.service.ts` | Chama a RPC `approve_driver_application` e traduz `error_code` (not_found/already_reviewed/infra_error) |
 | `rejectDriverApplicationService` | `./services/reject-driver-application.service.ts` | Atualiza status para `rejected` com guard de idempotencia (status pending) |
+| `getDriverApplicationByIdService` | `./services/get-driver-application-by-id.service.ts` | Carrega uma candidatura por id e traduz ausencia/erro de repo para code |
 
 ---
 
@@ -70,7 +71,7 @@ Dois slices compoem o backend:
 | `deleteDriverDocumentAdminRepo` | `./repos/delete-driver-document.admin.repo.ts` | Remove um ou mais paths do bucket `fleet-documents` |
 | `registerDriverApplicationAdminRepo` | `./repos/register-driver-application.admin.repo.ts` | Chama `register_driver_application` com admin client para membership + candidatura atomicas |
 | `listPendingDriverApplicationsRepo` | `./repos/list-pending-driver-applications.repo.ts` | Le candidaturas pendentes da org (SSR) com embed do candidato |
-| `getDriverApplicationByIdRepo` | `./repos/get-driver-application-by-id.repo.ts` | Le id/org/user/status de uma candidatura (SSR) para o guard de review |
+| `getDriverApplicationByIdAdminRepo` | `./repos/get-driver-application-by-id.admin.repo.ts` | Le id/org/status de uma candidatura (admin client, tabela bloqueada por RLS) para o guard de review |
 | `approveDriverApplicationAdminRepo` | `./repos/approve-driver-application.admin.repo.ts` | Chama `approve_driver_application` com admin client (insere driver + status approved) |
 | `rejectDriverApplicationAdminRepo` | `./repos/reject-driver-application.admin.repo.ts` | Atualiza status para `rejected` com filtro `status = pending` (admin client) |
 
@@ -133,8 +134,9 @@ Dois slices compoem o backend:
 | `reviewDriverApplicationUseCase` | `getCurrentAuthUserService` | Guard de autenticacao |
 | `reviewDriverApplicationUseCase` | `getOrganizationIdByAppDomainService` | Resolve o tenant por host |
 | `reviewDriverApplicationUseCase` | `hasMembershipPermissionService` | Exige `fleet.applications.manage` |
-| `reviewDriverApplicationUseCase` | `getDriverApplicationByIdRepo` | Carrega a candidatura para guard de escopo/idempotencia |
+| `reviewDriverApplicationUseCase` | `getDriverApplicationByIdService` | Carrega a candidatura para guard de escopo/idempotencia |
 | `reviewDriverApplicationUseCase` | `approveDriverApplicationService` | Aprova via RPC quando `action === "approve"` |
+| `getDriverApplicationByIdService` | `getDriverApplicationByIdAdminRepo` | Mapeia ausencia para `not_found` e erro técnico para `generic_error` |
 | `reviewDriverApplicationUseCase` | `rejectDriverApplicationService` | Rejeita via update quando `action === "reject"` |
 | `listPendingDriverApplicationsService` | `listPendingDriverApplicationsRepo` | Mapeia erro para `infra_error` |
 | `approveDriverApplicationService` | `approveDriverApplicationAdminRepo` | Mapeia `not_found`, `already_reviewed` e `infra_error` |
@@ -220,7 +222,7 @@ Aprovar/rejeitar so atua sobre candidaturas com status `pending`. O `reject` usa
 
 | Item | Motivo | Recomendacao |
 |---|---|---|
-| — | — | Sem pendencias no momento; manter este indice em dia ao evoluir os slices `register-as-driver` e `review-driver-applications` |
+| — | — | Listagem, aprovacao e rejeicao de candidaturas usam o padrao flat |
 
 ---
 

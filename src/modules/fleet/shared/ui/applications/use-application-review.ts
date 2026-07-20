@@ -2,8 +2,8 @@
 
 import { useCallback, useState } from "react"
 import { toast } from "sonner"
-import { approveDriverApplicationAction } from "@/modules/fleet/server/slices/review-driver-applications/actions/approve-driver-application.action"
-import { rejectDriverApplicationAction } from "@/modules/fleet/server/slices/review-driver-applications/actions/reject-driver-application.action"
+import { approveDriverApplicationAction } from "@/modules/fleet/server/actions/approve-driver-application.action"
+import { rejectDriverApplicationAction } from "@/modules/fleet/server/actions/reject-driver-application.action"
 
 type ReviewAction = "approve" | "reject"
 
