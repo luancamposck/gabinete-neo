@@ -33,7 +33,7 @@ Este diretorio contem a camada server-side do modulo **accounts/users/profiles**
 - (nenhum)
 
 ## Services
-- `create-user-profile.service` - `./services/create-user-profile.service.ts`
+- `update-user-address.service` - `./services/update-user-address.service.ts`
 
 ## Repos
 - `insert-profile.admin.repo` - `./repos/insert-profile.admin.repo.ts`
@@ -42,14 +42,14 @@ Este diretorio contem a camada server-side do modulo **accounts/users/profiles**
 
 | Entry point | Chama | Observacoes |
 |---|---|---|
-| `createUserProfileService` | `insertUserProfileAdminRepo` | insere em `user_profiles` |
-| `registerAndJoinUseCase` | `createUserProfileService` | modulo accounts/onboarding |
+| `updateUserAddressService` | `updateUserAddressRepo` | atualiza o endereço do usuário autenticado |
 
 ## Fluxos
 
-### Fluxo: Create User Profile
-1) `createUserProfileService(params)`
-2) `insertUserProfileAdminRepo`
+### Fluxo: Update User Address
+1) `editUserAddressUseCase(params)`
+2) `updateUserAddressService(params)`
+3) `updateUserAddressRepo(params)`
 
 ## Nao usados
 - Itens sem referencia direta via import (relative ou `@/`).

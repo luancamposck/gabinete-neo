@@ -33,7 +33,6 @@ Este diretorio contem a camada server-side do modulo **accounts/users**.
 - (nenhum)
 
 ## Services
-- `create-user.service` - `./services/create-user.service.ts`
 - `get-user-id-by-username.service` - `./services/get-user-id-by-username.service.ts`
 - `get-username-by-user-id.service` - `./services/get-username-by-user-id.service.ts`
 
@@ -46,18 +45,12 @@ Este diretorio contem a camada server-side do modulo **accounts/users**.
 
 | Entry point | Chama | Observacoes |
 |---|---|---|
-| `createUserService` | `insertUserAdminRepo` | insere `username` e dados base do usuário |
 | `getUserIdByUsernameService` | `findUserIdByUsernameAdminRepo` | normaliza `username` |
 | `getUsernameByUserIdService` | `findUsernameByUserIdAdminRepo` | busca `username` |
-| `registerAndJoinUseCase` | `createUserService` | modulo accounts/onboarding |
 | `registerAndJoinUseCase` | `getUserIdByUsernameService` | valida ref |
 | `getMyReferralLinkUseCase` | `getUsernameByUserIdService` | modulo organizations/referrals |
 
 ## Fluxos
-
-### Fluxo: Create User
-1) `createUserService(params)`
-2) `insertUserAdminRepo` (insere em `users` com `username`)
 
 ### Fluxo: Get User Id by Username
 1) `getUserIdByUsernameService(username)`

@@ -8,7 +8,7 @@ Este arquivo serve como mapa rápido para entender entrypoints, arquivos princip
 
 ## Visao geral
 
-Este submódulo concentra operações sobre `public.users`: criação do usuário público, busca por id, busca por username, carregamento com perfil e atualização de username do usuário autenticado.
+Este submódulo concentra buscas em `public.users`, carregamento com perfil e atualização de username do usuário autenticado. A criação inicial ocorre atomicamente pela trigger do fluxo de Auth.
 
 ---
 
@@ -17,7 +17,6 @@ Este submódulo concentra operações sobre `public.users`: criação do usuári
 | Entrypoint | Arquivo | Observações |
 |---|---|---|
 | `editUsernameAction` | `./slices/edit-username/actions/edit-username.action.ts` | Valida username e chama use-case |
-| `createUserService` | `./services/create-user.service.ts` | Usado pelo onboarding para criar `public.users` |
 | `getUserByIdService` | `./services/get-user-by-id.service.ts` | Usado por app-shell |
 | `getUserWithProfileService` | `./services/get-user-with-profile.service.ts` | Usado por accounts raiz |
 | `getUserIdByUsernameService` | `./services/get-user-id-by-username.service.ts` | Usado por onboarding/referral |
@@ -53,7 +52,6 @@ Este submódulo concentra operações sobre `public.users`: criação do usuári
 
 | Service | Caminho | Responsabilidade |
 |---|---|---|
-| `createUserService` | `./services/create-user.service.ts` | Insere usuário público e trata username duplicado (`23505`) |
 | `getUserByIdService` | `./services/get-user-by-id.service.ts` | Busca usuário por id via SSR client |
 | `getUserWithProfileService` | `./services/get-user-with-profile.service.ts` | Busca usuário com `user_profiles` |
 | `getUserIdByUsernameService` | `./services/get-user-id-by-username.service.ts` | Normaliza username e busca id via admin repo |
@@ -106,7 +104,6 @@ Este submódulo concentra operações sobre `public.users`: criação do usuári
 | `editUsernameUseCase` | `getCurrentAuthUserService` | Exige sessão |
 | `editUsernameUseCase` | `updateUsernameService` | Atualiza username do usuário atual |
 | `updateUsernameService` | `updateUserRepo` | Normaliza username para lowercase |
-| `createUserService` | `insertUserAdminRepo` | Usado por `accounts/onboarding` |
 | `getUserIdByUsernameService` | `findUserIdByUsernameAdminRepo` | Usado para resolver `ref` |
 | `getUsernameByUserIdService` | `findUsernameByUserIdAdminRepo` | Usado para gerar link referral |
 | `getUserWithProfileService` | `findUserWithProfileRepo` | Usado em dados de conta |
@@ -122,13 +119,6 @@ Este submódulo concentra operações sobre `public.users`: criação do usuári
 3. `updateUsernameService` normaliza username com `trim().toLowerCase()`.
 4. `updateUserRepo` atualiza `users`.
 5. Erro `23505` vira `username_already_exists`.
-
-### Fluxo: Create Public User
-
-1. `createUserService` recebe dados base do usuário.
-2. `insertUserAdminRepo` insere em `users`.
-3. Erro `23505` vira username duplicado.
-4. Retorna `userId`.
 
 ### Fluxo: Lookup de username/referral
 
@@ -146,11 +136,11 @@ Este submódulo concentra operações sobre `public.users`: criação do usuári
 
 ### Unicidade
 
-Criação e update de username tratam erro `23505` como conflito de username.
+O update de username trata erro `23505` como conflito de username.
 
 ### Infra/Admin
 
-Criação e lookups por username usam Admin; busca por id/profile e update usam SSR client.
+Lookups por username usam Admin; busca por id/profile e update usam SSR client.
 
 ---
 

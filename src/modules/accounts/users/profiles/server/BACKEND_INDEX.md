@@ -8,7 +8,7 @@ Este arquivo serve como mapa rápido para entender entrypoints, arquivos princip
 
 ## Visao geral
 
-Este submódulo concentra escrita e atualização de dados de perfil do usuário em `user_profiles`, incluindo criação inicial via onboarding e edição do endereço do usuário autenticado.
+Este submódulo concentra leitura e atualização de dados em `user_profiles`. A criação inicial ocorre atomicamente pela trigger do fluxo de Auth.
 
 ---
 
@@ -17,7 +17,6 @@ Este submódulo concentra escrita e atualização de dados de perfil do usuário
 | Entrypoint | Arquivo | Observações |
 |---|---|---|
 | `editUserAddressAction` | `./slices/edit-user-address/actions/edit-user-address.action.ts` | Valida `addressSchemaServer` e chama o use-case |
-| `createUserProfileService` | `./services/create-user-profile.service.ts` | Service consumido pelo onboarding para criar `user_profiles` |
 | `updateUserAddressService` | `./services/update-user-address.service.ts` | Service consumido pelo use-case local para atualizar endereço |
 
 ---
@@ -50,7 +49,6 @@ Este submódulo concentra escrita e atualização de dados de perfil do usuário
 
 | Service | Caminho | Responsabilidade |
 |---|---|---|
-| `createUserProfileService` | `./services/create-user-profile.service.ts` | Insere perfil via admin repo e trata telefone duplicado (`23505`) |
 | `updateUserAddressService` | `./services/update-user-address.service.ts` | Monta patch de endereço e atualiza `user_profiles` via SSR client |
 
 ---
@@ -95,7 +93,6 @@ Este submódulo concentra escrita e atualização de dados de perfil do usuário
 | `editUserAddressUseCase` | `getCurrentAuthUserService` | Falha como `unauthenticated` ou `infra_error` |
 | `editUserAddressUseCase` | `updateUserAddressService` | Usa `user.id` do auth como chave |
 | `updateUserAddressService` | `updateUserAddressRepo` | Atualiza campos de endereço |
-| `createUserProfileService` | `insertUserProfileAdminRepo` | Usado por `accounts/onboarding` |
 
 ---
 
@@ -109,13 +106,6 @@ Este submódulo concentra escrita e atualização de dados de perfil do usuário
 4. `updateUserAddressRepo` atualiza `user_profiles` pelo `user_id`.
 5. Retorna `userId` atualizado.
 
-### Fluxo: Create User Profile
-
-1. `createUserProfileService` recebe dados de perfil do onboarding.
-2. `insertUserProfileAdminRepo` insere em `user_profiles`.
-3. Erro `23505` é tratado como telefone duplicado.
-4. Retorna `userId`.
-
 ---
 
 ## Comportamentos importantes
@@ -126,11 +116,7 @@ Este submódulo concentra escrita e atualização de dados de perfil do usuário
 
 ### Infra/Admin
 
-Criação de perfil usa Supabase Admin porque faz parte do fluxo de cadastro inicial; edição de endereço usa SSR client.
-
-### Unicidade de telefone
-
-`createUserProfileService` traduz erro `23505` para mensagem específica de telefone já cadastrado.
+Edição de endereço usa o client SSR da sessão autenticada.
 
 ---
 
@@ -144,4 +130,4 @@ Criação de perfil usa Supabase Admin porque faz parte do fluxo de cadastro ini
 
 ## Notas de manutencao
 
-Atualize este arquivo quando mudar criação de perfil, campos de endereço, validações server-side de endereço, repos de `user_profiles` ou dependências com `auth`.
+Atualize este arquivo quando mudarem campos de endereço, validações server-side, repos de `user_profiles` ou dependências com `auth`.
