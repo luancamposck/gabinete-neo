@@ -49,3 +49,6 @@ scripts/ralph/.last-branch
 scripts/ralph/progress.txt
 scripts/ralph/logs/
 .claude/settings.local.json
+
+# One-off data migration scripts: contêm hashes de senha e PII de produção
+scripts/migrate-to-new-project.sql
