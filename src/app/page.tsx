@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import { getCurrentUserAction } from "@/modules/auth/server/slices/get-current-user/actions/get-current-user.action"
+import { AuthBackground } from "@/modules/auth/shared/ui/auth-background"
 import { AuthTabs, AuthTabsSkeleton } from "@/modules/auth/shared/ui/auth-tabs"
-import { Vortex } from "@/shared/components/vortex"
+import { ModeToggleButton } from "@/shared/components/mode-toggle-button"
 
 type HomePageProps = {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -16,9 +17,11 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
 	}
 
 	return (
-		<div className="relative bg-muted/20 flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-			<div className="fixed left-0  size-full -z-20 overflow-hidden">
-				<Vortex backgroundColor="transparent" className="flex size-full" rangeY={300} baseRadius={2} particleCount={50} rangeSpeed={1.5} baseHue={200} />
+		<div className="relative flex min-h-svh flex-col items-center justify-center gap-6 p-4 sm:p-6 md:p-10">
+			<AuthBackground />
+
+			<div className="fixed right-4 top-4 z-10">
+				<ModeToggleButton />
 			</div>
 
 			<Suspense fallback={<AuthTabsSkeleton />}>

@@ -64,6 +64,20 @@
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
+  /* ── Auth gate surface ── extensão da feature home-auth-gate.
+     Aditivo: NÃO substitui tokens existentes nem cria estética isolada.
+     Deriva da mesma família cool/navy (hue 247–265) já usada pelo tema
+     (--background / --primary / --info) para compor o fundo estático que
+     substitui o Vortex na home. Expor como cores permite `from-auth-*`,
+     `via-auth-*`, `to-auth-*`; `--auth-glow` também é usável direto em
+     radial-gradient arbitrário. */
+  --color-auth-gradient-from: var(--auth-gradient-from);
+  --color-auth-gradient-via: var(--auth-gradient-via);
+  --color-auth-gradient-to: var(--auth-gradient-to);
+  --color-auth-glow: var(--auth-glow);
+  --color-auth-panel: var(--auth-panel);
+  --color-auth-panel-foreground: var(--auth-panel-foreground);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -127,6 +141,21 @@
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --duration-slow: 400ms;
+
+  /* ── Auth gate surface — light (home-auth-gate) ──
+     Fundo estático institucional que substitui o Vortex na home. Tints
+     pastéis perceptíveis (mas suaves) nas pontas do gradiente; o card
+     near-white mantém contraste AA por cima. `--auth-glow` é o realce
+     radial atrás do card. */
+  --auth-gradient-from: oklch(0.94 0.05 265);
+  --auth-gradient-via: oklch(0.975 0.02 255);
+  --auth-gradient-to: oklch(0.93 0.055 240);
+  --auth-glow: oklch(0.55 0.16 255 / 0.16);
+
+  /* Painel de marca (split-auth) — navy profundo nos DOIS temas (não usa
+     --primary, que inverte no dark). Foreground near-white para contraste AA. */
+  --auth-panel: oklch(0.22 0.05 265);
+  --auth-panel-foreground: oklch(0.985 0.004 255);
 }
 
 .dark {
@@ -180,6 +209,20 @@
   --destructive-foreground: oklch(0.2 0.04 25);
   --destructive-subtle: oklch(0.28 0.07 25);
   --destructive-subtle-foreground: oklch(0.85 0.12 25);
+
+  /* ── Auth gate surface — dark (home-auth-gate) ──
+     Não é inversão: navy profundo elevado sobre o --background, com o glow
+     do --info mais presente para dar profundidade sem comprometer o
+     contraste do card (que já é navy claro no dark). */
+  --auth-gradient-from: oklch(0.2 0.06 265);
+  --auth-gradient-via: oklch(0.14 0.045 264.695);
+  --auth-gradient-to: oklch(0.18 0.06 250);
+  --auth-glow: oklch(0.68 0.16 255 / 0.22);
+
+  /* Painel de marca (split-auth) — dark: navy profundo que se destaca do
+     --background sem virar claro. Foreground mantém near-white. */
+  --auth-panel: oklch(0.18 0.05 265);
+  --auth-panel-foreground: oklch(0.985 0.004 255);
 }
 
 @layer base {

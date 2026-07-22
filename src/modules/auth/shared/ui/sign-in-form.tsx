@@ -14,7 +14,12 @@ import { Card, CardContent } from "@/shared/components/ui/card"
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/shared/components/ui/field"
 import { Input } from "@/shared/components/ui/input"
 
-export const SignInForm = ({ organizationName }: { organizationName: string }) => {
+type SignInFormProps = {
+	organizationName: string
+	onSwitchToSignup?: () => void
+}
+
+export const SignInForm = ({ organizationName, onSwitchToSignup }: SignInFormProps) => {
 	const baseId = useId()
 	const formId = `${baseId}-sign-in-form`
 	const emailId = `${baseId}-email`
@@ -106,9 +111,9 @@ export const SignInForm = ({ organizationName }: { organizationName: string }) =
 							</Button>
 							<div className="text-center text-sm">
 								Ainda nao tem uma conta?{" "}
-								<Link href="#" className="underline underline-offset-4">
+								<button type="button" onClick={onSwitchToSignup} className="font-medium underline underline-offset-4 hover:text-primary">
 									Cadastre-se
-								</Link>
+								</button>
 							</div>
 						</FieldSet>
 					</form>

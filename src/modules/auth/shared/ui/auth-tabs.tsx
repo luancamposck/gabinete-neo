@@ -1,8 +1,6 @@
 // @/modules/auth/ui/auth-tabs.tsx
 
-import Image from "next/image"
-import { RegisterAndJoinForm } from "@/modules/accounts/onboarding/shared/ui/register-and-join-form"
-import { SignInForm } from "@/modules/auth/shared/ui/sign-in-form"
+import { AuthTabsClient } from "@/modules/auth/shared/ui/auth-tabs-client"
 import { getCurrentOrganizationAction } from "@/modules/organizations/server/slices/get-current-organization/actions/get-current-organization.action"
 import { Card } from "@/shared/components/ui/card"
 import { Skeleton } from "@/shared/components/ui/skeleton"
@@ -22,40 +20,22 @@ export const AuthTabs = async (props: { searchParams: SearchParams }) => {
 	const organizationName = getOrgRes.success ? getOrgRes.data.organization.name : "Gabinete NEO"
 	const imageUrl = getOrgRes.success && getOrgRes.data.organization.imageUrl ? getOrgRes.data.organization.imageUrl : "/logo.png"
 
-	return (
-		<Tabs defaultValue={initialTab} className="w-full max-w-sm md:max-w-3xl">
-			<Image src={imageUrl} width={500} height={500} alt={organizationName} className="w-3/4 mx-auto md:hidden" />
-
-			<TabsList className="w-full bg-primary-foreground">
-				<TabsTrigger value="login">Login</TabsTrigger>
-				<TabsTrigger value="signup">Cadastro</TabsTrigger>
-			</TabsList>
-
-			<Card className="grid grid-cols-1 md:grid-cols-2 p-0">
-				<TabsContent value="login">
-					<SignInForm organizationName={organizationName} />
-				</TabsContent>
-				<TabsContent value="signup">
-					<RegisterAndJoinForm />
-				</TabsContent>
-
-				<div className="bg-muted hidden md:flex md:flex-col md:justify-center md:items-center">
-					<Image src={imageUrl} width={300} height={300} alt={organizationName} />
-					<h1 className="text-3xl font-semibold text-center">{organizationName}</h1>
-				</div>
-			</Card>
-		</Tabs>
-	)
+	return <AuthTabsClient organizationName={organizationName} imageUrl={imageUrl} initialTab={initialTab} />
 }
 
 export const AuthTabsSkeleton = () => {
 	return (
-		<Tabs defaultValue="login" className="pointer-events-none w-full max-w-sm md:max-w-3xl">
-			<TabsList className="w-full bg-primary-foreground">
+		<Tabs defaultValue="login" className="pointer-events-none w-full max-w-sm gap-4 md:max-w-3xl">
+			<div className="flex flex-col items-center gap-2 md:hidden">
+				<Skeleton className="size-16 rounded-2xl" />
+				<Skeleton className="h-6 w-40" />
+			</div>
+
+			<TabsList className="w-full">
 				<TabsTrigger value="login">Login</TabsTrigger>
 				<TabsTrigger value="signup">Cadastro</TabsTrigger>
 			</TabsList>
-			<Card className="grid grid-cols-1 md:grid-cols-2 p-0">
+			<Card className="grid grid-cols-1 overflow-hidden p-0 shadow-xl md:grid-cols-2">
 				<TabsContent value="login">
 					<div className="flex flex-col gap-6">
 						<div className="p-6 pb-2 md:p-8">
@@ -136,9 +116,10 @@ export const AuthTabsSkeleton = () => {
 					</div>
 				</TabsContent>
 
-				<div className="bg-muted hidden md:flex md:flex-col md:justify-center md:items-center">
-					<Skeleton className="h-[300px] w-[300px]" />
-					<Skeleton className="mt-4 h-8 w-56" />
+				<div className="hidden bg-auth-panel md:flex md:flex-col md:items-center md:justify-center md:gap-5 md:p-10">
+					<Skeleton className="size-40 rounded-3xl opacity-20" />
+					<Skeleton className="h-8 w-56 opacity-20" />
+					<Skeleton className="h-4 w-40 opacity-20" />
 				</div>
 			</Card>
 		</Tabs>
