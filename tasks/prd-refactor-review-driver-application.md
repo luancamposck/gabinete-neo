@@ -75,53 +75,55 @@ Baseado no prompt e na análise do código atual, assumo o seguinte. Corrija o q
 **Contexto:** Hoje `reviewDriverApplicationUseCase` importa e chama `getDriverApplicationByIdAdminRepo` diretamente. Isso viola `docs/standards/backend-layers.md`, que na tabela de responsabilidades marca "Chamar Repo" como **Não** para Use-case, e na seção de Use-case afirma "Não deve acessar Repo diretamente". É a única ocorrência do módulo: nenhum use-case do padrão flat importa de `repos/`.
 
 **Acceptance Criteria:**
-- [ ] Criar `src/modules/fleet/server/services/get-driver-application-by-id.service.ts`
-- [ ] O Service consome `getDriverApplicationByIdAdminRepo` e traduz erro de infra para `code`, sem `MSG_*` e sem `message`
-- [ ] Retorna `AppResultAsync<GetDriverApplicationByIdServiceData, GetDriverApplicationByIdServiceCodes>`, com Data/Codes no slice types file
-- [ ] Candidatura inexistente resolve para o code `not_found` (não para `success: true` com data nula)
-- [ ] O Service faz log técnico do erro de Repo, seguindo o padrão dos demais services do módulo
-- [ ] O use-case passa a chamar o Service e **não** importa mais nada de `repos/`
-- [ ] As decisões de negócio permanecem no use-case: comparação `organization_id !== organizationId` (não vazar existência cross-org) e checagem `status !== "pending"`
-- [ ] Remover `user_id` do `.select()` em `getDriverApplicationByIdAdminRepo` e do type `GetDriverApplicationByIdAdminRepoData` — confirmado que nenhum consumidor usa esse campo (só a query, o use-case e `BACKEND_INDEX.md` referenciam o repo, e nenhum lê `.user_id`)
-- [ ] `grep -rn "repos/" src/modules/fleet/server/use-cases/` não retorna nenhum resultado
-- [ ] Typecheck e lint passam
+- [x] Criar `src/modules/fleet/server/services/get-driver-application-by-id.service.ts`
+- [x] O Service consome `getDriverApplicationByIdAdminRepo` e traduz erro de infra para `code`, sem `MSG_*` e sem `message`
+- [x] Retorna `AppResultAsync<GetDriverApplicationByIdServiceData, GetDriverApplicationByIdServiceCodes>`, com Data/Codes no slice types file
+- [x] Candidatura inexistente resolve para o code `not_found` (não para `success: true` com data nula)
+- [x] O Service faz log técnico do erro de Repo, seguindo o padrão dos demais services do módulo
+- [x] O use-case passa a chamar o Service e **não** importa mais nada de `repos/`
+- [x] As decisões de negócio permanecem no use-case: comparação `organization_id !== organizationId` (não vazar existência cross-org) e checagem `status !== "pending"`
+- [x] Remover `user_id` do `.select()` em `getDriverApplicationByIdAdminRepo` e do type `GetDriverApplicationByIdAdminRepoData` — confirmado que nenhum consumidor usa esse campo (só a query, o use-case e `BACKEND_INDEX.md` referenciam o repo, e nenhum lê `.user_id`)
+- [x] `grep -rn "repos/" src/modules/fleet/server/use-cases/` não retorna nenhum resultado
+- [x] Typecheck e lint passam
 
 ### US-005: Mover o use-case para o padrão flat e alinhar convenções
 **Description:** Como desenvolvedor, quero o use-case fora de `slices/` e seguindo as mesmas convenções dos use-cases já migrados, para que o módulo tenha um padrão só.
 
 **Acceptance Criteria:**
-- [ ] Arquivo movido para `src/modules/fleet/server/use-cases/review-driver-application.use-case.ts`
-- [ ] Retorna `AppResultAsync<ReviewDriverApplicationUseCaseData, ReviewDriverApplicationUseCaseCodes>`
-- [ ] Nenhuma constante `MSG_*` e nenhum retorno com `message`
-- [ ] Types importados do slice file; nenhum type declarado localmente
-- [ ] Guard de permissão usa `PERMISSIONS.FLEET_APPLICATIONS_MANAGE` em vez da string literal `"fleet.applications.manage"` (ver FR-6)
-- [ ] `try/catch` envolvendo o corpo inteiro é removido, alinhando com `addDriverApplicationUseCase` e `getPendingDriverApplicationsUseCase` (ver FR-7)
-- [ ] Consome apenas Services (nenhum import de `repos/`), conforme US-004
-- [ ] Comportamento preservado: a ordem dos guards (auth → org → permissão → load/escopo/status → aplicar revisão) permanece idêntica
-- [ ] Typecheck e lint passam
+- [x] Arquivo movido para `src/modules/fleet/server/use-cases/review-driver-application.use-case.ts`
+- [x] Retorna `AppResultAsync<ReviewDriverApplicationUseCaseData, ReviewDriverApplicationUseCaseCodes>`
+- [x] Nenhuma constante `MSG_*` e nenhum retorno com `message`
+- [x] Types importados do slice file; nenhum type declarado localmente
+- [x] Guard de permissão usa `PERMISSIONS.FLEET_APPLICATIONS_MANAGE` em vez da string literal `"fleet.applications.manage"` (ver FR-6)
+- [x] `try/catch` envolvendo o corpo inteiro é removido, alinhando com `addDriverApplicationUseCase` e `getPendingDriverApplicationsUseCase` (ver FR-7)
+- [x] Consome apenas Services (nenhum import de `repos/`), conforme US-004
+- [x] Comportamento preservado: a ordem dos guards (auth → org → permissão → load/escopo/status → aplicar revisão) permanece idêntica
+- [x] Typecheck e lint passam
 
 ### US-006: Mover as duas Actions para o padrão flat com tradução de erro
 **Description:** Como desenvolvedor, quero as Actions fora de `slices/`, sendo o único lugar do fluxo que conhece mensagens de usuário.
 
 **Acceptance Criteria:**
-- [ ] Arquivos movidos para `src/modules/fleet/server/actions/approve-driver-application.action.ts` e `.../reject-driver-application.action.ts`
-- [ ] Cada Action declara seus próprios `MSG_*` e uma função `toMessage(code)`, no mesmo formato de `get-pending-driver-applications.action.ts`
-- [ ] `toMessage` cobre todos os códigos do union, com `default` para o genérico
-- [ ] Cada Action continua retornando `OperationResponse` e chamando `revalidatePath("/dashboard/config/fleet")` apenas no caminho de sucesso
-- [ ] Types de Action importados do slice types file
-- [ ] Mensagens de sucesso permanecem distintas por operação ("aprovada" / "rejeitada")
-- [ ] Typecheck e lint passam
+- [x] Arquivos movidos para `src/modules/fleet/server/actions/approve-driver-application.action.ts` e `.../reject-driver-application.action.ts`
+- [x] Cada Action declara seus próprios `MSG_*` e uma função `toMessage(code)`, no mesmo formato de `get-pending-driver-applications.action.ts`
+- [x] `toMessage` cobre todos os códigos do union, com `default` para o genérico
+- [x] Cada Action continua retornando `OperationResponse` e chamando `revalidatePath("/dashboard/config/fleet")` apenas no caminho de sucesso
+- [x] Types de Action importados do slice types file
+- [x] Mensagens de sucesso permanecem distintas por operação ("aprovada" / "rejeitada")
+- [x] Typecheck e lint passam
 
 ### US-007: Atualizar consumidores e remover a pasta legada
 **Description:** Como desenvolvedor, quero que nada mais aponte para `slices/review-driver-applications/` e que a pasta deixe de existir.
 
 **Acceptance Criteria:**
-- [ ] `use-application-review.ts` importa as Actions dos novos caminhos flat
-- [ ] Nenhuma alteração na lógica do hook (estado, toasts, `onResolved`, bulk) é necessária
-- [ ] `grep -r "review-driver-applications" src/` não retorna nenhum resultado
-- [ ] A pasta `src/modules/fleet/server/slices/review-driver-applications/` é removida do disco
-- [ ] Typecheck e lint passam
+- [x] `use-application-review.ts` importa as Actions dos novos caminhos flat
+- [x] Nenhuma alteração na lógica do hook (estado, toasts, `onResolved`, bulk) é necessária
+- [x] `grep -r "review-driver-applications" src/` não retorna nenhum resultado
+- [x] A pasta `src/modules/fleet/server/slices/review-driver-applications/` é removida do disco
+- [x] Typecheck e lint passam
 - [ ] Aprovar e rejeitar (individual e em lote) verificados no browser usando a skill dev-browser
+
+> Validação visual pendente: a skill `dev-browser` não estava disponível durante a implementação.
 
 ### US-008: Atualizar o BACKEND_INDEX.md do módulo
 **Description:** Como desenvolvedor, quero o índice do backend refletindo a estrutura final, já que ele é usado como mapa de navegação do módulo.
