@@ -4,9 +4,11 @@
 
 import "maplibre-gl/dist/maplibre-gl.css"
 
+import type { FeatureCollection, LineString } from "geojson"
 import { ArrowRight } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
-import MapGL, { Layer, Marker, NavigationControl, Source } from "react-map-gl/maplibre"
+import type { StyleSpecification } from "maplibre-gl"
+import { useEffect, useId, useMemo, useState } from "react"
+import MapGL, { Layer, type LayerProps, Marker, NavigationControl, Source } from "react-map-gl/maplibre"
 import type { CityPin } from "@/modules/organizations/insights/people-map/shared/types/pins"
 import { Button } from "@/shared/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog"
@@ -23,15 +25,21 @@ const sizePresetClass: Record<SizePreset, string> = {
 const PULSE_LIGHT_BLUE = "#93c5fd"
 const PULSE_DARK_BLUE = "#1d293d"
 
-function buildHubLinesGeoJson(pins: CityPin[]) {
-	if (pins.length < 2) {
+interface HubLineProperties {
+	from: string
+	to: string
+	pulse?: number
+}
+
+function buildHubLinesGeoJson(pins: CityPin[]): FeatureCollection<LineString, HubLineProperties> {
+	const hub = pins.at(0)
+
+	if (!hub || pins.length < 2) {
 		return {
 			type: "FeatureCollection",
 			features: []
-		} as const
+		}
 	}
-
-	const hub = pins[0]!
 
 	return {
 		type: "FeatureCollection",
@@ -49,10 +57,10 @@ function buildHubLinesGeoJson(pins: CityPin[]) {
 				]
 			}
 		}))
-	} as const
+	}
 }
 
-function addPulseToLines(geoJson: ReturnType<typeof buildHubLinesGeoJson>) {
+function addPulseToLines(geoJson: FeatureCollection<LineString, HubLineProperties>): FeatureCollection<LineString, HubLineProperties> {
 	return {
 		...geoJson,
 		features: geoJson.features.map((feature) => ({
@@ -75,11 +83,12 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 	const [openPinId, setOpenPinId] = useState<string | null>(null)
 	const [zoom, setZoom] = useState<number>(minZoomToShowCards)
 	const [linesGeoJson, setLinesGeoJson] = useState(() => addPulseToLines(buildHubLinesGeoJson(pins)))
+	const linesSourceId = useId()
 	const showCards = zoom >= minZoomToShowCards
 
 	const selected = useMemo(() => pins.find((p) => p.id === openPinId) ?? null, [pins, openPinId])
 
-	const rasterStyle = useMemo(
+	const rasterStyle = useMemo<StyleSpecification>(
 		() => ({
 			version: 8,
 			sources: {
@@ -98,7 +107,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 		[]
 	)
 
-	const linesLayer: any = useMemo(
+	const linesLayer = useMemo<LayerProps>(
 		() => ({
 			id: "referral-lines",
 			type: "line",
@@ -111,7 +120,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 		[]
 	)
 
-	const glowLinesLayer: any = useMemo(
+	const glowLinesLayer = useMemo<LayerProps>(
 		() => ({
 			id: "referral-lines-glow",
 			type: "line",
@@ -157,7 +166,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 					longitude: -51.9253,
 					zoom: 4.2
 				}}
-				mapStyle={rasterStyle as any}
+				mapStyle={rasterStyle}
 				onMove={(evt) => setZoom(evt.viewState.zoom)}
 			>
 				<div className="absolute right-3 top-3 z-10">
@@ -165,7 +174,7 @@ export default function WorldPeopleMapMapLibre({ pins, minZoomToShowCards = 5.8,
 				</div>
 
 				{/* Linhas primeiro (fica atras dos pins) */}
-				<Source id="lines-source" type="geojson" data={linesGeoJson as any}>
+				<Source id={linesSourceId} type="geojson" data={linesGeoJson}>
 					<Layer {...glowLinesLayer} />
 					<Layer {...linesLayer} />
 				</Source>

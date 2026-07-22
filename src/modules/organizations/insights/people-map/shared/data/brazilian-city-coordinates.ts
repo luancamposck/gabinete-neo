@@ -1,5 +1,5 @@
 export function normalizeCityStateKey(city: string, state: string): string {
-	return (city + "-" + state)
+	return `${city}-${state}`
 		.normalize("NFD")
 		.replace(/[\u0300-\u036f]/g, "")
 		.toLowerCase()

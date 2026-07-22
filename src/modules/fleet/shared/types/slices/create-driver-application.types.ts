@@ -1,5 +1,4 @@
-import type { VehicleType } from "../db"
-import type { DriverApplicationInsert } from "../db"
+import type { DriverApplicationInsert, VehicleType } from "../db"
 
 // ============= REPO =============
 
