@@ -125,6 +125,13 @@ create unique index driver_applications_organization_id_plate_active_uidx
   on public.driver_applications using btree (organization_id, plate)
   where status in ('pending', 'approved');
 
+-- Um usuário pode ter no máximo uma candidatura pendente por organização
+-- (candidaturas seriais). Multi-veículo continua válido ao longo do tempo,
+-- pois approved/rejected não contam para este índice.
+create unique index driver_applications_organization_id_user_pending_uidx
+  on public.driver_applications using btree (organization_id, user_id)
+  where status = 'pending';
+
 create index if not exists driver_applications_organization_id_status_idx
   on public.driver_applications using btree (organization_id, status);
 
