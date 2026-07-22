@@ -1,6 +1,6 @@
 // @/modules/fleet/server/repos/register-driver-application.admin.repo.ts
 import { createAdminClient } from "@/lib/supabase/admin"
-import type { VehicleType } from "@/modules/fleet/shared/constants/vehicle-types"
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
 type Params = {
 	organizationId: string

@@ -2,7 +2,7 @@
 
 import type { Table } from "@tanstack/react-table"
 import { Search, X } from "lucide-react"
-import { VEHICLE_TYPE_LABELS, VEHICLE_TYPES } from "@/modules/fleet/shared/constants/vehicle-types"
+import { VEHICLE_TYPE_LABELS, VEHICLE_TYPES } from "@/modules/fleet/shared/constants/vehicle-type"
 import type { PendingDriverApplicationDTO } from "@/modules/fleet/shared/types/slices/get-pending-driver-applications.types"
 import { VEHICLE_TYPE_ICONS } from "@/modules/fleet/shared/ui/applications/application-visuals"
 import { Button } from "@/shared/components/ui/button"

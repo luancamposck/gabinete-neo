@@ -1,7 +1,7 @@
 // @/modules/fleet/server/slices/register-as-driver/steps/create-driver-application.step.ts
 
 import { registerDriverApplicationService } from "@/modules/fleet/server/services/register-driver-application.service"
-import type { VehicleType } from "@/modules/fleet/shared/constants/vehicle-types"
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type CreateDriverApplicationStepParams = {

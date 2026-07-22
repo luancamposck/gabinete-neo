@@ -2,7 +2,9 @@
 
 import { z } from "zod"
 import { registerAndJoinSchemaClient, registerAndJoinSchemaServer } from "@/modules/accounts/onboarding/shared/validations/register-and-join.schema"
-import { driverDocumentFileSchema, plateSchema, vehicleTypeSchema } from "@/modules/fleet/shared/validations/vehicle.schema"
+import { driverDocumentFileSchema } from "@/modules/fleet/shared/validations/driver-document.schema"
+import { plateSchema } from "@/modules/fleet/shared/validations/plate.schema"
+import { vehicleTypeSchema } from "@/modules/fleet/shared/validations/vehicle.schema"
 
 function emptyStringToUndefined(value: unknown) {
 	return typeof value === "string" && value.trim() === "" ? undefined : value

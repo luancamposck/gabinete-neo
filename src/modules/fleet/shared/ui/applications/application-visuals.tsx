@@ -1,8 +1,8 @@
 "use client"
 
 import { Bike, Car, Caravan, Clock, FileText, FileX2, type LucideIcon, Sparkles, Truck } from "lucide-react"
-import type { VehicleType } from "@/modules/fleet/shared/constants/vehicle-types"
-import { VEHICLE_TYPE_LABELS } from "@/modules/fleet/shared/constants/vehicle-types"
+import { VEHICLE_TYPE_LABELS } from "@/modules/fleet/shared/constants/vehicle-type"
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 import type { PendingDriverApplicationDTO } from "@/modules/fleet/shared/types/slices/get-pending-driver-applications.types"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"

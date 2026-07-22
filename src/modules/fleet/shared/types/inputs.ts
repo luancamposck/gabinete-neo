@@ -1,5 +1,5 @@
 // @/modules/fleet/shared/types/inputs.ts
-import type { VehicleType } from "@/modules/fleet/shared/constants/vehicle-types"
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
 export type RegisterAsDriverParams = {
 	email: string

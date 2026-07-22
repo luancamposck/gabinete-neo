@@ -1,7 +1,6 @@
 // @/modules/fleet/server/repos/delete-driver-document.admin.repo.ts
 import { createAdminClient } from "@/lib/supabase/admin"
-
-const FLEET_DOCUMENTS_BUCKET = "fleet-documents"
+import { FLEET_DOCUMENTS_BUCKET } from "@/modules/fleet/shared/constants/document-storage"
 
 type Params = {
 	paths: string[]

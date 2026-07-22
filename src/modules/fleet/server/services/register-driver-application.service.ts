@@ -1,7 +1,7 @@
 // @/modules/fleet/server/services/register-driver-application.service.ts
 
 import { registerDriverApplicationAdminRepo } from "@/modules/fleet/server/repos/register-driver-application.admin.repo"
-import type { VehicleType } from "@/modules/fleet/shared/constants/vehicle-types"
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 type RegisterDriverApplicationServiceParams = {

@@ -1,20 +1,9 @@
 // @/modules/fleet/server/repos/upload-driver-document.admin.repo.ts
 import { createAdminClient } from "@/lib/supabase/admin"
+import { FLEET_DOCUMENTS_BUCKET } from "@/modules/fleet/shared/constants/document-storage"
+import type { UploadDriverDocumentAdminRepoParams, UploadDriverDocumentAdminRepoResult } from "../../shared/types/slices/upload-driver-document.types"
 
-const FLEET_DOCUMENTS_BUCKET = "fleet-documents"
-
-type Params = {
-	organizationId: string
-	userId: string
-	file: File
-	ext: string
-}
-
-type UploadResult = {
-	path: string
-}
-
-export async function uploadDriverDocumentAdminRepo(params: Params) {
+export async function uploadDriverDocumentAdminRepo(params: UploadDriverDocumentAdminRepoParams) {
 	const supabaseAdmin = createAdminClient()
 	const path = `fleet/${params.organizationId}/${params.userId}/${crypto.randomUUID()}.${params.ext}`
 
@@ -26,6 +15,6 @@ export async function uploadDriverDocumentAdminRepo(params: Params) {
 
 	return {
 		...res,
-		data: res.data ? ({ path } satisfies UploadResult) : null
+		data: res.data ? ({ path } satisfies UploadDriverDocumentAdminRepoResult) : null
 	}
 }

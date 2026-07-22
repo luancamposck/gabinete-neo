@@ -1,44 +1,37 @@
 // @/modules/fleet/server/services/list-pending-driver-applications.service.ts
 
-import { listPendingDriverApplicationsRepo, type PendingDriverApplicationRow } from "@/modules/fleet/server/repos/list-pending-driver-applications.repo"
-import type { OperationResponse } from "@/shared/types/operation-response.types"
+import type { AppResultAsync } from "@/shared/types/app-result.types"
+import type { ListPendingDriverApplicationsServiceCodes, ListPendingDriverApplicationsServiceData, ListPendingDriverApplicationsServiceParams } from "../../shared/types/slices/list-pending-driver-applications.types"
+import { listPendingDriverApplicationsAdminRepo } from "../repos/list-pending-driver-applications.admin.repo"
 
-type ServiceRes = {
-	applications: PendingDriverApplicationRow[]
-}
-
-type ErrorCodes = "infra_error"
-
-const MSG_SUCCESS = "Candidaturas pendentes carregadas com sucesso."
-const MSG_INFRA_ERROR = "Não foi possível carregar as candidaturas pendentes. Tente novamente mais tarde."
 const prefixLog = "[listPendingDriverApplicationsService]:"
 
-export async function listPendingDriverApplicationsService(params: { organizationId: string }): OperationResponse<ServiceRes, ErrorCodes> {
+const FALLBACK_ERROR = {
+	success: false,
+	code: "generic_error"
+} as const
+
+export async function listPendingDriverApplicationsService(params: ListPendingDriverApplicationsServiceParams): AppResultAsync<ListPendingDriverApplicationsServiceData, ListPendingDriverApplicationsServiceCodes> {
 	try {
-		const { data, error } = await listPendingDriverApplicationsRepo(params)
+		const { data, error } = await listPendingDriverApplicationsAdminRepo(params)
 
 		if (error) {
-			console.error(`${prefixLog} ${error.message}`)
-			return {
-				success: false,
-				message: MSG_INFRA_ERROR,
-				code: "infra_error"
-			}
+			console.error(`${prefixLog} database error`, {
+				code: error.code,
+				details: error.details,
+				hint: error.hint
+			})
+			return FALLBACK_ERROR
 		}
 
 		return {
 			success: true,
-			message: MSG_SUCCESS,
 			data: {
-				applications: data ?? []
+				applications: (data ?? []) as ListPendingDriverApplicationsServiceData["applications"]
 			}
 		}
 	} catch (error) {
 		console.error(`${prefixLog} unexpected error:`, error)
-		return {
-			success: false,
-			message: MSG_INFRA_ERROR,
-			code: "infra_error"
-		}
+		return FALLBACK_ERROR
 	}
 }
