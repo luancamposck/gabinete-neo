@@ -56,8 +56,8 @@ Dois slices compoem o backend:
 | `createDriverDocumentSignedUrlService` | `./services/create-driver-document-signed-url.service.ts` | Gera signed URL de curta duracao para documento privado |
 | `registerDriverApplicationService` | `./services/register-driver-application.service.ts` | Chama a RPC de cadastro de motorista e traduz `error_code` para `OperationResponse` |
 | `listPendingDriverApplicationsService` | `./services/list-pending-driver-applications.service.ts` | Lista candidaturas pendentes da org com dados do candidato/veiculo |
-| `approveDriverApplicationService` | `./services/approve-driver-application.service.ts` | Chama a RPC `approve_driver_application` e traduz `error_code` (not_found/already_reviewed/infra_error) |
-| `rejectDriverApplicationService` | `./services/reject-driver-application.service.ts` | Atualiza status para `rejected` com guard de idempotencia (status pending) |
+| `approveDriverApplicationService` | `./services/approve-driver-application.service.ts` | Chama a RPC `approve_driver_application` e traduz `not_found`, `already_reviewed` e `generic_error` |
+| `rejectDriverApplicationService` | `./services/reject-driver-application.service.ts` | Atualiza status para `rejected` com guard de idempotencia (status pending) e mapeia falhas para `generic_error` |
 | `getDriverApplicationByIdService` | `./services/get-driver-application-by-id.service.ts` | Carrega uma candidatura por id e traduz ausencia/erro de repo para code |
 
 ---
