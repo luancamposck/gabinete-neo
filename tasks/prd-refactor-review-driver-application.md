@@ -129,10 +129,10 @@ Baseado no prompt e na análise do código atual, assumo o seguinte. Corrija o q
 **Description:** Como desenvolvedor, quero o índice do backend refletindo a estrutura final, já que ele é usado como mapa de navegação do módulo.
 
 **Acceptance Criteria:**
-- [ ] As linhas de `approveDriverApplicationAction`, `rejectDriverApplicationAction` e `reviewDriverApplicationUseCase` apontam para os novos caminhos flat
-- [ ] A menção a `review-driver-applications` como slice legado (seções de introdução e de observações finais) é removida ou atualizada
-- [ ] A entrada do repo de leitura reflete o nome/caminho atual (`getDriverApplicationByIdAdminRepo`)
-- [ ] Nenhuma linha do índice aponta para caminho inexistente
+- [x] As linhas de `approveDriverApplicationAction`, `rejectDriverApplicationAction` e `reviewDriverApplicationUseCase` apontam para os novos caminhos flat
+- [x] A menção a `review-driver-applications` como slice legado (seções de introdução e de observações finais) é removida ou atualizada
+- [x] A entrada do repo de leitura reflete o nome/caminho atual (`getDriverApplicationByIdAdminRepo`)
+- [x] Nenhuma linha do índice aponta para caminho inexistente
 
 ---
 
