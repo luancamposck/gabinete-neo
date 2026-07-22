@@ -2,11 +2,7 @@
 import { createAdminClient } from "@/lib/supabase/admin"
 import { FLEET_DOCUMENTS_BUCKET } from "@/modules/fleet/shared/constants/document-storage"
 
-type Params = {
-	paths: string[]
-}
-
-export async function deleteDriverDocumentsAdminRepo(params: Params) {
+export async function deleteDriverDocumentsAdminRepo(params: { paths: string[] }) {
 	const supabaseAdmin = createAdminClient()
 	const paths = params.paths.filter(Boolean)
 
