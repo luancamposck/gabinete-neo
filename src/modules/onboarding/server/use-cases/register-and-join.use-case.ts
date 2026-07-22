@@ -3,7 +3,6 @@
 import { getUserIdByUsernameService } from "@/modules/accounts/users/server/services/get-user-id-by-username.service"
 import { createUserService } from "@/modules/auth/server/services/create-user.service"
 import { signInService } from "@/modules/auth/server/services/sign-in.service"
-import { signOutService } from "@/modules/auth/server/services/sign-out.service"
 import { sendWelcomeEmailService } from "@/modules/emails/server/services/send-welcome-email.service"
 import { createOrganizationMembershipService } from "@/modules/organizations/memberships/server/services/create-membership.service"
 import { getRoleByNameService } from "@/modules/organizations/memberships/server/services/get-role-by-name.service"
@@ -105,14 +104,13 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinUseCaseParam
 	}
 
 	let userId: string
-	let mode: "new" | "existing"
 
 	if (emailLookupRes.data.userId) {
 		// ============================================================
 		// 4a) [existing] Autenticar com email + senha
 		//
 		// Possibilidades:
-		// - Sucesso: mode = "existing", userId da conta já existente.
+		// - Sucesso: userId da conta já existente, sessão estabelecida.
 		// - Falha: mensagem neutra ("invalid_signup"), sem vazar se o
 		//   email existe ou se foi só a senha que errou.
 		// ============================================================
@@ -129,7 +127,6 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinUseCaseParam
 		}
 
 		userId = signInRes.data.userId
-		mode = "existing"
 	} else {
 		// ============================================================
 		// 4b) [new] Pré-checks de disponibilidade + criação atômica
@@ -164,8 +161,21 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinUseCaseParam
 		})
 		if (createRes.success === false) return createRes
 
+		// Estabelece a sessão do usuário recém-criado: createUserService
+		// apenas cria a conta (não loga). Sem isso, o redirect pós-cadastro
+		// para /dashboard cairia num usuário sem sessão e quicaria pro login.
+		const signInRes = await signInService({
+			email: params.email,
+			password: params.password
+		})
+		if (signInRes.success === false) {
+			return {
+				success: false,
+				code: "invalid_signup"
+			}
+		}
+
 		userId = createRes.data.userId
-		mode = "new"
 	}
 
 	// ============================================================
@@ -174,11 +184,11 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinUseCaseParam
 	// Possibilidades:
 	// - Já é membro: joinedNow = false, não mexe em nada.
 	// - Não é: cria membership (role MEMBER) com invited_by_user_id.
-	// - Falha técnica em qualquer ponto daqui: se mode === "existing",
-	//   desloga (evita deixar a pessoa "logada no lugar errado"). Não
-	//   apaga a conta em nenhum dos dois modos — a conta em si foi
-	//   criada com sucesso, só a entrada nesta organização falhou, e
-	//   pode ser tentada de novo depois.
+	// - Falha técnica em qualquer ponto daqui: o usuário NUNCA é deslogado
+	//   (política "nunca deslogar") nem tem a conta apagada. A conta/sessão
+	//   foram criadas com sucesso, só a entrada nesta organização falhou; o
+	//   dashboard-guard redireciona quem ficou sem membership, e a tentativa
+	//   pode ser refeita depois.
 	// ============================================================
 	const membershipCheckRes = await isUserMemberOfOrganizationService({
 		organizationId,
@@ -186,13 +196,6 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinUseCaseParam
 	})
 
 	if (membershipCheckRes.success === false) {
-		if (mode === "existing") {
-			const signOutRes = await signOutService()
-			if (signOutRes.success === false) {
-				console.error(`${prefixLog} signOut failed after membership check error:`, signOutRes.message)
-			}
-		}
-
 		return {
 			success: false,
 			code: "generic_error"
@@ -208,13 +211,6 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinUseCaseParam
 		})
 
 		if (roleRes.success === false) {
-			if (mode === "existing") {
-				const signOutRes = await signOutService()
-				if (signOutRes.success === false) {
-					console.error(`${prefixLog} signOut failed after role lookup error:`, signOutRes.message)
-				}
-			}
-
 			return {
 				success: false,
 				code: roleRes.code === "role_not_found" || roleRes.code === "role_inactive" ? roleRes.code : "generic_error"
@@ -229,13 +225,6 @@ export async function registerAndJoinUseCase(params: RegisterAndJoinUseCaseParam
 		})
 
 		if (createMembershipRes.success === false) {
-			if (mode === "existing") {
-				const signOutRes = await signOutService()
-				if (signOutRes.success === false) {
-					console.error(`${prefixLog} signOut failed after create membership error:`, signOutRes.message)
-				}
-			}
-
 			return {
 				success: false,
 				code: "generic_error"
