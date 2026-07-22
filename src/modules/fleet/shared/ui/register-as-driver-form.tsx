@@ -9,7 +9,7 @@ import { useId, useMemo, useState } from "react"
 import { Controller, type FieldPath, type Resolver, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils/cn"
-import { registerAndJoinAsDriverAction } from "@/modules/fleet/server/slices/register-as-driver/actions/register-and-join-as-driver.action"
+import { registerAndJoinAsDriverAction } from "@/modules/fleet/server/actions/register-and-join-as-driver.action"
 import { DRIVER_DOCUMENT_MIME_TYPES } from "@/modules/fleet/shared/constants/driver-document"
 import { VEHICLE_TYPE_LABELS, VEHICLE_TYPES } from "@/modules/fleet/shared/constants/vehicle-type"
 import { type RegisterAsDriverSchemaClientData, registerAsDriverSchemaClient } from "@/modules/fleet/shared/validations/slices/register-as-driver.schema"
@@ -196,30 +196,23 @@ export const RegisterAsDriverForm = () => {
 
 	async function onSubmit(data: RegisterAsDriverSchemaClientData) {
 		try {
-			const formData = new FormData()
-			formData.append("name", data.name)
-			formData.append("username", data.username)
-			formData.append("phone", data.phone)
-			formData.append("email", data.email)
-			formData.append("password", data.password)
-			formData.append("cep", data.address.cep)
-			formData.append("state", data.address.state)
-			formData.append("city", data.address.city)
-			formData.append("neighborhood", data.address.neighborhood)
-			formData.append("street", data.address.street)
-			formData.append("number", data.address.number)
-			if (data.address.complement) formData.append("complement", data.address.complement)
-			if (ref) formData.append("ref", ref)
-			if (showRelationshipField && data.relationshipToInviter) formData.append("relationshipToInviter", data.relationshipToInviter)
-			formData.append("plate", data.plate)
-			formData.append("vehicleType", data.vehicleType)
-			if (data.vehicleModel) formData.append("vehicleModel", data.vehicleModel)
-			if (data.vehicleYear !== undefined) formData.append("vehicleYear", String(data.vehicleYear))
-			if (data.vehicleColor) formData.append("vehicleColor", data.vehicleColor)
-			formData.append("crlv", data.crlv)
-			formData.append("cnh", data.cnh)
-
-			const result = await registerAndJoinAsDriverAction(formData)
+			const result = await registerAndJoinAsDriverAction({
+				name: data.name,
+				username: data.username,
+				phone: data.phone,
+				email: data.email,
+				password: data.password,
+				address: data.address,
+				ref,
+				relationshipToInviter: showRelationshipField ? data.relationshipToInviter : undefined,
+				plate: data.plate,
+				vehicleType: data.vehicleType,
+				vehicleModel: data.vehicleModel,
+				vehicleYear: data.vehicleYear,
+				vehicleColor: data.vehicleColor,
+				crlv: data.crlv,
+				cnh: data.cnh
+			})
 
 			if (!result) {
 				toast.error("Erro no cadastro", {
