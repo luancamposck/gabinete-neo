@@ -54,6 +54,7 @@ export const ApplicationsExplorer = ({ applications }: ApplicationsExplorerProps
 	const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode)
 	const [rowSelection, setRowSelection] = useState({})
 	const [globalFilter, setGlobalFilter] = useState("")
+	const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 	const [previewDocument, setPreviewDocument] = useState<PreviewDocument | null>(null)
 
 	const { sorting, setSorting, columnFilters, setColumnFilters, columnVisibility, setColumnVisibility } = usePersistedApplicationsTableState({
@@ -68,15 +69,23 @@ export const ApplicationsExplorer = ({ applications }: ApplicationsExplorerProps
 	// Fonte da verdade da fila é o estado local: ao resolver (single/bulk) removemos
 	// os ids com microtransição, sem depender de refetch. `revalidatePath` na action
 	// mantém o servidor fresco para a próxima navegação.
-	const handleResolved = useCallback((applicationIds: string[]) => {
-		const resolved = new Set(applicationIds)
-		setItems((previous) => previous.filter((application) => !resolved.has(application.applicationId)))
-		setRowSelection((previous) => {
-			const next = { ...previous } as Record<string, boolean>
-			for (const applicationId of applicationIds) delete next[applicationId]
-			return next
-		})
+	const resetPageIndex = useCallback(() => {
+		setPagination((previous) => (previous.pageIndex === 0 ? previous : { ...previous, pageIndex: 0 }))
 	}, [])
+
+	const handleResolved = useCallback(
+		(applicationIds: string[]) => {
+			const resolved = new Set(applicationIds)
+			setItems((previous) => previous.filter((application) => !resolved.has(application.applicationId)))
+			setRowSelection((previous) => {
+				const next = { ...previous } as Record<string, boolean>
+				for (const applicationId of applicationIds) delete next[applicationId]
+				return next
+			})
+			resetPageIndex()
+		},
+		[resetPageIndex]
+	)
 
 	const review = useApplicationReview({ onResolved: handleResolved })
 
@@ -101,12 +110,23 @@ export const ApplicationsExplorer = ({ applications }: ApplicationsExplorerProps
 		meta: controls,
 		filterFns: { fuzzy: fuzzyFilter },
 		globalFilterFn: fuzzyFilter,
-		state: { sorting, columnFilters, columnVisibility, rowSelection, globalFilter },
-		onSortingChange: setSorting,
-		onColumnFiltersChange: setColumnFilters,
+		state: { sorting, columnFilters, columnVisibility, rowSelection, globalFilter, pagination },
+		onSortingChange: (updater) => {
+			setSorting(updater)
+			resetPageIndex()
+		},
+		onColumnFiltersChange: (updater) => {
+			setColumnFilters(updater)
+			resetPageIndex()
+		},
 		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
-		onGlobalFilterChange: setGlobalFilter,
+		onGlobalFilterChange: (updater) => {
+			setGlobalFilter(updater)
+			resetPageIndex()
+		},
+		onPaginationChange: setPagination,
+		autoResetPageIndex: false,
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
