@@ -145,7 +145,7 @@ export async function addDriverApplicationUseCase(params: AddDriverApplicationUs
 	if (cnhUploadRes.success === false) {
 		const cleanupRes = await deleteDriverDocumentsService({ paths: [crlvUploadRes.data.path] })
 		if (cleanupRes.success === false) {
-			console.error(`${prefixLog} failed to cleanup CRLV after CNH upload failure: ${cleanupRes.message}`)
+			console.error(`${prefixLog} failed to cleanup CRLV after CNH upload failure: ${cleanupRes.code}`)
 		}
 		return cnhUploadRes
 	}
@@ -172,7 +172,7 @@ export async function addDriverApplicationUseCase(params: AddDriverApplicationUs
 	if (createRes.success === false) {
 		const cleanupRes = await deleteDriverDocumentsService({ paths: [crlvUploadRes.data.path, cnhUploadRes.data.path] })
 		if (cleanupRes.success === false) {
-			console.error(`${prefixLog} failed to cleanup documents after create failure: ${cleanupRes.message}`)
+			console.error(`${prefixLog} failed to cleanup documents after create failure: ${cleanupRes.code}`)
 		}
 		return createRes
 	}

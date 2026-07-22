@@ -1,42 +1,30 @@
 // @/modules/fleet/server/services/delete-driver-documents.service.ts
 
-import { deleteDriverDocumentAdminRepo } from "@/modules/fleet/server/repos/delete-driver-document.admin.repo"
-import type { OperationResponse } from "@/shared/types/operation-response.types"
+import type { AppResultAsync } from "@/shared/types/app-result.types"
+import { deleteDriverDocumentsAdminRepo } from "../repos/delete-driver-documents.admin.repo"
 
-type DeleteDriverDocumentsServiceParams = {
-	paths: string[]
-}
-
-type ErrorCodes = "infra_error"
-
-const MSG_DELETE_SUCCESS = "Documentos removidos com sucesso."
-const MSG_DELETE_ERROR = "Não foi possível remover os documentos. Tente novamente mais tarde."
 const prefixLog = "[deleteDriverDocumentsService]:"
 
-export async function deleteDriverDocumentsService(params: DeleteDriverDocumentsServiceParams): OperationResponse<null, ErrorCodes> {
+const FALLBACK_ERROR = {
+	success: false,
+	code: "infra_error"
+} as const
+
+export async function deleteDriverDocumentsService({ paths }: { paths: string[] }): AppResultAsync<null, "infra_error"> {
 	try {
-		const { error } = await deleteDriverDocumentAdminRepo({ paths: params.paths })
+		const { error } = await deleteDriverDocumentsAdminRepo({ paths })
 
 		if (error) {
 			console.error(`${prefixLog} ${error.message}`)
-			return {
-				success: false,
-				message: MSG_DELETE_ERROR,
-				code: "infra_error"
-			}
+			return FALLBACK_ERROR
 		}
 
 		return {
 			success: true,
-			message: MSG_DELETE_SUCCESS,
 			data: null
 		}
 	} catch (error) {
 		console.error(`${prefixLog} unexpected error:`, error)
-		return {
-			success: false,
-			message: MSG_DELETE_ERROR,
-			code: "infra_error"
-		}
+		return FALLBACK_ERROR
 	}
 }
