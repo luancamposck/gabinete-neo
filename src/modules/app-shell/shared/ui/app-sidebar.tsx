@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { getSidebarContextAction } from "@/modules/app-shell/server/slices/get-sidebar-context/actions/get-sidebar-context.action"
 import { navMain } from "@/modules/app-shell/shared/navigation/nav-main"
 import { NavFooter } from "@/modules/app-shell/shared/ui/nav-footer"
+import { PERMISSIONS } from "@/modules/auth/shared/permissions"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/components/ui/collapsible"
 import { Separator } from "@/shared/components/ui/separator"
 import {
@@ -47,8 +48,9 @@ const AppSidebar = async () => {
 	const canViewAdminConfigs = permissionKeys.includes("org.admin.read")
 	const canViewUsersConfigs = permissionKeys.includes("users.read")
 	const canViewRolesConfigs = permissionKeys.includes("roles.read")
+	const canViewFleetConfigs = permissionKeys.includes(PERMISSIONS.FLEET_APPLICATIONS_MANAGE)
 
-	const showConfigCollapsible = canViewAdminConfigs || canViewUsersConfigs || canViewRolesConfigs
+	const showConfigCollapsible = canViewAdminConfigs || canViewUsersConfigs || canViewRolesConfigs || canViewFleetConfigs
 
 	return (
 		<Sidebar collapsible="icon" variant="inset">
@@ -130,6 +132,18 @@ const AppSidebar = async () => {
 													<SidebarMenuSubButton asChild>
 														<Link href="/dashboard/config/roles">
 															<span>Cargos e Permissões</span>
+														</Link>
+													</SidebarMenuSubButton>
+												</SidebarMenuSubItem>
+											</SidebarMenuSub>
+										)}
+
+										{canViewFleetConfigs && (
+											<SidebarMenuSub>
+												<SidebarMenuSubItem>
+													<SidebarMenuSubButton asChild>
+														<Link href="/dashboard/config/fleet">
+															<span>Frota</span>
 														</Link>
 													</SidebarMenuSubButton>
 												</SidebarMenuSubItem>
