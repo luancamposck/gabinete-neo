@@ -1,7 +1,0 @@
-interface:
-  display_name: "Backend Index Maintainer"
-  short_description: "Maintain backend index maps"
-  default_prompt: "Use $backend-index-maintainer to create or update backend index files from the real code."
-
-policy:
-  allow_implicit_invocation: true

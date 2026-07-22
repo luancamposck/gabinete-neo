@@ -1,7 +1,0 @@
-interface:
-  display_name: "shadcn Form"
-  short_description: "Build accessible shadcn forms"
-  default_prompt: "Use $shadcn-form to create a validated form that follows this project's local shadcn/ui pattern."
-
-policy:
-  allow_implicit_invocation: true

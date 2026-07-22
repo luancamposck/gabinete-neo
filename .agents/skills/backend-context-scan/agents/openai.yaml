@@ -1,7 +1,0 @@
-interface:
-  display_name: "Backend Context Scan"
-  short_description: "Map backend context before planning"
-  default_prompt: "Use $backend-context-scan to map backend context before planning a server-side feature."
-
-policy:
-  allow_implicit_invocation: true
