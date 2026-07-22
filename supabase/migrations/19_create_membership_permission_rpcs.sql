@@ -18,6 +18,12 @@
 
 -- ---------------------------------------------------------------------
 -- 1) Function: public.has_membership_permission()
+--
+-- security definer: memberships/roles/role_permissions são bloqueadas
+-- para authenticated/anon por design (ver 18_create_memberships_rls_policies.sql,
+-- 09_create_roles_rls_policies.sql, 13_create_role_permissions_rls_policies.sql).
+-- Sem security definer, a query abaixo roda com o privilégio de quem
+-- chama e falha com "permission denied" para o usuário logado comum.
 -- ---------------------------------------------------------------------
 create or replace function public.has_membership_permission(
   p_organization_id uuid,
@@ -26,6 +32,8 @@ create or replace function public.has_membership_permission(
 ) returns boolean
 language sql
 stable
+security definer
+set search_path = public, pg_temp
 as $$
   select exists (
     select 1
@@ -49,6 +57,8 @@ comment on function public.has_membership_permission(uuid, uuid, text) is
 
 -- ---------------------------------------------------------------------
 -- 2) Function: public.list_membership_permissions()
+--
+-- security definer: mesmo motivo de has_membership_permission() acima.
 -- ---------------------------------------------------------------------
 create or replace function public.list_membership_permissions(
   p_organization_id uuid,
@@ -56,6 +66,8 @@ create or replace function public.list_membership_permissions(
 ) returns text[]
 language sql
 stable
+security definer
+set search_path = public, pg_temp
 as $$
   select coalesce(
     array_agg(distinct rp.permission_key order by rp.permission_key),

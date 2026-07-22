@@ -18,3 +18,15 @@
 -- 1) Habilitar RLS
 -- ---------------------------------------------------------------------
 alter table public.tasks enable row level security;
+
+
+-- ---------------------------------------------------------------------
+-- 2) Grants
+--
+-- O Supabase CLI restringe por padrão os privilégios de tabelas criadas
+-- pela role postgres: service_role não recebe SELECT/INSERT/UPDATE/
+-- DELETE automaticamente, mesmo contornando RLS. anon/authenticated
+-- não recebem grant nenhum: a tabela fica bloqueada para esses roles
+-- por design.
+-- ---------------------------------------------------------------------
+grant select, insert, update, delete on public.tasks to service_role;

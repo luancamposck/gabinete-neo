@@ -1,10 +1,10 @@
 -- =====================================================================
--- Migration: create_roles_rls_policies
+-- Migration: create_drivers_rls_policies
 -- Objetivo:
---   - Habilitar Row Level Security em public.roles.
+--   - Habilitar Row Level Security em public.drivers.
 --
 -- Premissas:
---   - public.roles já existe.
+--   - public.drivers já existe.
 --   - Todo acesso da aplicação passa pelo server (Server Actions/Route
 --     Handlers), que usa o client admin (service_role) e faz a checagem
 --     de autorização na camada de aplicação.
@@ -17,4 +17,16 @@
 -- ---------------------------------------------------------------------
 -- 1) Habilitar RLS
 -- ---------------------------------------------------------------------
-alter table public.roles enable row level security;
+alter table public.drivers enable row level security;
+
+
+-- ---------------------------------------------------------------------
+-- 2) Grants
+--
+-- O Supabase CLI restringe por padrão os privilégios de tabelas criadas
+-- pela role postgres: service_role não recebe SELECT/INSERT/UPDATE/
+-- DELETE automaticamente, mesmo contornando RLS. anon/authenticated
+-- não recebem grant nenhum: a tabela fica bloqueada para esses roles
+-- por design.
+-- ---------------------------------------------------------------------
+grant select, insert, update, delete on public.drivers to service_role;

@@ -36,3 +36,15 @@ for update
 to authenticated
 using (auth.uid() = id)
 with check (auth.uid() = id);
+
+
+-- ---------------------------------------------------------------------
+-- 4) Grants
+--
+-- O Supabase CLI restringe por padrão os privilégios de tabelas criadas
+-- pela role postgres: anon/authenticated/service_role não recebem
+-- SELECT/INSERT/UPDATE/DELETE automaticamente. RLS filtra linhas, mas
+-- não substitui o GRANT de tabela.
+-- ---------------------------------------------------------------------
+grant select, update on public.users to authenticated;
+grant select, insert, update, delete on public.users to service_role;

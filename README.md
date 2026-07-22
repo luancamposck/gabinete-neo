@@ -50,6 +50,25 @@ Futuramente:
 
 ---
 
+# Seed de desenvolvimento (usuários de teste)
+
+Rodar `npm run db:reset` cria a organization `Organizacao Local` (`app_domain=localhost`)
+e os usuários de teste abaixo, todos com senha `password123`:
+
+| Email | Role | Estado |
+|---|---|---|
+| owner@localhost.dev | OWNER | — |
+| admin@localhost.dev | ADMIN | — |
+| staff@localhost.dev | STAFF | — |
+| member@localhost.dev | MEMBER | membro comum, sem candidatura de motorista |
+| member.driver@localhost.dev | MEMBER | motorista aprovado (aparece em `drivers`) |
+| member.driver.pending@localhost.dev | MEMBER | candidatura de motorista pendente de revisão |
+| member.driver.rejected@localhost.dev | MEMBER | candidatura de motorista rejeitada |
+| member.inactive@localhost.dev | MEMBER | membership inativa (`is_active=false`) |
+| member.referred@localhost.dev | MEMBER | indicado por member@localhost.dev (`referrals`) |
+
+---
+
 # FAQ Técnico — Perguntas e Respostas para Apresentação Comercial
 
 ## Stack e Tecnologia
