@@ -1,7 +1,7 @@
 // @/modules/fleet/server/services/upload-driver-document.service.ts
 
+import type { UploadDriverDocumentServiceCodes, UploadDriverDocumentServiceData, UploadDriverDocumentServiceParams } from "@/modules/fleet/server/types/operations/upload-driver-document.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
-import type { UploadDriverDocumentServiceCodes, UploadDriverDocumentServiceData, UploadDriverDocumentServiceParams } from "../../shared/types/slices/upload-driver-document.types"
 import { uploadDriverDocumentAdminRepo } from "../repos/upload-driver-document.admin.repo"
 
 const prefixLog = "[uploadDriverDocumentService]:"

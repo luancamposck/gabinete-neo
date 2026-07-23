@@ -1,7 +1,7 @@
 // @/modules/fleet/server/services/reject-driver-application.service.ts
 
 import { rejectDriverApplicationAdminRepo } from "@/modules/fleet/server/repos/reject-driver-application.admin.repo"
-import type { RejectDriverApplicationServiceCodes, RejectDriverApplicationServiceData, RejectDriverApplicationServiceParams } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
+import type { RejectDriverApplicationServiceCodes, RejectDriverApplicationServiceData, RejectDriverApplicationServiceParams } from "@/modules/fleet/server/types/operations/reject-driver-application.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
 
 const prefixLog = "[rejectDriverApplicationService]:"

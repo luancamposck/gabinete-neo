@@ -1,5 +1,3 @@
-// ============= USE-CASE =============
-
 export interface GetAddDriverApplicationContextUseCaseData {
 	candidates: {
 		userId: string
@@ -11,8 +9,6 @@ export interface GetAddDriverApplicationContextUseCaseData {
 }
 
 export type GetAddDriverApplicationContextUseCaseCodes = "unauthenticated" | "org_not_found" | "not_allowed" | "generic_error"
-
-// ============= ACTION =============
 
 export type GetAddDriverApplicationContextActionData = GetAddDriverApplicationContextUseCaseData
 

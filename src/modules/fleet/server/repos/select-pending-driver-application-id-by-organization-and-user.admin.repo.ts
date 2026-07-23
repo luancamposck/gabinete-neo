@@ -3,7 +3,7 @@
 import "server-only"
 
 import { createAdminClient } from "@/lib/supabase/admin"
-import type { SelectPendingDriverApplicationIdByOrganizationAndUserAdminRepoParams } from "../../shared/types/slices/check-pending-driver-application.types"
+import type { SelectPendingDriverApplicationIdByOrganizationAndUserAdminRepoParams } from "@/modules/fleet/server/types/operations/check-pending-driver-application.types"
 
 export async function selectPendingDriverApplicationIdByOrganizationAndUserAdminRepo(params: SelectPendingDriverApplicationIdByOrganizationAndUserAdminRepoParams) {
 	const supabaseAdmin = createAdminClient()

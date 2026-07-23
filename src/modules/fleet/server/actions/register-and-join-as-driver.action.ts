@@ -3,7 +3,7 @@
 "use server"
 
 import { registerAndJoinAsDriverUseCase } from "@/modules/fleet/server/use-cases/register-and-join-as-driver.use-case"
-import type { RegisterAndJoinAsDriverActionCodes, RegisterAndJoinAsDriverActionData } from "@/modules/fleet/shared/types/slices/register-and-join-as-driver.types"
+import type { RegisterAndJoinAsDriverActionCodes, RegisterAndJoinAsDriverActionData } from "@/modules/fleet/shared/types/flows/register-and-join-as-driver.types"
 import { registerAsDriverSchemaServer } from "@/modules/fleet/shared/validations/slices/register-as-driver.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 

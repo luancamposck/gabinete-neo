@@ -3,7 +3,7 @@
 import "server-only"
 
 import { createAdminClient } from "@/lib/supabase/admin"
-import type { InsertDriverApplicationAdminRepoParams } from "../../shared/types/slices/create-driver-application.types"
+import type { InsertDriverApplicationAdminRepoParams } from "@/modules/fleet/server/types/operations/create-driver-application.types"
 
 export async function insertDriverApplicationAdminRepo(params: InsertDriverApplicationAdminRepoParams) {
 	const supabaseAdmin = createAdminClient()

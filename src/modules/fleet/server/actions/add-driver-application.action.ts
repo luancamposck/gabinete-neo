@@ -4,7 +4,7 @@
 
 import { revalidatePath } from "next/cache"
 import { addDriverApplicationUseCase } from "@/modules/fleet/server/use-cases/add-driver-application.use-case"
-import type { AddDriverApplicationActionCodes, AddDriverApplicationActionData } from "@/modules/fleet/shared/types/slices/add-driver-application.types"
+import type { AddDriverApplicationActionCodes, AddDriverApplicationActionData } from "@/modules/fleet/shared/types/flows/add-driver-application.types"
 import { addDriverApplicationSchema } from "@/modules/fleet/shared/validations/slices/add-driver-application.schema"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 

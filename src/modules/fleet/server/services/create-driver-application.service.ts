@@ -1,7 +1,7 @@
 // @/modules/fleet/server/services/create-driver-application.service.ts
 
+import type { CreateDriverApplicationServiceCodes, CreateDriverApplicationServiceData, CreateDriverApplicationServiceParams } from "@/modules/fleet/server/types/operations/create-driver-application.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
-import type { CreateDriverApplicationServiceCodes, CreateDriverApplicationServiceData, CreateDriverApplicationServiceParams } from "../../shared/types/slices/create-driver-application.types"
 import { insertDriverApplicationAdminRepo } from "../repos/insert-driver-application.admin.repo"
 
 const prefixLog = "[createDriverApplicationService]:"

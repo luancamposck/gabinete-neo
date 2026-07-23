@@ -1,11 +1,7 @@
-// ============= REPO =============
-
 export interface CreateSignedDocumentUrlsAdminRepoParams {
 	paths: string[]
 	expiresIn?: number
 }
-
-// ============= SERVICE =============
 
 export interface CreateDriverDocumentSignedUrlsServiceParams {
 	paths: string[]
@@ -16,7 +12,3 @@ export interface CreateDriverDocumentSignedUrlsServiceData {
 }
 
 export type CreateDriverDocumentSignedUrlsServiceCodes = "generic_error"
-
-// ============= ACTION =============
-
-// No Actions here

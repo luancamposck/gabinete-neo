@@ -1,5 +1,5 @@
 import { getDriverApplicationByIdAdminRepo } from "@/modules/fleet/server/repos/get-driver-application-by-id.admin.repo"
-import type { GetDriverApplicationByIdServiceCodes, GetDriverApplicationByIdServiceData } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
+import type { GetDriverApplicationByIdServiceCodes, GetDriverApplicationByIdServiceData } from "@/modules/fleet/server/types/operations/get-driver-application-by-id.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
 
 const prefixLog = "[getDriverApplicationByIdService]:"

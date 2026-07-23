@@ -1,7 +1,7 @@
 // @/modules/fleet/server/services/approve-driver-application.service.ts
 
 import { approveDriverApplicationAdminRepo } from "@/modules/fleet/server/repos/approve-driver-application.admin.repo"
-import type { ApproveDriverApplicationServiceCodes, ApproveDriverApplicationServiceData, ApproveDriverApplicationServiceParams } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
+import type { ApproveDriverApplicationServiceCodes, ApproveDriverApplicationServiceData, ApproveDriverApplicationServiceParams } from "@/modules/fleet/server/types/operations/approve-driver-application.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
 
 const prefixLog = "[approveDriverApplicationService]:"

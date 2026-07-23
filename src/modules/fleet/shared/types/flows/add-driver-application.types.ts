@@ -1,6 +1,4 @@
-import type { VehicleType } from "../../types/db"
-
-// ============= USE-CASE =============
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
 export interface AddDriverApplicationUseCaseParams {
 	candidateUserId: string
@@ -18,8 +16,6 @@ export interface AddDriverApplicationUseCaseData {
 }
 
 export type AddDriverApplicationUseCaseCodes = "unauthenticated" | "org_not_found" | "not_allowed" | "candidate_not_member" | "plate_taken" | "pending_application_exists" | "generic_error"
-
-// ============= ACTION =============
 
 export type AddDriverApplicationActionData = AddDriverApplicationUseCaseData
 

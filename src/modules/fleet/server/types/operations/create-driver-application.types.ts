@@ -1,13 +1,9 @@
-import type { DriverApplicationInsert, VehicleType } from "../db"
-
-// ============= REPO =============
+import type { DriverApplicationInsert, VehicleType } from "@/modules/fleet/shared/types/db"
 
 export type InsertDriverApplicationAdminRepoParams = Pick<
 	DriverApplicationInsert,
 	"organization_id" | "user_id" | "plate" | "vehicle_type" | "vehicle_model" | "vehicle_year" | "vehicle_color" | "crlv_document_path" | "cnh_document_path"
 >
-
-// ============= SERVICE =============
 
 export interface CreateDriverApplicationServiceParams {
 	organizationId: string
@@ -26,7 +22,3 @@ export interface CreateDriverApplicationServiceData {
 }
 
 export type CreateDriverApplicationServiceCodes = "generic_error"
-
-// ============= ACTION =============
-
-// No Actions here

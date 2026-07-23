@@ -1,6 +1,6 @@
 // @/modules/fleet/server/repos/reject-driver-application.admin.repo.ts
 import { createAdminClient } from "@/lib/supabase/admin"
-import type { RejectDriverApplicationAdminRepoParams } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
+import type { RejectDriverApplicationAdminRepoParams } from "@/modules/fleet/server/types/operations/reject-driver-application.types"
 
 /**
  * Marca a candidatura como 'rejected' apenas quando ainda está 'pending'

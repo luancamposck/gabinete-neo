@@ -2,7 +2,7 @@
 
 import type { Row } from "@tanstack/react-table"
 import { cn } from "@/lib/utils/cn"
-import type { PendingDriverApplicationDTO } from "@/modules/fleet/shared/types/slices/get-pending-driver-applications.types"
+import type { PendingDriverApplicationDTO } from "@/modules/fleet/shared/types/flows/get-pending-driver-applications.types"
 import type { ApplicationReviewControls } from "@/modules/fleet/shared/ui/applications/application-inline-actions"
 import { ApplicationInlineActions } from "@/modules/fleet/shared/ui/applications/application-inline-actions"
 import { ApplicationAgeBadge, ApplicationDocuments, formatApplicationDate, VehicleTypeBadge } from "@/modules/fleet/shared/ui/applications/application-visuals"

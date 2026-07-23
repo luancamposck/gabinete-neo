@@ -2,7 +2,7 @@ import { getUserIdByUsernameService } from "@/modules/accounts/users/server/serv
 import { createUserService } from "@/modules/auth/server/services/create-user.service"
 import { signInService } from "@/modules/auth/server/services/sign-in.service"
 import { sendWelcomeEmailService } from "@/modules/emails/server/services/send-welcome-email.service"
-import type { RegisterAndJoinAsDriverUseCaseCodes, RegisterAndJoinAsDriverUseCaseData, RegisterAndJoinAsDriverUseCaseParams } from "@/modules/fleet/shared/types/slices/register-and-join-as-driver.types"
+import type { RegisterAndJoinAsDriverUseCaseCodes, RegisterAndJoinAsDriverUseCaseData, RegisterAndJoinAsDriverUseCaseParams } from "@/modules/fleet/shared/types/flows/register-and-join-as-driver.types"
 import { createOrganizationMembershipService } from "@/modules/organizations/memberships/server/services/create-membership.service"
 import { getRoleByNameService } from "@/modules/organizations/memberships/server/services/get-role-by-name.service"
 import { isUserMemberOfOrganizationService } from "@/modules/organizations/memberships/server/services/is-user-member-of-organization.service"

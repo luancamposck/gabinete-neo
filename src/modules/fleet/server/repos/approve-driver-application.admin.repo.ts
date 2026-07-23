@@ -1,6 +1,6 @@
 // @/modules/fleet/server/repos/approve-driver-application.admin.repo.ts
 import { createAdminClient } from "@/lib/supabase/admin"
-import type { ApproveDriverApplicationAdminRepoData, ApproveDriverApplicationAdminRepoParams } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
+import type { ApproveDriverApplicationAdminRepoData, ApproveDriverApplicationAdminRepoParams } from "@/modules/fleet/server/types/operations/approve-driver-application.types"
 
 /**
  * Espera existir a RPC transacional:

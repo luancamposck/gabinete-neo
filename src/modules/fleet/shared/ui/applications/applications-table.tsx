@@ -1,7 +1,7 @@
 "use client"
 
 import { flexRender, type Table } from "@tanstack/react-table"
-import type { PendingDriverApplicationDTO } from "@/modules/fleet/shared/types/slices/get-pending-driver-applications.types"
+import type { PendingDriverApplicationDTO } from "@/modules/fleet/shared/types/flows/get-pending-driver-applications.types"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as UITable } from "@/shared/components/ui/table"
 
 type ApplicationsTableProps = {

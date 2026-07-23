@@ -1,12 +1,8 @@
-import type { VehicleType } from "../db"
-
-// ============= REPO =============
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
 export interface ListPendingDriverApplicationsAdminRepoParams {
 	organizationId: string
 }
-
-// ============= SERVICE =============
 
 export interface ListPendingDriverApplicationsServiceParams {
 	organizationId: string
@@ -32,7 +28,3 @@ export interface ListPendingDriverApplicationsServiceData {
 }
 
 export type ListPendingDriverApplicationsServiceCodes = "generic_error"
-
-// ============= ACTION =============
-
-// No Actions here

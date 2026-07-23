@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { reviewDriverApplicationUseCase } from "@/modules/fleet/server/use-cases/review-driver-application.use-case"
-import type { RejectDriverApplicationActionCodes, RejectDriverApplicationActionData } from "@/modules/fleet/shared/types/slices/review-driver-application.types"
+import type { RejectDriverApplicationActionCodes, RejectDriverApplicationActionData } from "@/modules/fleet/shared/types/flows/review-driver-application.types"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const MSG_SUCCESS = "Candidatura rejeitada com sucesso."

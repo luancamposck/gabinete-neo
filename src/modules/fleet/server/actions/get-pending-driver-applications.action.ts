@@ -1,7 +1,7 @@
 "use server"
 
 import { getPendingDriverApplicationsUseCase } from "@/modules/fleet/server/use-cases/get-pending-driver-applications.use-case"
-import type { GetPendingDriverApplicationsActionCodes, GetPendingDriverApplicationsActionData } from "@/modules/fleet/shared/types/slices/get-pending-driver-applications.types"
+import type { GetPendingDriverApplicationsActionCodes, GetPendingDriverApplicationsActionData } from "@/modules/fleet/shared/types/flows/get-pending-driver-applications.types"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const MSG_SUCCESS = "Candidaturas pendentes carregadas com sucesso."

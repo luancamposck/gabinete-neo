@@ -1,7 +1,7 @@
 // @/modules/fleet/server/services/check-plate-available.service.ts
 
+import type { CheckPlateAvailableServiceCodes, CheckPlateAvailableServiceData, CheckPlateAvailableServiceParams } from "@/modules/fleet/server/types/operations/check-plate-available.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
-import type { CheckPlateAvailableServiceCodes, CheckPlateAvailableServiceData, CheckPlateAvailableServiceParams } from "../../shared/types/slices/check-plate-available.types"
 import { selectDriverApplicationIdByOrganizationAndPlateAdminRepo } from "../repos/select-driver-application-id-by-organization-and-plate.admin.repo"
 
 const prefixLog = "[checkPlateAvailableService]:"

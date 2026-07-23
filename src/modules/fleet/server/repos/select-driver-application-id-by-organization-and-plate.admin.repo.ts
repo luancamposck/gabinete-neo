@@ -3,7 +3,7 @@
 import "server-only"
 
 import { createAdminClient } from "@/lib/supabase/admin"
-import type { SelectDriverApplicationIdByOrganizationAndPlateAdminRepoParams } from "../../shared/types/slices/check-plate-available.types"
+import type { SelectDriverApplicationIdByOrganizationAndPlateAdminRepoParams } from "@/modules/fleet/server/types/operations/check-plate-available.types"
 
 export async function selectDriverApplicationIdByOrganizationAndPlateAdminRepo(params: SelectDriverApplicationIdByOrganizationAndPlateAdminRepoParams) {
 	const supabaseAdmin = createAdminClient()

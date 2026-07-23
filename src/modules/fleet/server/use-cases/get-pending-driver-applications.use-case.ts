@@ -1,10 +1,10 @@
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
 import { PERMISSIONS } from "@/modules/auth/shared/permissions"
+import type { GetPendingDriverApplicationsUseCaseCodes, GetPendingDriverApplicationsUseCaseData, PendingDriverApplicationDTO } from "@/modules/fleet/shared/types/flows/get-pending-driver-applications.types"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
-import type { GetPendingDriverApplicationsUseCaseCodes, GetPendingDriverApplicationsUseCaseData, PendingDriverApplicationDTO } from "../../shared/types/slices/get-pending-driver-applications.types"
 import { createDriverDocumentSignedUrlsService } from "../services/create-driver-document-signed-urls.service"
 import { listPendingDriverApplicationsService } from "../services/list-pending-driver-applications.service"
 

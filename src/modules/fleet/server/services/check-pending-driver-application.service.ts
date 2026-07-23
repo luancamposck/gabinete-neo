@@ -1,7 +1,11 @@
 // @/modules/fleet/server/services/check-pending-driver-application.service.ts
 
+import type {
+	CheckPendingDriverApplicationServiceCodes,
+	CheckPendingDriverApplicationServiceData,
+	CheckPendingDriverApplicationServiceParams
+} from "@/modules/fleet/server/types/operations/check-pending-driver-application.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
-import type { CheckPendingDriverApplicationServiceCodes, CheckPendingDriverApplicationServiceData, CheckPendingDriverApplicationServiceParams } from "../../shared/types/slices/check-pending-driver-application.types"
 import { selectPendingDriverApplicationIdByOrganizationAndUserAdminRepo } from "../repos/select-pending-driver-application-id-by-organization-and-user.admin.repo"
 
 const prefixLog = "[checkPendingDriverApplicationService]:"

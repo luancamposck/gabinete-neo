@@ -3,7 +3,7 @@
 "use server"
 
 import { getAddDriverApplicationContextUseCase } from "@/modules/fleet/server/use-cases/get-add-driver-application-context.use-case"
-import type { GetAddDriverApplicationContextActionCodes, GetAddDriverApplicationContextActionData } from "@/modules/fleet/shared/types/slices/get-add-driver-application-context.types"
+import type { GetAddDriverApplicationContextActionCodes, GetAddDriverApplicationContextActionData } from "@/modules/fleet/shared/types/flows/get-add-driver-application-context.types"
 import type { OperationResponse } from "@/shared/types/operation-response.types"
 
 const MSG_SUCCESS = "Contexto carregado com sucesso."

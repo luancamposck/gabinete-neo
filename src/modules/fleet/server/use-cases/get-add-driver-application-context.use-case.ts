@@ -3,11 +3,11 @@
 import { getCurrentAuthUserService } from "@/modules/auth/server/services/get-current-auth-user.service"
 import { hasMembershipPermissionService } from "@/modules/auth/server/services/has-membership-permission.service"
 import { PERMISSIONS } from "@/modules/auth/shared/permissions"
+import type { GetAddDriverApplicationContextUseCaseCodes, GetAddDriverApplicationContextUseCaseData } from "@/modules/fleet/shared/types/flows/get-add-driver-application-context.types"
 import { listActiveOrgMembersByOrgIdService } from "@/modules/memberships/server/services/list-active-org-members-by-org-id.service"
 import { getOrganizationIdByAppDomainService } from "@/modules/organizations/server/services/get-organization-id-by-app-domain.service"
 import { getRequestHost } from "@/shared/http/get-request-host"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
-import type { GetAddDriverApplicationContextUseCaseCodes, GetAddDriverApplicationContextUseCaseData } from "../../shared/types/slices/get-add-driver-application-context.types"
 import { listActiveDriverUserIdsByOrgIdService } from "../services/list-active-driver-user-ids-by-org-id.service"
 import { listPendingDriverApplicationUserIdsByOrgIdService } from "../services/list-pending-driver-application-user-ids-by-org-id.service"
 

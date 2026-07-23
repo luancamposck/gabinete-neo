@@ -1,7 +1,11 @@
 // @/modules/fleet/server/services/create-driver-document-signed-url.service.ts
 
+import type {
+	CreateDriverDocumentSignedUrlServiceCodes,
+	CreateDriverDocumentSignedUrlServiceData,
+	CreateDriverDocumentSignedUrlServiceParams
+} from "@/modules/fleet/server/types/operations/create-driver-document-signed-url.types"
 import type { AppResultAsync } from "@/shared/types/app-result.types"
-import type { CreateDriverDocumentSignedUrlServiceCodes, CreateDriverDocumentSignedUrlServiceData, CreateDriverDocumentSignedUrlServiceParams } from "../../shared/types/slices/create-driver-document-signed-url.types"
 import { createSignedDocumentUrlAdminRepo } from "../repos/create-signed-document-url.admin.repo"
 
 const prefixLog = "[createDriverDocumentSignedUrlService]:"

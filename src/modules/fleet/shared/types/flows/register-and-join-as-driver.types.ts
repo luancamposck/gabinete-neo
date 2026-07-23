@@ -1,6 +1,4 @@
-import type { VehicleType } from "../db"
-
-// ============= USE-CASE =============
+import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
 export interface RegisterAndJoinAsDriverUseCaseParams {
 	email: string
@@ -47,8 +45,6 @@ export type RegisterAndJoinAsDriverUseCaseCodes =
 	| "invalid_file"
 	| "plate_taken"
 	| "pending_application_exists"
-
-// ============= ACTION =============
 
 export type RegisterAndJoinAsDriverActionData = RegisterAndJoinAsDriverUseCaseData
 
