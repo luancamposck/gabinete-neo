@@ -13,6 +13,7 @@ O módulo concentra o cadastro público de motoristas, candidaturas, documentos 
 | `registerAndJoinAsDriverAction` | `./actions/register-and-join-as-driver.action.ts` | Valida um payload objeto e traduz os codes do cadastro público |
 | `addDriverApplicationAction` | `./actions/add-driver-application.action.ts` | Adiciona candidatura para membro existente |
 | `getPendingDriverApplicationsAction` | `./actions/get-pending-driver-applications.action.ts` | Lista candidaturas pendentes da organização |
+| `getFleetDriversForTableAction` | `./actions/get-fleet-drivers-for-table.action.ts` | Prepara a listagem de motoristas ativos e inativos para a tabela de gestão da frota |
 | `approveDriverApplicationAction` | `./actions/approve-driver-application.action.ts` | Aprova uma candidatura |
 | `rejectDriverApplicationAction` | `./actions/reject-driver-application.action.ts` | Rejeita uma candidatura |
 
@@ -23,6 +24,7 @@ O módulo concentra o cadastro público de motoristas, candidaturas, documentos 
 | `registerAndJoinAsDriverUseCase` | `./use-cases/register-and-join-as-driver.use-case.ts` | Cria/autentica conta, garante membership e registra candidatura com compensação de documentos |
 | `addDriverApplicationUseCase` | `./use-cases/add-driver-application.use-case.ts` | Valida membro, placa e candidatura antes de criar uma candidatura administrativa |
 | `getPendingDriverApplicationsUseCase` | `./use-cases/get-pending-driver-applications.use-case.ts` | Protege e lista candidaturas pendentes com signed URLs |
+| `getFleetDriversForTableUseCase` | `./use-cases/get-fleet-drivers-for-table.use-case.ts` | Autentica, resolve o tenant, autoriza e projeta os motoristas para a tabela |
 | `reviewDriverApplicationUseCase` | `./use-cases/review-driver-application.use-case.ts` | Protege e aprova/rejeita candidaturas com idempotência |
 
 ## Services do fluxo de candidatura
@@ -36,6 +38,7 @@ O módulo concentra o cadastro público de motoristas, candidaturas, documentos 
 | `createDriverApplicationService` | Insere uma candidatura `pending` em `driver_applications` |
 | `createDriverDocumentSignedUrlsService` | Gera signed URLs em lote para documentos privados |
 | `listPendingDriverApplicationsService` | Lista candidaturas pendentes com dados do candidato |
+| `listFleetDriversByOrganizationIdService` | Lista motoristas ativos e inativos com membro e candidatura de origem |
 | `approveDriverApplicationService` | Aprova via RPC `approve_driver_application` |
 | `rejectDriverApplicationService` | Rejeita com guard de status `pending` |
 
@@ -57,6 +60,10 @@ O módulo concentra o cadastro público de motoristas, candidaturas, documentos 
 - Os codes `plate_taken` e `pending_application_exists` vêm dos gates; falhas de insert retornam `generic_error`.
 - Não há rollback manual de auth user. A criação de auth, `users` e `user_profiles` é atômica pela trigger.
 - Aprovação/rejeição só atua sobre candidaturas `pending`; recursos cross-org são tratados como `not_found`.
+- A tabela de motoristas exige `fleet.applications.manage` e sempre resolve `organizationId` pelo host da requisição.
+- Na projeção da tabela, `member` e `approvedAt` são obrigatórios; ausência do usuário relacionado ou de `driver_applications.reviewed_at` é tratada como inconsistência pelo Service.
+- `approvedAt` vem de `driver_applications.reviewed_at` e `isActive` vem de `drivers.is_active`.
+- `listDriversWithMemberAndOriginApplicationByOrganizationIdAdminRepo` usa o admin client, mas restringe explicitamente a consulta ao tenant autorizado.
 
 ## Dependências compartilhadas relevantes
 
