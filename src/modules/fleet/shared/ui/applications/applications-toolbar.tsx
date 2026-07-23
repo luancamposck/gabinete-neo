@@ -35,7 +35,7 @@ export const ApplicationsToolbar = ({ table }: ApplicationsToolbarProps) => {
 				<InputGroupAddon>
 					<Search className="size-4" />
 				</InputGroupAddon>
-				<InputGroupInput className="h-8" placeholder="Buscar por nome ou placa..." value={globalFilter} onChange={(event) => table.setGlobalFilter(event.target.value)} aria-label="Buscar candidaturas" />
+				<InputGroupInput className="h-8" placeholder="Buscar por nome, e-mail ou placa..." value={globalFilter} onChange={(event) => table.setGlobalFilter(event.target.value)} aria-label="Buscar candidaturas" />
 			</InputGroup>
 
 			{vehicleTypeColumn && <DataTableFacetedFilter column={vehicleTypeColumn} title="Tipo" options={vehicleTypeOptions} />}

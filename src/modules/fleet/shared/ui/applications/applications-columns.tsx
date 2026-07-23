@@ -37,7 +37,7 @@ export const applicationsColumns: ColumnDef<PendingDriverApplicationDTO>[] = [
 		id: "candidate",
 		accessorFn: (row) => row.candidate?.name ?? "",
 		header: ({ column }) => (
-			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0">
+			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0 has-[>svg]:px-0">
 				Candidato
 				<ArrowUpDown className="ml-2 size-4" />
 			</Button>
@@ -58,7 +58,9 @@ export const applicationsColumns: ColumnDef<PendingDriverApplicationDTO>[] = [
 	{
 		accessorKey: "vehicleType",
 		header: "Tipo",
-		cell: ({ row }) => <VehicleTypeBadge type={row.original.vehicleType} />,
+		// -ml-2 cancela o px-2 interno do Badge para alinhar o conteúdo visível
+		// com o texto do header (que não tem esse padding extra).
+		cell: ({ row }) => <VehicleTypeBadge type={row.original.vehicleType} className="-ml-2" />,
 		filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id)))
 	},
 	{
@@ -79,7 +81,7 @@ export const applicationsColumns: ColumnDef<PendingDriverApplicationDTO>[] = [
 	{
 		accessorKey: "createdAt",
 		header: ({ column }) => (
-			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0">
+			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0 has-[>svg]:px-0">
 				Enviada em
 				<ArrowUpDown className="ml-2 size-4" />
 			</Button>
