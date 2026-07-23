@@ -1,7 +1,11 @@
+// ============= REPO =============
+
 export interface CreateSignedDocumentUrlsAdminRepoParams {
 	paths: string[]
 	expiresIn?: number
 }
+
+// ============= SERVICE =============
 
 export interface CreateDriverDocumentSignedUrlsServiceParams {
 	paths: string[]

@@ -1,3 +1,5 @@
+// ============= REPO =============
+
 export interface ApproveDriverApplicationAdminRepoParams {
 	applicationId: string
 	reviewerUserId: string
@@ -7,6 +9,8 @@ export interface ApproveDriverApplicationAdminRepoData {
 	driver_id: string | null
 	error_code: string | null
 }
+
+// ============= SERVICE =============
 
 export interface ApproveDriverApplicationServiceParams {
 	applicationId: string

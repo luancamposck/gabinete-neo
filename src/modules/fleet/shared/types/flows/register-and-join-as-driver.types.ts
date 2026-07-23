@@ -1,5 +1,7 @@
 import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
+// ============= USE-CASE =============
+
 export interface RegisterAndJoinAsDriverUseCaseParams {
 	email: string
 	password: string
@@ -45,6 +47,8 @@ export type RegisterAndJoinAsDriverUseCaseCodes =
 	| "invalid_file"
 	| "plate_taken"
 	| "pending_application_exists"
+
+// ============= ACTION =============
 
 export type RegisterAndJoinAsDriverActionData = RegisterAndJoinAsDriverUseCaseData
 

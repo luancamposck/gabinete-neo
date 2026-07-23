@@ -1,7 +1,11 @@
+// ============= REPO =============
+
 export interface RejectDriverApplicationAdminRepoParams {
 	applicationId: string
 	reviewerUserId: string
 }
+
+// ============= SERVICE =============
 
 export interface RejectDriverApplicationServiceParams {
 	applicationId: string

@@ -1,5 +1,7 @@
 import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
+// ============= DTO =============
+
 export interface PendingDriverApplicationDTO {
 	applicationId: string
 	candidate: {
@@ -17,11 +19,15 @@ export interface PendingDriverApplicationDTO {
 	createdAt: string
 }
 
+// ============= USE-CASE =============
+
 export interface GetPendingDriverApplicationsUseCaseData {
 	applications: PendingDriverApplicationDTO[]
 }
 
 export type GetPendingDriverApplicationsUseCaseCodes = "unauthenticated" | "org_not_found" | "not_allowed" | "generic_error"
+
+// ============= ACTION =============
 
 export type GetPendingDriverApplicationsActionData = GetPendingDriverApplicationsUseCaseData
 

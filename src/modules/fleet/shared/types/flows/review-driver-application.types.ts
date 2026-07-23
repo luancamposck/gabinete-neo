@@ -1,3 +1,5 @@
+// ============= USE-CASE =============
+
 export type ReviewDriverApplicationAction = "approve" | "reject"
 
 export interface ReviewDriverApplicationUseCaseData {
@@ -7,6 +9,8 @@ export interface ReviewDriverApplicationUseCaseData {
 }
 
 export type ReviewDriverApplicationUseCaseCodes = "unauthenticated" | "org_not_found" | "not_allowed" | "not_found" | "already_reviewed" | "generic_error"
+
+// ============= ACTION =============
 
 export interface ApproveDriverApplicationActionData {
 	applicationId: string

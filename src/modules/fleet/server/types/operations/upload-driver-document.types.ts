@@ -1,3 +1,5 @@
+// ============= REPO =============
+
 export interface UploadDriverDocumentAdminRepoParams {
 	organizationId: string
 	userId: string
@@ -8,6 +10,8 @@ export interface UploadDriverDocumentAdminRepoParams {
 export interface UploadDriverDocumentAdminRepoResult {
 	path: string
 }
+
+// ============= SERVICE =============
 
 export interface UploadDriverDocumentServiceParams {
 	organizationId: string

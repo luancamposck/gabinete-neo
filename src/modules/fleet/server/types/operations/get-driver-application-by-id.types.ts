@@ -1,5 +1,7 @@
 import type { Enums } from "@/shared/types/supabase"
 
+// ============= SERVICE =============
+
 export type GetDriverApplicationByIdServiceData = {
 	id: string
 	organization_id: string

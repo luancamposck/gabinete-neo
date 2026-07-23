@@ -1,7 +1,11 @@
+// ============= REPO =============
+
 export interface SelectDriverApplicationIdByOrganizationAndPlateAdminRepoParams {
 	organizationId: string
 	plate: string
 }
+
+// ============= SERVICE =============
 
 export interface CheckPlateAvailableServiceParams {
 	organizationId: string

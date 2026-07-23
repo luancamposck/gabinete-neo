@@ -1,8 +1,12 @@
 import type { VehicleType } from "@/modules/fleet/shared/types/db"
 
+// ============= REPO =============
+
 export interface ListPendingDriverApplicationsAdminRepoParams {
 	organizationId: string
 }
+
+// ============= SERVICE =============
 
 export interface ListPendingDriverApplicationsServiceParams {
 	organizationId: string
