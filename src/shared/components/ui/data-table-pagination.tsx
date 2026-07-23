@@ -2,20 +2,26 @@
 
 import type { Table } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { cn } from "@/lib/utils/cn"
 import { Button } from "@/shared/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select"
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>
+	// Falso quando a tabela não tem coluna de seleção (ex. listas somente leitura) —
+	// evita mostrar "0 de N linha(s) selecionada(s)." sem um recurso de seleção real.
+	showSelectionCount?: boolean
 }
 
-export const DataTablePagination = <TData,>({ table }: DataTablePaginationProps<TData>) => {
+export const DataTablePagination = <TData,>({ table, showSelectionCount = true }: DataTablePaginationProps<TData>) => {
 	return (
 		<div className="flex flex-col items-center justify-between gap-4 px-2 md:flex-row">
-			<div className="text-sm text-muted-foreground">
-				{table.getFilteredSelectedRowModel().rows.length} de {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
-			</div>
-			<div className="flex items-center flex-wrap justify-center gap-x-6 gap-y-2 md:justify-end lg:gap-x-8">
+			{showSelectionCount && (
+				<div className="text-sm text-muted-foreground">
+					{table.getFilteredSelectedRowModel().rows.length} de {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+				</div>
+			)}
+			<div className={cn("flex items-center flex-wrap justify-center gap-x-6 gap-y-2 md:justify-end lg:gap-x-8", !showSelectionCount && "md:ml-auto")}>
 				<div className="flex items-center space-x-2">
 					<p className="text-sm font-medium">Linhas por página</p>
 					<Select
