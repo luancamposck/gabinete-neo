@@ -60,6 +60,7 @@ Estrutura base (server) por módulo:
 - `src/modules/<module-name>/server/services/...`
 - `src/modules/<module-name>/server/actions/...`
 - `src/modules/<module-name>/server/use-cases/...`
+- `src/modules/<module-name>/server/types/operations/...` — contratos internos extraídos de Repos e Services
 
 ### Legado (não usar em código novo)
 Módulos mais antigos ainda organizam actions e use-cases dentro de `slices/<slice-name>/`:
@@ -72,11 +73,31 @@ Exemplos reais (legado):
 
 Não criar novas `slices/` em código novo — usar o padrão flat acima. Não é necessário migrar código legado existente como parte de outras tarefas.
 
-Estrutura base (shared/ui) por módulo:
+Estrutura base (shared) por módulo:
 - `src/modules/<module-name>/shared/ui/...`
+- `src/modules/<module-name>/shared/types/flows/...` — contratos de Use-cases, Actions e DTOs públicos
+- `src/modules/<module-name>/shared/types/db.ts` — aliases diretos dos tipos Supabase do módulo
 - usar essa pasta para componentes reutilizáveis que pertencem apenas a um módulo
 - manter em `src/shared/components/ui/` apenas primitives/base UI compartilhadas do design system (shadcn/ui)
 - usar `src/shared/components/` para componentes compostos globais/cross-module
+
+---
+
+## Contratos de tipos por fluxo e operação
+
+- A regra central é: **ownership e fronteiras são rígidos; a extração de tipos é pragmática**.
+- Use `shared/types/flows/<flow>.types.ts` para contratos de Use-case, Action e DTOs públicos consumidos pela UI.
+- Use `server/types/operations/<operation>.types.ts` para contratos internos extraídos de Repo e Service.
+- Use `shared/types/db.ts` apenas para aliases diretos dos tipos Supabase do módulo (`Row`, `Insert`, `Update`, enums etc.).
+- Tipos simples, locais e de uso único podem permanecer inline, como `{ paths: string[] }`, `null` e um único error code.
+- Extraia contratos públicos e tipos com semântica própria, especialmente quando forem compartilhados, aninhados, sujeitos a evolução, tiverem unions de códigos de negócio ou tiparem manualmente retornos de RPC/query.
+- Compartilhamento ou repetição de uma forma trivial, isoladamente, não obriga sua extração.
+- Não crie arquivo de tipos apenas por simetria e não use arquivos-gaveta genéricos como `dto.ts` ou `views.ts` em código novo.
+- DTO específico pertence ao fluxo; DTO realmente reutilizável deve ter nome e arquivo semânticos próprios.
+- Resultados de queries devem ser inferidos pelo Repo quando possível; tipos extraídos desses resultados são internos. Reserve “view” para views reais do banco.
+- UI pode importar `shared/types/flows` e `shared/types/db`, mas nunca `server/types/operations`.
+- Não criar novos `shared/types/slices`; migre código legado apenas quando o módulo ou fluxo estiver explicitamente no escopo.
+- Para a árvore de decisão, exemplos e regras completas, ver `docs/standards/type-contracts.md`.
 
 ---
 
@@ -98,6 +119,7 @@ Estrutura base (shared/ui) por módulo:
 - Actions traduzem `code` interno para `message`.
 - Tipos globais ficam em `src/shared/types/`.
 - Para tipos completos, tabela por camada e exemplo, ver `docs/standards/result-contracts.md`.
+- Para localização e extração dos contratos específicos de módulos, ver `docs/standards/type-contracts.md`.
 
 ---
 

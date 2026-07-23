@@ -4,7 +4,7 @@ Define os tipos de retorno usados entre as camadas do backend e onde cada um dev
 
 ## Tipos
 
-Definidos em `src/shared/types/`.
+Os tipos globais de resultado são definidos em `src/shared/types/`. Contratos específicos de módulos, como params, data, codes e DTOs de cada fluxo ou operação, seguem `docs/standards/type-contracts.md`.
 
 ### `AppResult<T, E>` / `AppResultAsync<T, E>`
 
@@ -51,6 +51,7 @@ export type OperationResponse<T, E extends string = string> = Promise<
 - Services e Use-cases não devem retornar `message`.
 - Actions devem traduzir `code` interno para `message`.
 - Tipos globais devem ficar em `src/shared/types/`.
+- Contratos específicos de módulos devem respeitar as fronteiras de `shared/types/flows` e `server/types/operations` descritas em `docs/standards/type-contracts.md`.
 
 ## Exemplo
 
